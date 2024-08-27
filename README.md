@@ -12,6 +12,14 @@
 
 This monorepo contains several utilities for working with [Vercel's Next.js][1].
 
+<!-- TODO -->
+
+TODO: subsume next-api-glue:
+
+- Compat w/ Express/Koa middleware & format
+- Autoload from installed plugins
+- Add error handles/error objects/error types etc in config
+
 ---
 
 <!-- remark-ignore-start -->
