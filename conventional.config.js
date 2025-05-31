@@ -17,9 +17,9 @@ if (pathParts.length < 2 || pathParts[0] != 'packages') {
 const pkgBasename = pathParts[1];
 debug('target package: %O', pkgBasename);
 
-module.exports = require('@xunnamius/conventional-changelog-projector')({
+module.exports = require('@xunnamius/conventional-changelog-symbiote')({
   options: {
-    // * Projector's monorepo tools follow basic lerna conventions
+    // * symbiote's monorepo tools follow basic lerna conventions
     lernaPackage: pkgBasename
   },
   gitRawCommitsOpts: {

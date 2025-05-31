@@ -82,7 +82,7 @@ module.exports = {
     // * Used by Jest and `npm test`
     test: {
       comments: true,
-      sourceMaps: 'both',
+      sourceMaps: 'inline',
       presets: [
         ['@babel/preset-env', { targets: { node: true } }],
         ['@babel/preset-typescript', { allowDeclareFields: true }]
@@ -94,7 +94,7 @@ module.exports = {
         'explicit-exports-references'
       ]
     },
-    // * Used when NODE_ENV == production
+    // * Used when NODE_ENV === production
     production: {
       presets: [
         [

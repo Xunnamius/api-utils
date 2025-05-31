@@ -11,9 +11,9 @@ started, [take a look at this quick and easy guide][how-to-contribute]. 💜
 
 This repository uses a [fully automated][github-actions] [continuous
 linting][husky-cl] (CL), integration testing (CI), and deployment (CD)
-[projector][projector]-based pipeline for integrating PRs and publishing
-releases. The neat thing about a fully automated pipeline is that anyone
-anywhere can make a contribution quickly and with minimal tedium.
+[symbiote][symbiote]-based pipeline for integrating PRs and publishing releases.
+The neat thing about a fully automated pipeline is that anyone anywhere can make
+a contribution quickly and with minimal tedium.
 
 This repository makes extensive use of [debug][pkg-debug]. Should you wish to
 view all possible debugging output, [export
@@ -91,7 +91,7 @@ At this point, you're ready to create your PR and ✨ contribute ✨!
 [open-issues]: https://github.com/Xunnamius/next-utils/issues?q=
 [pkg-debug]: https://www.npmjs.com/package/debug
 [pkg-debug-wildcards]: https://www.npmjs.com/package/debug#wildcards
-[projector]: https://github.com/Xunnamius/next-utils#readme
+[symbiote]: https://github.com/Xunnamius/next-utils#readme
 [x-repo-choose-new-issue]:
   https://github.com/Xunnamius/next-utils/issues/new/choose
 [x-repo-pr-compare]: https://github.com/Xunnamius/next-utils/compare

@@ -7,6 +7,7 @@
 [![Uses semantic-release][x-badge-semanticrelease-image]][x-badge-semanticrelease-link]
 
 <!-- badges-end -->
+<!-- TODO: rename repo etc to react-utils, offer @-xun/next and @-xun/react -->
 
 # next-utils
 
