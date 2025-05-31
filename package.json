@@ -1,10 +1,10 @@
 {
-  "name": "next-utils-monorepo",
+  "name": "react-utils-monorepo",
   "private": true,
   "homepage": "https://github.com/Xunnamius/next-utils",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Xunnamius/next-utils"
+    "url": "git+https://github.com/Xunnamius/react-utils.git"
   },
   "license": "MIT",
   "workspaces": [

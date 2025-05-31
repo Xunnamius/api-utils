@@ -11,15 +11,12 @@
 
 # next-utils
 
-This monorepo contains several utilities for working with [Vercel's Next.js][1].
+This monorepo contains several utilities for working with react and related
+ecosystems.
 
 <!-- TODO -->
 
-TODO: subsume next-api-glue:
-
-- Compat w/ Express/Koa middleware & format
-- Autoload from installed plugins
-- Add error handles/error objects/error types etc in config
+TODO
 
 ---
 
