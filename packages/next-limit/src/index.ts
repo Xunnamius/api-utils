@@ -4,7 +4,7 @@ import { getClientIp } from 'request-ip';
 import { ValidationError } from 'universe/error';
 
 import type { NextApiRequest } from 'next';
-import type { UnixEpochMs } from '@xunnamius/types';
+import type { UnixEpochMs } from '@-xun/types';
 import type { UpdateResult, WithId, WithoutId } from 'mongodb';
 
 /**

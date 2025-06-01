@@ -1,4 +1,4 @@
-import { asMockedFunction } from '@xunnamius/jest-types';
+import { asMockedFunction } from '@-xun/jest-types';
 import limitRequest from 'multiverse/next-adhesive/limit-request';
 import { withMiddleware } from 'multiverse/next-api-glue';
 import { clientIsRateLimited } from 'multiverse/next-limit';

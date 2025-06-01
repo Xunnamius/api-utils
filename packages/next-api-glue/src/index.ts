@@ -2,7 +2,7 @@ import { debugFactory } from 'multiverse/debug-extended';
 import { sendNotImplemented } from 'multiverse/next-api-respond';
 import { toss } from 'toss-expression';
 
-import type { NoInfer } from '@xunnamius/types';
+import type { NoInfer } from '@-xun/types';
 import type { Debugger } from 'multiverse/debug-extended';
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 

@@ -1,4 +1,4 @@
-import { asMockedFunction } from '@xunnamius/jest-types';
+import { asMockedFunction } from '@-xun/jest-types';
 import authRequest, { type Options } from 'multiverse/next-adhesive/auth-request';
 import { withMiddleware } from 'multiverse/next-api-glue';
 import { authenticateHeader, authorizeHeader } from 'multiverse/next-auth';

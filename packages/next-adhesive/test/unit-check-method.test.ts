@@ -3,7 +3,7 @@ import { withMiddleware } from 'multiverse/next-api-glue';
 import { testApiHandler } from 'next-test-api-route-handler';
 import { mockEnvFactory, noopHandler, wrapHandler } from 'testverse/setup';
 
-import type { ValidHttpMethod } from '@xunnamius/types';
+import type { ValidHttpMethod } from '@-xun/types';
 
 const withMockedEnv = mockEnvFactory({ NODE_ENV: 'test' });
 

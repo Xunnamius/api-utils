@@ -2,10 +2,10 @@ import { parse as parseAsBytes } from 'bytes';
 import { isServer } from 'is-server-side';
 import { InvalidAppEnvironmentError } from 'named-app-errors';
 import { toss } from 'toss-expression';
-import { validHttpMethods } from '@xunnamius/types';
+import { validHttpMethods } from '@-xun/types';
 import { debugFactory } from 'multiverse/debug-extended';
 
-import type { ValidHttpMethod } from '@xunnamius/types';
+import type { ValidHttpMethod } from '@-xun/types';
 import type { Primitive } from 'type-fest';
 
 const debug = debugFactory('next-env:env');
@@ -106,7 +106,7 @@ export function getEnv<T extends Environment>(customizedEnv?: T) {
   debug(env);
 
   // TODO: when the following logic is retired, consider renaming this package
-  // TODO: to `@xunnamius/env` or something similar since it's not next-specific
+  // TODO: to `@-xun/env` or something similar since it's not next-specific
 
   // TODO: when in production, perhaps these checks should only be run once?
   // TODO: Maybe this entire module should be cached? How does that work with

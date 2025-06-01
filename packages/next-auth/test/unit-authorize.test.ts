@@ -138,9 +138,8 @@ describe('::authorizeHeader', () => {
 
     await expect(
       deleteTokenById({
-        auth_id: (
-          await getTokenByDerivation({ from: `bearer ${DEV_BEARER_TOKEN}` })
-        ).auth_id
+        auth_id: (await getTokenByDerivation({ from: `bearer ${DEV_BEARER_TOKEN}` }))
+          .auth_id
       })
     ).resolves.toBe(1);
 

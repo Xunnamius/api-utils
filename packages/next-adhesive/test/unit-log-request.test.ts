@@ -1,4 +1,4 @@
-import { asMockedFunction } from '@xunnamius/jest-types';
+import { asMockedFunction } from '@-xun/jest-types';
 import logRequest from 'multiverse/next-adhesive/log-request';
 import { withMiddleware } from 'multiverse/next-api-glue';
 import { addToRequestLog } from 'multiverse/next-log';

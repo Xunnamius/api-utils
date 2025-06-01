@@ -4,7 +4,7 @@ import { toss } from 'toss-expression';
 
 import { sendHttpBadContentType, sendHttpBadRequest } from 'multiverse/next-api-respond';
 
-import type { ValidHttpMethod } from '@xunnamius/types';
+import type { ValidHttpMethod } from '@-xun/types';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { MiddlewareContext } from 'multiverse/next-api-glue';
 
@@ -69,12 +69,12 @@ export default async function (
     return typeof c === 'string'
       ? (c.toLowerCase() as typeof c)
       : Array.isArray(c)
-      ? c.map((s) => s.toLowerCase())
-      : toss(
-          new InvalidAppConfigurationError(
-            'allowedContentTypes must adhere to type constraints'
-          )
-        );
+        ? c.map((s) => s.toLowerCase())
+        : toss(
+            new InvalidAppConfigurationError(
+              'allowedContentTypes must adhere to type constraints'
+            )
+          );
   };
 
   // ? Ensure everything is lowercased before we begin

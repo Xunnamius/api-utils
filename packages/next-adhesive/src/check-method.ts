@@ -2,7 +2,7 @@ import { getEnv } from 'multiverse/next-env';
 import { sendHttpBadMethod } from 'multiverse/next-api-respond';
 import { debugFactory } from 'multiverse/debug-extended';
 
-import type { ValidHttpMethod } from '@xunnamius/types';
+import type { ValidHttpMethod } from '@-xun/types';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { MiddlewareContext } from 'multiverse/next-api-glue';
 

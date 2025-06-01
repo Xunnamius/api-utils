@@ -4,7 +4,7 @@ import { getEnv } from 'multiverse/next-env';
 import { getDb } from 'multiverse/mongo-schema';
 
 import type { NextApiRequest, NextApiResponse } from 'next';
-import type { HttpStatusCode, UnixEpochMs } from '@xunnamius/types';
+import type { HttpStatusCode, UnixEpochMs } from '@-xun/types';
 import type { WithId, WithoutId } from 'mongodb';
 
 /**

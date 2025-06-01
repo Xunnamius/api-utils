@@ -1,4 +1,4 @@
-import { asMockedFunction } from '@xunnamius/jest-types';
+import { asMockedFunction } from '@-xun/jest-types';
 import { ObjectId } from 'mongodb';
 import { randomUUID } from 'node:crypto';
 

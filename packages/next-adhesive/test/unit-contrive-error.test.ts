@@ -1,4 +1,4 @@
-import { asMockedFunction } from '@xunnamius/jest-types';
+import { asMockedFunction } from '@-xun/jest-types';
 import contriveError, { type Options } from 'multiverse/next-adhesive/contrive-error';
 import { withMiddleware } from 'multiverse/next-api-glue';
 import { isDueForContrivedError } from 'multiverse/next-contrived';

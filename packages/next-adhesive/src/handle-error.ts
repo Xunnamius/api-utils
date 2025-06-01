@@ -18,7 +18,7 @@ import {
   sendNotImplemented
 } from 'multiverse/next-api-respond';
 
-import type { JsonError } from '@xunnamius/types';
+import type { JsonError } from '@-xun/types';
 import type { MiddlewareContext } from 'multiverse/next-api-glue';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { Promisable } from 'type-fest';

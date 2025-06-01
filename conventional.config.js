@@ -17,7 +17,7 @@ if (pathParts.length < 2 || pathParts[0] != 'packages') {
 const pkgBasename = pathParts[1];
 debug('target package: %O', pkgBasename);
 
-module.exports = require('@xunnamius/conventional-changelog-symbiote')({
+module.exports = require('@-xun/conventional-changelog-symbiote')({
   options: {
     // * symbiote's monorepo tools follow basic lerna conventions
     lernaPackage: pkgBasename

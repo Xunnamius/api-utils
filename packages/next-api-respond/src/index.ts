@@ -1,5 +1,5 @@
 import type { NextApiResponse } from 'next';
-import type { HttpStatusCode, JsonSuccess, JsonError } from '@xunnamius/types';
+import type { HttpStatusCode, JsonSuccess, JsonError } from '@-xun/types';
 
 /**
  * Sends a generic HTTP response with the given `statusCode` and optional
