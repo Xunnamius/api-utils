@@ -6,7 +6,7 @@
 
 <p align="center" width="100%">
 <!-- symbiote-template-region-end -->
-Monorepo for the react-utils project
+Nibbling around the edges of Next.js and React for modest (opinionated) DX gains
 <!-- symbiote-template-region-start 2 -->
 </p>
 
@@ -27,7 +27,7 @@ Monorepo for the react-utils project
 
 <!-- symbiote-template-region-end -->
 
-Monorepo for the react-utils project
+Packages that improve on Next.js and React in tiny, opinionated ways.
 
 <!-- symbiote-template-region-start 3 -->
 
