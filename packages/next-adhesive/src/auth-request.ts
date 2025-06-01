@@ -5,19 +5,16 @@ import {
   authorizeHeader,
   type AuthenticationScheme,
   type AuthorizationConstraint
-} from 'multiverse/next-auth';
+} from '@-xun/next-auth';
 
-import {
-  sendHttpUnauthenticated,
-  sendHttpUnauthorized
-} from 'multiverse/next-api-respond';
+import { sendHttpUnauthenticated, sendHttpUnauthorized } from '@-xun/next-api-respond';
 
-import { debugFactory } from 'multiverse/debug-extended';
+import { createDebugLogger } from 'rejoinder';
 
 import type { NextApiRequest, NextApiResponse } from 'next';
-import type { MiddlewareContext } from 'multiverse/next-api-glue';
+import type { MiddlewareContext } from '@-xun/next-api-glue';
 
-const debug = debugFactory('next-adhesive:auth-request');
+const debug = createDebugLogger('next-adhesive:auth-request');
 
 export type Options = {
   /**

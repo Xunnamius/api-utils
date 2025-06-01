@@ -2,13 +2,13 @@ import { asMockedFunction } from '@-xun/jest-types';
 import { ObjectId } from 'mongodb';
 import { randomUUID } from 'node:crypto';
 
-import { expectExceptionsWithMatchingErrors } from 'multiverse/jest-expect-matching-errors';
-import { objectIdPseudoSortPredicate } from 'multiverse/jest-mongo-object-id-pseudo-sort';
-import { dummyRootData, useMockDateNow } from 'multiverse/mongo-common';
-import { setupMemoryServerOverride } from 'multiverse/mongo-test';
+import { expectExceptionsWithMatchingErrors } from '@-xun/jest-expect-matching-errors';
+import { objectIdPseudoSortPredicate } from '@-xun/jest-mongo-object-id-pseudo-sort';
+import { dummyRootData, useMockDateNow } from '@-xun/mongo-common';
+import { setupMemoryServerOverride } from '@-xun/mongo-test';
 import { ErrorMessage } from 'universe/error';
 
-import * as NextAuthConstants from 'multiverse/next-auth/constants';
+import * as NextAuthConstants from '@-xun/next-auth/constants';
 
 import {
   BANNED_BEARER_TOKEN,
@@ -35,7 +35,7 @@ import {
   type PublicAuthEntry,
   type TokenAttribute,
   type TokenAttributes
-} from 'multiverse/next-auth';
+} from '@-xun/next-auth';
 
 setupMemoryServerOverride();
 useMockDateNow();
@@ -286,7 +286,9 @@ describe('::deleteTokenById', () => {
       [{ auth_id: 5 as unknown as ObjectId }, ErrorMessage.InvalidObjectId(5)]
     ];
 
-    await expectExceptionsWithMatchingErrors(errors, (params) => deleteTokenById(params));
+    await expectExceptionsWithMatchingErrors(errors, (params) =>
+      deleteTokenById(params)
+    );
   });
 
   it('ignores already-deleted auth entries', async () => {

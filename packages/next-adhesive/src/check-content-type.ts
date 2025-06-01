@@ -1,14 +1,14 @@
-import { debugFactory } from 'multiverse/debug-extended';
+import { createDebugLogger } from 'rejoinder';
 import { InvalidAppConfigurationError } from 'named-app-errors';
 import { toss } from 'toss-expression';
 
-import { sendHttpBadContentType, sendHttpBadRequest } from 'multiverse/next-api-respond';
+import { sendHttpBadContentType, sendHttpBadRequest } from '@-xun/next-api-respond';
 
 import type { ValidHttpMethod } from '@-xun/types';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import type { MiddlewareContext } from 'multiverse/next-api-glue';
+import type { MiddlewareContext } from '@-xun/next-api-glue';
 
-const debug = debugFactory('next-adhesive:check-content-type');
+const debug = createDebugLogger('next-adhesive:check-content-type');
 
 /**
  * The shape of a simple configuration object.
@@ -65,7 +65,9 @@ export default async function (
   const contentType = req.headers['content-type']?.toLowerCase();
   const method = req.method?.toUpperCase();
 
-  const configToLowercase = (c: AllowedContentTypesConfig): AllowedContentTypesConfig => {
+  const configToLowercase = (
+    c: AllowedContentTypesConfig
+  ): AllowedContentTypesConfig => {
     return typeof c === 'string'
       ? (c.toLowerCase() as typeof c)
       : Array.isArray(c)
@@ -153,7 +155,10 @@ export default async function (
                 if (!allowsNone) {
                   return sendError();
                 }
-              } else if (contentType === 'none' || !allowedSubset.includes(contentType)) {
+              } else if (
+                contentType === 'none' ||
+                !allowedSubset.includes(contentType)
+              ) {
                 return sendError();
               }
             }

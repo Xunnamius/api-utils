@@ -1,5 +1,5 @@
-import useCors, { type Options } from 'multiverse/next-adhesive/use-cors';
-import { withMiddleware } from 'multiverse/next-api-glue';
+import useCors, { type Options } from '@-xun/next-adhesive/use-cors';
+import { withMiddleware } from '@-xun/next-api-glue';
 import { testApiHandler } from 'next-test-api-route-handler';
 import { isolatedImport, noopHandler, wrapHandler } from 'testverse/setup';
 
@@ -63,7 +63,7 @@ it('handles cors package errors gracefully', async () => {
         descriptor: '/fake',
         use: [
           isolatedImport<typeof useCors>({
-            path: 'multiverse/next-adhesive/use-cors'
+            path: '@-xun/next-adhesive/use-cors'
           })
         ],
         useOnError: [

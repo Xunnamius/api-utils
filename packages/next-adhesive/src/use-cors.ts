@@ -1,11 +1,11 @@
 import Cors from 'cors';
-import { debugFactory } from 'multiverse/debug-extended';
+import { createDebugLogger } from 'rejoinder';
 
-import type { Options as CheckMethodOptions } from 'multiverse/next-adhesive/check-method';
-import type { MiddlewareContext } from 'multiverse/next-api-glue';
+import type { Options as CheckMethodOptions } from '@-xun/next-adhesive/check-method';
+import type { MiddlewareContext } from '@-xun/next-api-glue';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-const debug = debugFactory('next-adhesive:use-cors');
+const debug = createDebugLogger('next-adhesive:use-cors');
 
 export type Options = {
   allowedMethods?: CheckMethodOptions['allowedMethods'];

@@ -1,20 +1,20 @@
-import { useMockDateNow } from 'multiverse/mongo-common';
-import { setupMemoryServerOverride } from 'multiverse/mongo-test';
+import { useMockDateNow } from '@-xun/mongo-common';
+import { setupMemoryServerOverride } from '@-xun/mongo-test';
 
 import {
   authenticateHeader,
   validAuthenticationSchemes,
   type AuthenticationScheme
-} from 'multiverse/next-auth/authenticate';
+} from '@-xun/next-auth/authenticate';
 
 import {
   BANNED_BEARER_TOKEN,
   DEV_BEARER_TOKEN,
   DUMMY_BEARER_TOKEN,
   NULL_BEARER_TOKEN
-} from 'multiverse/next-auth/constants';
+} from '@-xun/next-auth/constants';
 
-import { deleteTokenById, getTokenByDerivation } from 'multiverse/next-auth/token';
+import { deleteTokenById, getTokenByDerivation } from '@-xun/next-auth/token';
 
 setupMemoryServerOverride();
 useMockDateNow();

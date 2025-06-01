@@ -1,12 +1,12 @@
-import { useMockDateNow, mockDateNowMs } from 'multiverse/mongo-common';
-import { getDb } from 'multiverse/mongo-schema';
-import { BANNED_BEARER_TOKEN } from 'multiverse/next-auth';
-import { addToRequestLog } from 'multiverse/next-log';
-import { setupMemoryServerOverride } from 'multiverse/mongo-test';
+import { useMockDateNow, mockDateNowMs } from '@-xun/mongo-common';
+import { getDb } from '@-xun/mongo-schema';
+import { BANNED_BEARER_TOKEN } from '@-xun/next-auth';
+import { addToRequestLog } from '@-xun/next-log';
+import { setupMemoryServerOverride } from '@-xun/mongo-test';
 
 import { withMockedOutput } from 'testverse/setup';
 
-import type { InternalRequestLogEntry } from 'multiverse/next-log';
+import type { InternalRequestLogEntry } from '@-xun/next-log';
 import type { HttpStatusCode } from '@xunnamius/types';
 import type { NextApiRequest, NextApiResponse } from 'next';
 

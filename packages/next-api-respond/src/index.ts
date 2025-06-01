@@ -1,5 +1,21 @@
+import type { HttpStatusCode } from '@-xun/types';
 import type { NextApiResponse } from 'next';
-import type { HttpStatusCode, JsonSuccess, JsonError } from '@-xun/types';
+import type { JsonObject } from 'type-fest';
+
+/**
+ * Generic success JSON result object.
+ */
+export interface JsonSuccess extends JsonObject {
+  success: true;
+}
+
+/**
+ * Generic failure JSON result object.
+ */
+export interface JsonError extends JsonObject {
+  error: string;
+  success: false;
+}
 
 /**
  * Sends a generic HTTP response with the given `statusCode` and optional
@@ -49,7 +65,10 @@ export function sendHttpErrorResponse(
 /**
  * Sends an HTTP 200 "ok" response with optional `responseJson` data.
  */
-export function sendHttpOk(res: NextApiResponse, responseJson?: Record<string, unknown>) {
+export function sendHttpOk(
+  res: NextApiResponse,
+  responseJson?: Record<string, unknown>
+) {
   sendHttpSuccessResponse(res, 200, responseJson);
 }
 

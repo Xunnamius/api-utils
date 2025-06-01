@@ -1,5 +1,5 @@
-import checkMethod, { type Options } from 'multiverse/next-adhesive/check-method';
-import { withMiddleware } from 'multiverse/next-api-glue';
+import checkMethod, { type Options } from '@-xun/next-adhesive/check-method';
+import { withMiddleware } from '@-xun/next-api-glue';
 import { testApiHandler } from 'next-test-api-route-handler';
 import { mockEnvFactory, noopHandler, wrapHandler } from 'testverse/setup';
 

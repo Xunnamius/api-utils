@@ -61,6 +61,12 @@
     "test:package:unit": "symbiote test --env NODE_NO_WARNINGS=1 --tests unit type",
     "test:packages:all": "symbiote test --env NODE_NO_WARNINGS=1 --tests all-local --scope unlimited --coverage"
   },
+  "dependencies": {
+    "@-xun/types": "^1.0.0"
+  },
+  "peerDependencies": {
+    "next": ">=15"
+  },
   "engines": {
     "node": "^20.18.0 || >=22.12.0"
   },

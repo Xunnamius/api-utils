@@ -1,11 +1,9 @@
-import { withMiddleware } from 'multiverse/next-api-glue';
+import { withMiddleware } from '@-xun/next-api-glue';
 import { testApiHandler } from 'next-test-api-route-handler';
 import randomizeCase from 'random-case';
 import { noopHandler, withMockedOutput, wrapHandler } from 'testverse/setup';
 
-import checkContentType, {
-  type Options
-} from 'multiverse/next-adhesive/check-content-type';
+import checkContentType, { type Options } from '@-xun/next-adhesive/check-content-type';
 
 it('sends 415 by default for POST, PUT, and PATCH requests with or without a Content-Type header', async () => {
   expect.hasAssertions();

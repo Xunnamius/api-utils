@@ -1,11 +1,11 @@
-import { getEnv } from 'multiverse/next-env';
-import { sendHttpNotFound } from 'multiverse/next-api-respond';
-import { debugFactory } from 'multiverse/debug-extended';
+import { getEnv } from '@-xun/next-env';
+import { sendHttpNotFound } from '@-xun/next-api-respond';
+import { createDebugLogger } from 'rejoinder';
 
 import type { NextApiRequest, NextApiResponse } from 'next';
-import type { MiddlewareContext } from 'multiverse/next-api-glue';
+import type { MiddlewareContext } from '@-xun/next-api-glue';
 
-const debug = debugFactory('next-adhesive:check-version');
+const debug = createDebugLogger('next-adhesive:check-version');
 
 export type Options = {
   /**

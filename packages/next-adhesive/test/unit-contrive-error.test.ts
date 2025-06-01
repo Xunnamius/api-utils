@@ -1,11 +1,11 @@
 import { asMockedFunction } from '@-xun/jest-types';
-import contriveError, { type Options } from 'multiverse/next-adhesive/contrive-error';
-import { withMiddleware } from 'multiverse/next-api-glue';
-import { isDueForContrivedError } from 'multiverse/next-contrived';
+import contriveError, { type Options } from '@-xun/next-adhesive/contrive-error';
+import { withMiddleware } from '@-xun/next-api-glue';
+import { isDueForContrivedError } from '@-xun/next-contrived';
 import { testApiHandler } from 'next-test-api-route-handler';
 import { noopHandler, wrapHandler } from 'testverse/setup';
 
-jest.mock('multiverse/next-contrived');
+jest.mock('@-xun/next-contrived');
 
 const mockIsDueForContrivedError = asMockedFunction(isDueForContrivedError);
 

@@ -1,9 +1,9 @@
 import { isNativeError } from 'node:util/types';
 
-import { debugFactory } from 'multiverse/debug-extended';
+import { createDebugLogger } from 'rejoinder';
 import { getTokenByDerivation } from './token';
 
-const debug = debugFactory('next-auth:authenticate');
+const debug = createDebugLogger('next-auth:authenticate');
 
 /**
  * An array of supported authentication schemes.

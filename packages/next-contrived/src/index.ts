@@ -1,8 +1,8 @@
-import { getEnv } from 'multiverse/next-env';
-import { debugFactory } from 'multiverse/debug-extended';
-import { getDb } from 'multiverse/mongo-schema';
+import { getEnv } from '@-xun/next-env';
+import { createDebugLogger } from 'rejoinder';
+import { getDb } from '@-xun/mongo-schema';
 
-const debug = debugFactory('next-contrived:isDueForContrivedError');
+const debug = createDebugLogger('next-contrived:isDueForContrivedError');
 
 /**
  * Returns `true` if a request should be rejected with a pseudo-error.

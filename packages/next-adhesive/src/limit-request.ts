@@ -1,12 +1,12 @@
-import { getEnv } from 'multiverse/next-env';
-import { clientIsRateLimited } from 'multiverse/next-limit';
-import { debugFactory } from 'multiverse/debug-extended';
+import { getEnv } from '@-xun/next-env';
+import { clientIsRateLimited } from '@-xun/next-limit';
+import { createDebugLogger } from 'rejoinder';
 
-import { sendHttpRateLimited, sendHttpUnauthorized } from 'multiverse/next-api-respond';
+import { sendHttpRateLimited, sendHttpUnauthorized } from '@-xun/next-api-respond';
 
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-const debug = debugFactory('next-adhesive:limit-request');
+const debug = createDebugLogger('next-adhesive:limit-request');
 
 export type Options = {
   // No options

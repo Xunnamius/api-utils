@@ -7,9 +7,9 @@ import {
   ItemNotFoundError
 } from 'named-app-errors';
 
-import { getEnv } from 'multiverse/next-env';
-import { debugFactory } from 'multiverse/debug-extended';
-import { itemToObjectId } from 'multiverse/mongo-item';
+import { getEnv } from '@-xun/next-env';
+import { createDebugLogger } from 'rejoinder';
+import { itemToObjectId } from '@-xun/mongo-item';
 
 import { validAuthenticationSchemes, type AuthenticationScheme } from './authenticate';
 
@@ -30,7 +30,7 @@ import { getConfig } from './constants';
 import type { JsonObject, JsonValue } from 'type-fest';
 import type { LiteralUnknownUnion } from 'types/global';
 
-const debug = debugFactory('next-auth:token');
+const debug = createDebugLogger('next-auth:token');
 
 /**
  * The shape of the actual token and scheme data contained within an entry in

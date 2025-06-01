@@ -1,4 +1,4 @@
-import { getDb } from 'multiverse/mongo-schema';
+import { getDb } from '@-xun/mongo-schema';
 
 import {
   isTokenAttributes,
@@ -84,7 +84,11 @@ export async function getAuthDb() {
  * into one that is safe for consumption.
  */
 export function toPublicAuthEntry(entry: InternalAuthEntry): PublicAuthEntry {
-  const { _id, deleted: _, ...publicEntry } = { ...entry, auth_id: entry._id.toString() };
+  const {
+    _id,
+    deleted: _,
+    ...publicEntry
+  } = { ...entry, auth_id: entry._id.toString() };
 
   return publicEntry /*satisfies Exact<PublicAuthEntry, typeof publicEntry>*/;
 }

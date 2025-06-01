@@ -1,7 +1,12 @@
-import handleError, { type Options } from 'multiverse/next-adhesive/handle-error';
-import { withMiddleware } from 'multiverse/next-api-glue';
+import handleError, { type Options } from '@-xun/next-adhesive/handle-error';
+import { withMiddleware } from '@-xun/next-api-glue';
 import { testApiHandler } from 'next-test-api-route-handler';
-import { itemFactory, noopHandler, withMockedOutput, wrapHandler } from 'testverse/setup';
+import {
+  itemFactory,
+  noopHandler,
+  withMockedOutput,
+  wrapHandler
+} from 'testverse/setup';
 import { toss } from 'toss-expression';
 
 import {

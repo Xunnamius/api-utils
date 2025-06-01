@@ -1,11 +1,11 @@
 import { asMockedFunction } from '@-xun/jest-types';
-import limitRequest from 'multiverse/next-adhesive/limit-request';
-import { withMiddleware } from 'multiverse/next-api-glue';
-import { clientIsRateLimited } from 'multiverse/next-limit';
+import limitRequest from '@-xun/next-adhesive/limit-request';
+import { withMiddleware } from '@-xun/next-api-glue';
+import { clientIsRateLimited } from '@-xun/next-limit';
 import { testApiHandler } from 'next-test-api-route-handler';
 import { mockEnvFactory, noopHandler, wrapHandler } from 'testverse/setup';
 
-jest.mock('multiverse/next-limit');
+jest.mock('@-xun/next-limit');
 
 const withMockedEnv = mockEnvFactory({ NODE_ENV: 'test' });
 const mockClientIsRateLimited = asMockedFunction(clientIsRateLimited);

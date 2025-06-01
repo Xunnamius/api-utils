@@ -1,12 +1,12 @@
-import { getEnv } from 'multiverse/next-env';
-import { sendHttpBadMethod } from 'multiverse/next-api-respond';
-import { debugFactory } from 'multiverse/debug-extended';
+import { getEnv } from '@-xun/next-env';
+import { sendHttpBadMethod } from '@-xun/next-api-respond';
+import { createDebugLogger } from 'rejoinder';
 
 import type { ValidHttpMethod } from '@-xun/types';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import type { MiddlewareContext } from 'multiverse/next-api-glue';
+import type { MiddlewareContext } from '@-xun/next-api-glue';
 
-const debug = debugFactory('next-adhesive:check-method');
+const debug = createDebugLogger('next-adhesive:check-method');
 
 export type Options = {
   /**

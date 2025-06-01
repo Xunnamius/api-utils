@@ -1,14 +1,14 @@
-import { dummyRootData, useMockDateNow } from 'multiverse/mongo-common';
-import { getDb } from 'multiverse/mongo-schema';
-import { BANNED_BEARER_TOKEN } from 'multiverse/next-auth';
+import { dummyRootData, useMockDateNow } from '@-xun/mongo-common';
+import { getDb } from '@-xun/mongo-schema';
+import { BANNED_BEARER_TOKEN } from '@-xun/next-auth';
 import {
   clientIsRateLimited,
   getAllRateLimits,
   removeRateLimit
-} from 'multiverse/next-limit';
-import { setupMemoryServerOverride } from 'multiverse/mongo-test';
+} from '@-xun/next-limit';
+import { setupMemoryServerOverride } from '@-xun/mongo-test';
 
-import type { InternalLimitedLogEntry } from 'multiverse/next-limit';
+import type { InternalLimitedLogEntry } from '@-xun/next-limit';
 import type { NextApiRequest } from 'next';
 
 setupMemoryServerOverride();

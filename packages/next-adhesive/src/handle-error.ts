@@ -1,4 +1,4 @@
-import { debugFactory } from 'multiverse/debug-extended';
+import { createDebugLogger } from 'rejoinder';
 
 import {
   NotImplementedError,
@@ -16,14 +16,14 @@ import {
   sendHttpUnauthorized,
   sendHttpBadRequest,
   sendNotImplemented
-} from 'multiverse/next-api-respond';
+} from '@-xun/next-api-respond';
 
 import type { JsonError } from '@-xun/types';
-import type { MiddlewareContext } from 'multiverse/next-api-glue';
+import type { MiddlewareContext } from '@-xun/next-api-glue';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { Promisable } from 'type-fest';
 
-const debug = debugFactory('next-adhesive:handle-error');
+const debug = createDebugLogger('next-adhesive:handle-error');
 
 /**
  * Special middleware used to handle custom errors.

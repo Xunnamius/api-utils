@@ -1,5 +1,5 @@
-import { getDb } from 'multiverse/mongo-schema';
-import { getEnv } from 'multiverse/next-env';
+import { getDb } from '@-xun/mongo-schema';
+import { getEnv } from '@-xun/next-env';
 import { getClientIp } from 'request-ip';
 import { ValidationError } from 'universe/error';
 

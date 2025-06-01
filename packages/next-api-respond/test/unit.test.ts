@@ -14,7 +14,7 @@ import {
   sendHttpUnauthenticated,
   sendHttpUnauthorized,
   sendNotImplemented
-} from 'multiverse/next-api-respond';
+} from '@-xun/next-api-respond';
 import { testApiHandler } from 'next-test-api-route-handler';
 
 describe('::sendGenericHttpResponse', () => {

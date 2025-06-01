@@ -1,13 +1,13 @@
 import { randomUUID } from 'node:crypto';
 import { performance as perf } from 'node:perf_hooks';
 
-import { addToRequestLog } from 'multiverse/next-log';
-import { debugFactory } from 'multiverse/debug-extended';
+import { addToRequestLog } from '@-xun/next-log';
+import { createDebugLogger } from 'rejoinder';
 
 import type { NextApiRequest, NextApiResponse } from 'next';
-import type { MiddlewareContext } from 'multiverse/next-api-glue';
+import type { MiddlewareContext } from '@-xun/next-api-glue';
 
-const debug = debugFactory('next-adhesive:log-request');
+const debug = createDebugLogger('next-adhesive:log-request');
 
 export type Options = {
   // No options

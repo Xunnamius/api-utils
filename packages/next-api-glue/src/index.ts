@@ -1,12 +1,12 @@
-import { debugFactory } from 'multiverse/debug-extended';
-import { sendNotImplemented } from 'multiverse/next-api-respond';
+import { createDebugLogger } from 'rejoinder';
+import { sendNotImplemented } from '@-xun/next-api-respond';
 import { toss } from 'toss-expression';
 
 import type { NoInfer } from '@-xun/types';
-import type { Debugger } from 'multiverse/debug-extended';
+import type { Debugger } from 'rejoinder';
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 
-const debug = debugFactory('next-api-glue:runtime');
+const debug = createDebugLogger('next-api-glue:runtime');
 
 /**
  * The shape of a custom middleware function.

@@ -1,13 +1,13 @@
-import { withMiddleware } from 'multiverse/next-api-glue';
+import { withMiddleware } from '@-xun/next-api-glue';
 import { testApiHandler } from 'next-test-api-route-handler';
 import { noopHandler, withMockedOutput, wrapHandler } from 'testverse/setup';
 
 import addRawBody, {
   ensureNextApiRequestHasRawBody,
   isNextApiRequestWithRawBody
-} from 'multiverse/next-adhesive/add-raw-body';
+} from '@-xun/next-adhesive/add-raw-body';
 
-import type { Options, WithRawBody } from 'multiverse/next-adhesive/add-raw-body';
+import type { Options, WithRawBody } from '@-xun/next-adhesive/add-raw-body';
 import type { NextApiRequest } from 'next';
 
 describe('::<default export>', () => {

@@ -2,10 +2,10 @@ import { asMockedFunction } from '@-xun/jest-types';
 import { ObjectId } from 'mongodb';
 import { randomUUID } from 'node:crypto';
 
-import { useMockDateNow } from 'multiverse/mongo-common';
-import { setupMemoryServerOverride } from 'multiverse/mongo-test';
+import { useMockDateNow } from '@-xun/mongo-common';
+import { setupMemoryServerOverride } from '@-xun/mongo-test';
 
-import * as NextAuthTokenSpyTarget from 'multiverse/next-auth/token';
+import * as NextAuthTokenSpyTarget from '@-xun/next-auth/token';
 
 import {
   DUMMY_BEARER_TOKEN,
@@ -19,7 +19,7 @@ import {
   type InternalAuthEntry,
   type Token,
   type TokenAttributes
-} from 'multiverse/next-auth';
+} from '@-xun/next-auth';
 
 setupMemoryServerOverride();
 useMockDateNow();

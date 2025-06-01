@@ -1,7 +1,7 @@
-import { dummyRootData, useMockDateNow } from 'multiverse/mongo-common';
-import { getDb } from 'multiverse/mongo-schema';
-import { setupMemoryServerOverride } from 'multiverse/mongo-test';
-import { isDueForContrivedError } from 'multiverse/next-contrived';
+import { dummyRootData, useMockDateNow } from '@-xun/mongo-common';
+import { getDb } from '@-xun/mongo-schema';
+import { setupMemoryServerOverride } from '@-xun/mongo-test';
+import { isDueForContrivedError } from '@-xun/next-contrived';
 import { mockEnvFactory } from 'testverse/setup';
 
 setupMemoryServerOverride();

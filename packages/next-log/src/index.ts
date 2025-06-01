@@ -1,7 +1,7 @@
 import { getClientIp } from 'request-ip';
 
-import { getEnv } from 'multiverse/next-env';
-import { getDb } from 'multiverse/mongo-schema';
+import { getEnv } from '@-xun/next-env';
+import { getDb } from '@-xun/mongo-schema';
 
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { HttpStatusCode, UnixEpochMs } from '@-xun/types';

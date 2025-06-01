@@ -1,4 +1,4 @@
-import { isNewAuthEntry } from 'multiverse/next-auth/db';
+import { isNewAuthEntry } from '@-xun/next-auth/db';
 
 describe('::isNewAuthEntry', () => {
   it('returns true only if passed a NewAuthEntry', async () => {

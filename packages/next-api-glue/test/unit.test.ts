@@ -1,10 +1,10 @@
-import { middlewareFactory, withMiddleware } from 'multiverse/next-api-glue';
+import { middlewareFactory, withMiddleware } from '@-xun/next-api-glue';
 import { testApiHandler } from 'next-test-api-route-handler';
 import { mockOutputFactory, withDebugEnabled } from 'testverse/setup';
 import { toss } from 'toss-expression';
 import { DummyError } from 'universe/error';
 
-import type { Middleware, MiddlewareContext } from 'multiverse/next-api-glue';
+import type { Middleware, MiddlewareContext } from '@-xun/next-api-glue';
 import type { NextApiRequest, NextApiResponse, NextConfig } from 'next';
 
 const MAX_CONTENT_LENGTH_BYTES = 100_000;
@@ -393,7 +393,11 @@ describe('::withMiddleware', () => {
         pagesHandler: withMiddleware(noopHandler, {
           descriptor: '/fake',
           use: [(_, __, context) => context.runtime.done(), middleware, middleware],
-          useOnError: [(_, __, context) => context.runtime.done(), middleware, middleware]
+          useOnError: [
+            (_, __, context) => context.runtime.done(),
+            middleware,
+            middleware
+          ]
         }),
         test: async ({ fetch }) => {
           await fetch();

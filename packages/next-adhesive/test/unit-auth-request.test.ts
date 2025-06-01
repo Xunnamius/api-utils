@@ -1,11 +1,11 @@
 import { asMockedFunction } from '@-xun/jest-types';
-import authRequest, { type Options } from 'multiverse/next-adhesive/auth-request';
-import { withMiddleware } from 'multiverse/next-api-glue';
-import { authenticateHeader, authorizeHeader } from 'multiverse/next-auth';
+import authRequest, { type Options } from '@-xun/next-adhesive/auth-request';
+import { withMiddleware } from '@-xun/next-api-glue';
+import { authenticateHeader, authorizeHeader } from '@-xun/next-auth';
 import { testApiHandler } from 'next-test-api-route-handler';
 import { noopHandler, wrapHandler } from 'testverse/setup';
 
-jest.mock('multiverse/next-auth');
+jest.mock('@-xun/next-auth');
 
 const mockAuthenticateHeader = asMockedFunction(authenticateHeader);
 const mockAuthorizeHeader = asMockedFunction(authorizeHeader);
