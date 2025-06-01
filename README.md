@@ -23,7 +23,7 @@ Nibbling around the edges of Next.js and React for modest (opinionated) DX gains
 
 <br />
 
-# react-utils (react-utils-monorepo)
+# react-utils
 
 <!-- symbiote-template-region-end -->
 
