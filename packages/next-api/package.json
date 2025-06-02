@@ -1,7 +1,7 @@
 {
-  "name": "@-xun/next-api",
+  "name": "next-api",
   "version": "1.0.0",
-  "description": "Common business logic for Next.js API routes",
+  "description": "Powerful locally-runnable middleware for Next.js API routes",
   "keywords": [],
   "homepage": "https://github.com/Xunnamius/react-utils/tree/main/packages/next-api#readme",
   "bugs": {

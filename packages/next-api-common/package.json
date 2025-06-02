@@ -1,9 +1,9 @@
 {
-  "name": "next-api-middleware",
+  "name": "@-xun/next-api-common",
   "version": "1.0.0",
-  "description": "Powerful locally-runnable middleware for Next.js API routes",
+  "description": "Common business logic for Next.js API routes",
   "keywords": [],
-  "homepage": "https://github.com/Xunnamius/react-utils/tree/main/packages/next-api-middleware#readme",
+  "homepage": "https://github.com/Xunnamius/react-utils/tree/main/packages/next-api-common#readme",
   "bugs": {
     "url": "https://github.com/Xunnamius/react-utils/issues"
   },
@@ -17,8 +17,8 @@
   "type": "commonjs",
   "exports": {
     ".": {
-      "types": "./dist/packages/next-api-middleware/src/index.d.ts",
-      "default": "./dist/packages/next-api-middleware/src/index.js"
+      "types": "./dist/packages/next-api-common/src/index.d.ts",
+      "default": "./dist/packages/next-api-common/src/index.js"
     },
     "./package": "./package.json",
     "./package.json": "./package.json"
@@ -26,7 +26,7 @@
   "typesVersions": {
     "*": {
       "index": [
-        "dist/packages/next-api-middleware/src/index.d.ts"
+        "dist/packages/next-api-common/src/index.d.ts"
       ],
       "package": [
         "package.json"
@@ -60,6 +60,9 @@
     "test:package:integration": "symbiote test --env NODE_NO_WARNINGS=1 --tests integration",
     "test:package:unit": "symbiote test --env NODE_NO_WARNINGS=1 --tests unit type",
     "test:packages:all": "symbiote test --env NODE_NO_WARNINGS=1 --tests all-local --scope unlimited --coverage"
+  },
+  "dependencies": {
+    "@-xun/mongo-test": "^1.0.0"
   },
   "engines": {
     "node": "^20.18.0 || >=22.12.0"

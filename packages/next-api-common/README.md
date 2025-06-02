@@ -1,12 +1,12 @@
 <!-- symbiote-template-region-start 1 -->
 
 <p align="center" width="100%">
-  <img width="300" src="https://raw.githubusercontent.com/Xunnamius/react-utils/refs/heads/main/packages/next-api-middleware/logo.png">
+  <img width="300" src="https://raw.githubusercontent.com/Xunnamius/react-utils/refs/heads/main/packages/next-api-common/logo.png">
 </p>
 
 <p align="center" width="100%">
 <!-- symbiote-template-region-end -->
-Powerful locally-runnable middleware for Next.js API routes
+Common business logic for Next.js API routes
 <!-- symbiote-template-region-start 2 -->
 </p>
 
@@ -27,11 +27,11 @@ Powerful locally-runnable middleware for Next.js API routes
 
 <br />
 
-# next-api-middleware
+# @-xun/next-api-common
 
 <!-- symbiote-template-region-end -->
 
-Powerful locally-runnable middleware for Next.js API routes.
+Common business logic for Next.js API routes.
 
 <!-- symbiote-template-region-start 3 -->
 
@@ -63,7 +63,7 @@ Powerful locally-runnable middleware for Next.js API routes.
 To install:
 
 ```shell
-npm install next-api-middleware
+npm install @-xun/next-api-common
 ```
 
 ## Usage
@@ -168,25 +168,25 @@ See the [table of contributors][x-repo-contributors].
 [x-badge-blm-image]: https://xunn.at/badge-blm 'Join the movement!'
 [x-badge-blm-link]: https://xunn.at/donate-blm
 [x-badge-codecov-image]:
-  https://img.shields.io/codecov/c/github/Xunnamius/react-utils/main?style=flat-square&token=HWRIOBAAPW&flag=package.main_next-api-middleware
+  https://img.shields.io/codecov/c/github/Xunnamius/react-utils/main?style=flat-square&token=HWRIOBAAPW&flag=package.main_next-api-common
   'Is this package well-tested?'
 [x-badge-codecov-link]: https://codecov.io/gh/Xunnamius/react-utils
 [x-badge-downloads-image]:
-  https://img.shields.io/npm/dm/next-api-middleware?style=flat-square
+  https://img.shields.io/npm/dm/@-xun/next-api-common?style=flat-square
   'Number of times this package has been downloaded per month'
-[x-badge-downloads-link]: https://npmtrends.com/next-api-middleware
+[x-badge-downloads-link]: https://npmtrends.com/@-xun/next-api-common
 [x-badge-lastcommit-image]:
   https://img.shields.io/github/last-commit/Xunnamius/react-utils?style=flat-square
   'Latest commit timestamp'
 [x-badge-license-image]:
-  https://img.shields.io/npm/l/next-api-middleware?style=flat-square
+  https://img.shields.io/npm/l/@-xun/next-api-common?style=flat-square
   "This package's source license"
 [x-badge-license-link]:
   https://github.com/Xunnamius/react-utils/blob/main/LICENSE
 [x-badge-npm-image]:
-  https://xunn.at/npm-pkg-version/next-api-middleware
+  https://xunn.at/npm-pkg-version/@-xun/next-api-common
   'Install this package using npm or yarn!'
-[x-badge-npm-link]: https://npm.im/next-api-middleware
+[x-badge-npm-link]: https://npm.im/@-xun/next-api-common
 [x-badge-repo-link]: https://github.com/Xunnamius/react-utils
 [x-badge-semanticrelease-image]:
   https://xunn.at/badge-semantic-release
@@ -197,6 +197,8 @@ See the [table of contributors][x-repo-contributors].
   https://dev.to/jakobjingleheimer/configuring-commonjs-es-modules-for-nodejs-12ed#publish-only-a-cjs-distribution-with-property-exports
 [x-pkg-dual-package-hazard]:
   https://nodejs.org/api/packages.html#dual-package-hazard
+[x-pkg-esm-wine]:
+  https://dev.to/jakobjingleheimer/configuring-commonjs-es-modules-for-nodejs-12ed#esm-source-and-distribution
 [x-pkg-exports-conditions]:
   https://webpack.js.org/guides/package-exports#reference-syntax
 [x-pkg-exports-module-key]:

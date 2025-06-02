@@ -52,17 +52,12 @@ Packages that improve on Next.js and React in tiny, opinionated ways.
 
 <!-- symbiote-template-region-end -->
 
-- [common][1] — Common unpublished multiversal imports (beware the dual package
-  hazard!).
-- [@-xun/next-api][2] — Common business logic for Next.js API routes.
-- [@-xun/next-api-glue][3] — Functions meant for use as middleware with
-  @-xun/next-api-middleware.
-- [next-api-middleware][4] — Powerful locally-runnable middleware for Next.js
-  API routes.
-- [@-xun/next-api-respond][5] — A consistent set of functions offering various
-  standard HTTP responses.
-- [@-xun/next-env][6] — Unified environment resolution and validation for
+- [next-api][1] — Powerful locally-runnable middleware for Next.js API routes.
+- [@-xun/next-api-common][2] — Common business logic for Next.js API routes.
+- [@-xun/next-env][3] — Unified environment resolution and validation for
   Next.js.
+- [shared][4] — Common unpublished multiversal imports (beware the dual package
+  hazard!).
 
 <!-- symbiote-template-region-start 5 -->
 
@@ -151,9 +146,7 @@ specification. Contributions of any kind welcome!
 [x-repo-pr-compare]: https://github.com/Xunnamius/react-utils/compare
 [x-repo-sponsor]: https://github.com/sponsors/Xunnamius
 [x-repo-support]: /.github/SUPPORT.md
-[1]: ./packages/common
-[2]: ./packages/next-api
-[3]: ./packages/next-api-glue
-[4]: ./packages/next-api-middleware
-[5]: ./packages/next-api-respond
-[6]: ./packages/next-env
+[1]: ./packages/next-api
+[2]: ./packages/next-api-common
+[3]: ./packages/next-env
+[4]: ./packages/shared

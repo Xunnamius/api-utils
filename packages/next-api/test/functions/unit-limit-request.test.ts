@@ -1,17 +1,17 @@
 import { asMockedFunction } from '@-xun/jest-types';
 import limitRequest from '@-xun/next-adhesive/limit-request';
 import { withMiddleware } from '@-xun/next-api-glue';
-import { clientIsRateLimited } from '@-xun/next-limit';
+import { isclientRateLimited } from '@-xun/next-limit';
 import { testApiHandler } from 'next-test-api-route-handler';
 import { mockEnvFactory, noopHandler, wrapHandler } from 'testverse/setup';
 
 jest.mock('@-xun/next-limit');
 
 const withMockedEnv = mockEnvFactory({ NODE_ENV: 'test' });
-const mockClientIsRateLimited = asMockedFunction(clientIsRateLimited);
+const mockisclientRateLimited = asMockedFunction(isclientRateLimited);
 
 beforeEach(() => {
-  mockClientIsRateLimited.mockReturnValue(
+  mockisclientRateLimited.mockReturnValue(
     Promise.resolve({ isLimited: false, retryAfter: 0 })
   );
 });
@@ -29,7 +29,7 @@ it('rate limits requests according to backend determination', async () => {
     test: async ({ fetch }) => {
       await withMockedEnv(
         async () => {
-          void mockClientIsRateLimited.mockReturnValue(
+          void mockisclientRateLimited.mockReturnValue(
             Promise.resolve({ isLimited: false, retryAfter: 0 })
           );
 
@@ -37,7 +37,7 @@ it('rate limits requests according to backend determination', async () => {
             fetch().then(async (r) => [r.status, await r.json()])
           ).resolves.toStrictEqual([200, {}]);
 
-          void mockClientIsRateLimited.mockReturnValue(
+          void mockisclientRateLimited.mockReturnValue(
             Promise.resolve({ isLimited: true, retryAfter: 100 })
           );
 
@@ -69,7 +69,7 @@ it('does not rate limit requests when ignoring rate limits', async () => {
     test: async ({ fetch }) => {
       await withMockedEnv(
         async () => {
-          void mockClientIsRateLimited.mockReturnValue(
+          void mockisclientRateLimited.mockReturnValue(
             Promise.resolve({ isLimited: false, retryAfter: 0 })
           );
 
@@ -77,7 +77,7 @@ it('does not rate limit requests when ignoring rate limits', async () => {
             fetch().then(async (r) => [r.status, await r.json()])
           ).resolves.toStrictEqual([200, {}]);
 
-          void mockClientIsRateLimited.mockReturnValue(
+          void mockisclientRateLimited.mockReturnValue(
             Promise.resolve({ isLimited: true, retryAfter: 100 })
           );
 
@@ -132,7 +132,7 @@ it('includes retry-after value in header (s) and in response JSON (ms)', async (
     test: async ({ fetch }) => {
       await withMockedEnv(
         async () => {
-          void mockClientIsRateLimited.mockReturnValue(
+          void mockisclientRateLimited.mockReturnValue(
             Promise.resolve({ isLimited: false, retryAfter: 0 })
           );
 
@@ -140,7 +140,7 @@ it('includes retry-after value in header (s) and in response JSON (ms)', async (
             fetch().then(async (r) => [r.headers.get('retry-after'), await r.json()])
           ).resolves.toStrictEqual([null, {}]);
 
-          void mockClientIsRateLimited.mockReturnValue(
+          void mockisclientRateLimited.mockReturnValue(
             Promise.resolve({ isLimited: true, retryAfter: 12_344 })
           );
 

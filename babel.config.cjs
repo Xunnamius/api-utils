@@ -19,6 +19,14 @@ module.exports = deepMergeConfig(
   }),
   {
     // Any custom configs here will be deep merged with moduleExport's result
+    // You may wish to enable explicit exports references for improved testing
+    // DX, but be aware that it is currently a wee buggy as of 5/2025 (fix it!)
+    //
+    // env: {
+    //   test: {
+    //     plugins: ['babel-plugin-explicit-exports-references']
+    //   }
+    // }
   }
 );
 
@@ -29,53 +37,34 @@ function getBabelAliases() {
   // ! directly, consider regenerating aliases across the entire project with:
   // ! `npx symbiote project renovate --regenerate-assets --assets-preset ...`
   return {
-    '^multiverse\\+common:(.+)$': './packages/common/src/$1',
     '^multiverse\\+next\\x2dapi:(.+)$': './packages/next-api/src/$1',
-    '^multiverse\\+next\\x2dapi\\x2dglue:(.+)$': './packages/next-api-glue/src/$1',
-    '^multiverse\\+next\\x2dapi\\x2dmiddleware:(.+)$':
-      './packages/next-api-middleware/src/$1',
-    '^multiverse\\+next\\x2dapi\\x2drespond:(.+)$': './packages/next-api-respond/src/$1',
+    '^multiverse\\+next\\x2dapi\\x2dcommon:(.+)$': './packages/next-api-common/src/$1',
     '^multiverse\\+next\\x2denv:(.+)$': './packages/next-env/src/$1',
-    '^multiverse\\+common$': './packages/common/src/index.js',
+    '^multiverse\\+shared:(.+)$': './packages/shared/src/$1',
     '^multiverse\\+next\\x2dapi$': './packages/next-api/src/index.js',
-    '^multiverse\\+next\\x2dapi\\x2dglue$': './packages/next-api-glue/src/index.js',
-    '^multiverse\\+next\\x2dapi\\x2dmiddleware$':
-      './packages/next-api-middleware/src/index.js',
-    '^multiverse\\+next\\x2dapi\\x2drespond$':
-      './packages/next-api-respond/src/index.js',
+    '^multiverse\\+next\\x2dapi\\x2dcommon$': './packages/next-api-common/src/index.js',
     '^multiverse\\+next\\x2denv$': './packages/next-env/src/index.js',
-    '^universe\\+common:(.+)$': './packages/common/src/$1',
+    '^multiverse\\+shared$': './packages/shared/src/index.js',
     '^universe\\+next\\x2dapi:(.+)$': './packages/next-api/src/$1',
-    '^universe\\+next\\x2dapi\\x2dglue:(.+)$': './packages/next-api-glue/src/$1',
-    '^universe\\+next\\x2dapi\\x2dmiddleware:(.+)$':
-      './packages/next-api-middleware/src/$1',
-    '^universe\\+next\\x2dapi\\x2drespond:(.+)$': './packages/next-api-respond/src/$1',
+    '^universe\\+next\\x2dapi\\x2dcommon:(.+)$': './packages/next-api-common/src/$1',
     '^universe\\+next\\x2denv:(.+)$': './packages/next-env/src/$1',
-    '^universe\\+common$': './packages/common/src/index.js',
+    '^universe\\+shared:(.+)$': './packages/shared/src/$1',
     '^universe\\+next\\x2dapi$': './packages/next-api/src/index.js',
-    '^universe\\+next\\x2dapi\\x2dglue$': './packages/next-api-glue/src/index.js',
-    '^universe\\+next\\x2dapi\\x2dmiddleware$':
-      './packages/next-api-middleware/src/index.js',
-    '^universe\\+next\\x2dapi\\x2drespond$': './packages/next-api-respond/src/index.js',
+    '^universe\\+next\\x2dapi\\x2dcommon$': './packages/next-api-common/src/index.js',
     '^universe\\+next\\x2denv$': './packages/next-env/src/index.js',
+    '^universe\\+shared$': './packages/shared/src/index.js',
     '^universe:(.+)$': './src/$1',
     '^universe$': './src/index.js',
-    '^testverse\\+common:(.+)$': './packages/common/test/$1',
     '^testverse\\+next\\x2dapi:(.+)$': './packages/next-api/test/$1',
-    '^testverse\\+next\\x2dapi\\x2dglue:(.+)$': './packages/next-api-glue/test/$1',
-    '^testverse\\+next\\x2dapi\\x2dmiddleware:(.+)$':
-      './packages/next-api-middleware/test/$1',
-    '^testverse\\+next\\x2dapi\\x2drespond:(.+)$': './packages/next-api-respond/test/$1',
+    '^testverse\\+next\\x2dapi\\x2dcommon:(.+)$': './packages/next-api-common/test/$1',
     '^testverse\\+next\\x2denv:(.+)$': './packages/next-env/test/$1',
+    '^testverse\\+shared:(.+)$': './packages/shared/test/$1',
     '^testverse:(.+)$': './test/$1',
     '^typeverse:(.+)$': './types/$1',
-    '^rootverse\\+common:(.+)$': './packages/common/$1',
     '^rootverse\\+next\\x2dapi:(.+)$': './packages/next-api/$1',
-    '^rootverse\\+next\\x2dapi\\x2dglue:(.+)$': './packages/next-api-glue/$1',
-    '^rootverse\\+next\\x2dapi\\x2dmiddleware:(.+)$':
-      './packages/next-api-middleware/$1',
-    '^rootverse\\+next\\x2dapi\\x2drespond:(.+)$': './packages/next-api-respond/$1',
+    '^rootverse\\+next\\x2dapi\\x2dcommon:(.+)$': './packages/next-api-common/$1',
     '^rootverse\\+next\\x2denv:(.+)$': './packages/next-env/$1',
+    '^rootverse\\+shared:(.+)$': './packages/shared/$1',
     '^rootverse:(.+)$': './$1'
   };
 }

@@ -6,7 +6,7 @@
 
 <p align="center" width="100%">
 <!-- symbiote-template-region-end -->
-Common business logic for Next.js API routes
+Powerful locally-runnable middleware for Next.js API routes
 <!-- symbiote-template-region-start 2 -->
 </p>
 
@@ -27,11 +27,11 @@ Common business logic for Next.js API routes
 
 <br />
 
-# @-xun/next-api
+# next-api
 
 <!-- symbiote-template-region-end -->
 
-Common business logic for Next.js API routes.
+Powerful locally-runnable middleware for Next.js API routes.
 
 <!-- symbiote-template-region-start 3 -->
 
@@ -63,7 +63,7 @@ Common business logic for Next.js API routes.
 To install:
 
 ```shell
-npm install @-xun/next-api
+npm install next-api
 ```
 
 ## Usage
@@ -172,21 +172,21 @@ See the [table of contributors][x-repo-contributors].
   'Is this package well-tested?'
 [x-badge-codecov-link]: https://codecov.io/gh/Xunnamius/react-utils
 [x-badge-downloads-image]:
-  https://img.shields.io/npm/dm/@-xun/next-api?style=flat-square
+  https://img.shields.io/npm/dm/next-api?style=flat-square
   'Number of times this package has been downloaded per month'
-[x-badge-downloads-link]: https://npmtrends.com/@-xun/next-api
+[x-badge-downloads-link]: https://npmtrends.com/next-api
 [x-badge-lastcommit-image]:
   https://img.shields.io/github/last-commit/Xunnamius/react-utils?style=flat-square
   'Latest commit timestamp'
 [x-badge-license-image]:
-  https://img.shields.io/npm/l/@-xun/next-api?style=flat-square
+  https://img.shields.io/npm/l/next-api?style=flat-square
   "This package's source license"
 [x-badge-license-link]:
   https://github.com/Xunnamius/react-utils/blob/main/LICENSE
 [x-badge-npm-image]:
-  https://xunn.at/npm-pkg-version/@-xun/next-api
+  https://xunn.at/npm-pkg-version/next-api
   'Install this package using npm or yarn!'
-[x-badge-npm-link]: https://npm.im/@-xun/next-api
+[x-badge-npm-link]: https://npm.im/next-api
 [x-badge-repo-link]: https://github.com/Xunnamius/react-utils
 [x-badge-semanticrelease-image]:
   https://xunn.at/badge-semantic-release
@@ -197,6 +197,8 @@ See the [table of contributors][x-repo-contributors].
   https://dev.to/jakobjingleheimer/configuring-commonjs-es-modules-for-nodejs-12ed#publish-only-a-cjs-distribution-with-property-exports
 [x-pkg-dual-package-hazard]:
   https://nodejs.org/api/packages.html#dual-package-hazard
+[x-pkg-esm-wine]:
+  https://dev.to/jakobjingleheimer/configuring-commonjs-es-modules-for-nodejs-12ed#esm-source-and-distribution
 [x-pkg-exports-conditions]:
   https://webpack.js.org/guides/package-exports#reference-syntax
 [x-pkg-exports-module-key]:

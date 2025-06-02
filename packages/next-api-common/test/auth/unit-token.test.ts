@@ -1,24 +1,20 @@
-import { asMockedFunction } from '@-xun/jest-types';
-import { ObjectId } from 'mongodb';
 import { randomUUID } from 'node:crypto';
 
-import { expectExceptionsWithMatchingErrors } from '@-xun/jest-expect-matching-errors';
-import { objectIdPseudoSortPredicate } from '@-xun/jest-mongo-object-id-pseudo-sort';
-import { dummyRootData, useMockDateNow } from '@-xun/mongo-common';
+import { useMockDateNow } from '@-xun/jest';
+import { dummyRootData } from '@-xun/mongo-common';
 import { setupMemoryServerOverride } from '@-xun/mongo-test';
-import { ErrorMessage } from 'universe/error';
+import { ObjectId } from 'mongodb';
 
-import * as NextAuthConstants from '@-xun/next-auth/constants';
+import * as NextAuthConstants from 'universe+next-api-backend:auth/constants.ts';
 
 import {
   BANNED_BEARER_TOKEN,
-  DEV_BEARER_TOKEN,
-  DUMMY_BEARER_TOKEN,
-  NULL_BEARER_TOKEN,
   createToken,
   deleteTokenById,
   deleteTokensByAttribute,
   deriveSchemeAndToken,
+  DEV_BEARER_TOKEN,
+  DUMMY_BEARER_TOKEN,
   getAuthDb,
   getTokenByDerivation,
   getTokenById,
@@ -26,16 +22,24 @@ import {
   isAllowedScheme,
   isTokenAttributes,
   isTokenAttributesFilter,
+  NULL_BEARER_TOKEN,
   toPublicAuthEntry,
   updateTokenAttributesById,
   updateTokensAttributesByAttribute,
-  validAuthenticationSchemes,
-  type AuthenticationScheme,
-  type InternalAuthEntry,
-  type PublicAuthEntry,
-  type TokenAttribute,
-  type TokenAttributes
-} from '@-xun/next-auth';
+  validAuthenticationSchemes
+} from 'universe+next-api-backend:auth/index.ts';
+
+import { ErrorMessage } from 'universe:error.ts';
+
+import { asMocked, expectExceptionsWithMatchingErrors } from 'testverse:util.ts';
+
+import type {
+  AuthenticationScheme,
+  InternalAuthEntry,
+  PublicAuthEntry,
+  TokenAttribute,
+  TokenAttributes
+} from 'universe+next-api-backend:auth/index.ts';
 
 setupMemoryServerOverride();
 useMockDateNow();
@@ -49,7 +53,7 @@ async function countAuthDbTokens() {
   return (await getAuthDb()).countDocuments({ deleted: false });
 }
 
-const mockRandomUUID = asMockedFunction(randomUUID);
+const mockRandomUUID = asMocked(randomUUID);
 const _validAuthenticationSchemes = validAuthenticationSchemes.slice();
 const mutableAuthenticationSchemes = validAuthenticationSchemes as unknown as string[];
 
@@ -1400,7 +1404,7 @@ describe('::updateTokensAttributesByAttribute', () => {
         .map((entry) => {
           return { ...entry, attributes: { ...entry.attributes, owner: 'xyz123' } };
         })
-        .concat(dummyRootData.auth.at(-1)!)
+        .concat(dummyRootData.auth.at(-1))
     );
 
     await expect(
@@ -1426,7 +1430,7 @@ describe('::updateTokensAttributesByAttribute', () => {
             } as TokenAttributes
           };
         })
-        .concat(dummyRootData.auth.at(-1)!)
+        .concat(dummyRootData.auth.at(-1))
     );
 
     await expect(

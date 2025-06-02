@@ -25,56 +25,38 @@ function getJestAliases() {
   // ! directly, consider regenerating aliases across the entire project with:
   // ! `npx symbiote project renovate --regenerate-assets --assets-preset ...`
   return {
-    '^multiverse\\+common:(.+)$': '<rootDir>/packages/common/src/$1',
     '^multiverse\\+next\\x2dapi:(.+)$': '<rootDir>/packages/next-api/src/$1',
-    '^multiverse\\+next\\x2dapi\\x2dglue:(.+)$':
-      '<rootDir>/packages/next-api-glue/src/$1',
-    '^multiverse\\+next\\x2dapi\\x2dmiddleware:(.+)$':
-      '<rootDir>/packages/next-api-middleware/src/$1',
-    '^multiverse\\+next\\x2dapi\\x2drespond:(.+)$':
-      '<rootDir>/packages/next-api-respond/src/$1',
+    '^multiverse\\+next\\x2dapi\\x2dcommon:(.+)$':
+      '<rootDir>/packages/next-api-common/src/$1',
     '^multiverse\\+next\\x2denv:(.+)$': '<rootDir>/packages/next-env/src/$1',
-    '^multiverse\\+common$': `<rootDir>/packages/common/src/index.${extension}`,
+    '^multiverse\\+shared:(.+)$': '<rootDir>/packages/shared/src/$1',
     '^multiverse\\+next\\x2dapi$': `<rootDir>/packages/next-api/src/index.${extension}`,
-    '^multiverse\\+next\\x2dapi\\x2dglue$': `<rootDir>/packages/next-api-glue/src/index.${extension}`,
-    '^multiverse\\+next\\x2dapi\\x2dmiddleware$': `<rootDir>/packages/next-api-middleware/src/index.${extension}`,
-    '^multiverse\\+next\\x2dapi\\x2drespond$': `<rootDir>/packages/next-api-respond/src/index.${extension}`,
+    '^multiverse\\+next\\x2dapi\\x2dcommon$': `<rootDir>/packages/next-api-common/src/index.${extension}`,
     '^multiverse\\+next\\x2denv$': `<rootDir>/packages/next-env/src/index.${extension}`,
-    '^universe\\+common:(.+)$': '<rootDir>/packages/common/src/$1',
+    '^multiverse\\+shared$': `<rootDir>/packages/shared/src/index.${extension}`,
     '^universe\\+next\\x2dapi:(.+)$': '<rootDir>/packages/next-api/src/$1',
-    '^universe\\+next\\x2dapi\\x2dglue:(.+)$': '<rootDir>/packages/next-api-glue/src/$1',
-    '^universe\\+next\\x2dapi\\x2dmiddleware:(.+)$':
-      '<rootDir>/packages/next-api-middleware/src/$1',
-    '^universe\\+next\\x2dapi\\x2drespond:(.+)$':
-      '<rootDir>/packages/next-api-respond/src/$1',
+    '^universe\\+next\\x2dapi\\x2dcommon:(.+)$':
+      '<rootDir>/packages/next-api-common/src/$1',
     '^universe\\+next\\x2denv:(.+)$': '<rootDir>/packages/next-env/src/$1',
-    '^universe\\+common$': `<rootDir>/packages/common/src/index.${extension}`,
+    '^universe\\+shared:(.+)$': '<rootDir>/packages/shared/src/$1',
     '^universe\\+next\\x2dapi$': `<rootDir>/packages/next-api/src/index.${extension}`,
-    '^universe\\+next\\x2dapi\\x2dglue$': `<rootDir>/packages/next-api-glue/src/index.${extension}`,
-    '^universe\\+next\\x2dapi\\x2dmiddleware$': `<rootDir>/packages/next-api-middleware/src/index.${extension}`,
-    '^universe\\+next\\x2dapi\\x2drespond$': `<rootDir>/packages/next-api-respond/src/index.${extension}`,
+    '^universe\\+next\\x2dapi\\x2dcommon$': `<rootDir>/packages/next-api-common/src/index.${extension}`,
     '^universe\\+next\\x2denv$': `<rootDir>/packages/next-env/src/index.${extension}`,
+    '^universe\\+shared$': `<rootDir>/packages/shared/src/index.${extension}`,
     '^universe:(.+)$': '<rootDir>/src/$1',
     '^universe$': `<rootDir>/src/index.${extension}`,
-    '^testverse\\+common:(.+)$': '<rootDir>/packages/common/test/$1',
     '^testverse\\+next\\x2dapi:(.+)$': '<rootDir>/packages/next-api/test/$1',
-    '^testverse\\+next\\x2dapi\\x2dglue:(.+)$':
-      '<rootDir>/packages/next-api-glue/test/$1',
-    '^testverse\\+next\\x2dapi\\x2dmiddleware:(.+)$':
-      '<rootDir>/packages/next-api-middleware/test/$1',
-    '^testverse\\+next\\x2dapi\\x2drespond:(.+)$':
-      '<rootDir>/packages/next-api-respond/test/$1',
+    '^testverse\\+next\\x2dapi\\x2dcommon:(.+)$':
+      '<rootDir>/packages/next-api-common/test/$1',
     '^testverse\\+next\\x2denv:(.+)$': '<rootDir>/packages/next-env/test/$1',
+    '^testverse\\+shared:(.+)$': '<rootDir>/packages/shared/test/$1',
     '^testverse:(.+)$': '<rootDir>/test/$1',
     '^typeverse:(.+)$': '<rootDir>/types/$1',
-    '^rootverse\\+common:(.+)$': '<rootDir>/packages/common/$1',
     '^rootverse\\+next\\x2dapi:(.+)$': '<rootDir>/packages/next-api/$1',
-    '^rootverse\\+next\\x2dapi\\x2dglue:(.+)$': '<rootDir>/packages/next-api-glue/$1',
-    '^rootverse\\+next\\x2dapi\\x2dmiddleware:(.+)$':
-      '<rootDir>/packages/next-api-middleware/$1',
-    '^rootverse\\+next\\x2dapi\\x2drespond:(.+)$':
-      '<rootDir>/packages/next-api-respond/$1',
+    '^rootverse\\+next\\x2dapi\\x2dcommon:(.+)$':
+      '<rootDir>/packages/next-api-common/$1',
     '^rootverse\\+next\\x2denv:(.+)$': '<rootDir>/packages/next-env/$1',
+    '^rootverse\\+shared:(.+)$': '<rootDir>/packages/shared/$1',
     '^rootverse:(.+)$': '<rootDir>/$1'
   };
 }
