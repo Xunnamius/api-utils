@@ -14,7 +14,7 @@ describe('::getEnv', () => {
         expect(getEnv()).toStrictEqual({
           NODE_ENV: 'known',
           MONGODB_URI: 'uri',
-          MONGODB_MS_PORT: null,
+          MONGODB_MS_PORT: 6666,
           DISABLED_API_VERSIONS: [],
           RESULTS_PER_PAGE: 5,
           IGNORE_RATE_LIMITS: false,
@@ -22,7 +22,7 @@ describe('::getEnv', () => {
           DISALLOWED_METHODS: [],
           MAX_CONTENT_LENGTH_BYTES: 1024,
           AUTH_HEADER_MAX_LENGTH: 500,
-          DEBUG: null,
+          DEBUG: undefined,
           DEBUG_INSPECTING: false,
           REQUESTS_PER_CONTRIVED_ERROR: 0
         });

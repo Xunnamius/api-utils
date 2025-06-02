@@ -43,9 +43,7 @@ export function getEnv<T extends Environment>(customizedEnv?: T) {
       process.env.BABEL_ENV ||
       'unknown',
     MONGODB_URI: process.env.MONGODB_URI || '',
-    MONGODB_MS_PORT: process.env.MONGODB_MS_PORT
-      ? Number(process.env.MONGODB_MS_PORT)
-      : null,
+    MONGODB_MS_PORT: Number(process.env.MONGODB_MS_PORT) || 6666,
     DISABLED_API_VERSIONS: process.env.DISABLED_API_VERSIONS
       ? arrayFromEnvironmentValue(process.env.DISABLED_API_VERSIONS.toLowerCase())
       : [],
@@ -60,7 +58,7 @@ export function getEnv<T extends Environment>(customizedEnv?: T) {
     MAX_CONTENT_LENGTH_BYTES:
       parseAsBytes(process.env.MAX_CONTENT_LENGTH_BYTES ?? '-Infinity') || 50_000,
     AUTH_HEADER_MAX_LENGTH: Number(process.env.AUTH_HEADER_MAX_LENGTH) || 500,
-    DEBUG: process.env.DEBUG ?? null,
+    DEBUG: process.env.DEBUG ?? undefined,
     DEBUG_INSPECTING: !!process.env.VSCODE_INSPECTOR_OPTIONS,
     REQUESTS_PER_CONTRIVED_ERROR: Number(process.env.REQUESTS_PER_CONTRIVED_ERROR) || 0,
 
