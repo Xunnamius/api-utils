@@ -20,6 +20,14 @@
       "types": "./dist/packages/next-api/src/index.d.ts",
       "default": "./dist/packages/next-api/src/index.js"
     },
+    "./respond": {
+      "types": "./dist/packages/next-api/src/respond.d.ts",
+      "default": "./dist/packages/next-api/src/respond.js"
+    },
+    "./middleware/*": {
+      "types": "./dist/packages/next-api/src/middleware/*.d.ts",
+      "default": "./dist/packages/next-api/src/middleware/*.js"
+    },
     "./package": "./package.json",
     "./package.json": "./package.json"
   },

@@ -20,6 +20,22 @@
       "types": "./dist/packages/next-api-common/src/index.d.ts",
       "default": "./dist/packages/next-api-common/src/index.js"
     },
+    "./auth": {
+      "types": "./dist/packages/next-api-common/src/auth/index.d.ts",
+      "default": "./dist/packages/next-api-common/src/auth/index.js"
+    },
+    "./contrived": {
+      "types": "./dist/packages/next-api-common/src/contrived/index.d.ts",
+      "default": "./dist/packages/next-api-common/src/contrived/index.js"
+    },
+    "./limit": {
+      "types": "./dist/packages/next-api-common/src/limit/index.d.ts",
+      "default": "./dist/packages/next-api-common/src/limit/index.js"
+    },
+    "./log": {
+      "types": "./dist/packages/next-api-common/src/log/index.d.ts",
+      "default": "./dist/packages/next-api-common/src/log/index.js"
+    },
     "./package": "./package.json",
     "./package.json": "./package.json"
   },
