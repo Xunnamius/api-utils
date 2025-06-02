@@ -8,7 +8,7 @@
 
 > `const` **ErrorMessage**: `object`
 
-Defined in: [error.ts:5](https://github.com/Xunnamius/react-utils/blob/84547fe8d5f66a2fb908cd35a9aeb4b422bd1c6c/packages/next-env/src/error.ts#L5)
+Defined in: [error.ts:5](https://github.com/Xunnamius/react-utils/blob/b1b45cf09cd5af6593920ea281ef27f4c3efd32f/packages/next-env/src/error.ts#L5)
 
 A collection of possible error and warning messages.
 
