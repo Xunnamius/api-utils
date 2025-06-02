@@ -1,5 +1,5 @@
 {
-  "name": "common",
+  "name": "shared",
   "version": "1.0.0",
   "private": true,
   "description": "Common unpublished multiversal imports (beware the dual package hazard!)",
