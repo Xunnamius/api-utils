@@ -1,12 +1,12 @@
 <!-- symbiote-template-region-start 1 -->
 
 <p align="center" width="100%">
-  <img width="300" src="https://raw.githubusercontent.com/Xunnamius/react-utils/refs/heads/main/packages/next-api-glue/logo.png">
+  <img width="300" src="https://raw.githubusercontent.com/Xunnamius/react-utils/refs/heads/main/packages/next-adhesive/logo.png">
 </p>
 
 <p align="center" width="100%">
 <!-- symbiote-template-region-end -->
-Powerful locally-runnable middleware for Next.js API routes
+Middleware functions for @-xun/next-api-glue
 <!-- symbiote-template-region-start 2 -->
 </p>
 
@@ -27,11 +27,11 @@ Powerful locally-runnable middleware for Next.js API routes
 
 <br />
 
-# next-api-glue
+# @-xun/next-adhesive
 
 <!-- symbiote-template-region-end -->
 
-Powerful locally-runnable middleware for Next.js API routes.
+Middleware functions for @-xun/next-api-glue.
 
 <!-- symbiote-template-region-start 3 -->
 
@@ -63,7 +63,7 @@ Powerful locally-runnable middleware for Next.js API routes.
 To install:
 
 ```shell
-npm install next-api-glue
+npm install @-xun/next-adhesive
 ```
 
 ## Usage
@@ -168,25 +168,25 @@ See the [table of contributors][x-repo-contributors].
 [x-badge-blm-image]: https://xunn.at/badge-blm 'Join the movement!'
 [x-badge-blm-link]: https://xunn.at/donate-blm
 [x-badge-codecov-image]:
-  https://img.shields.io/codecov/c/github/Xunnamius/react-utils/main?style=flat-square&token=HWRIOBAAPW&flag=package.main_next-api-glue
+  https://img.shields.io/codecov/c/github/Xunnamius/react-utils/main?style=flat-square&token=HWRIOBAAPW&flag=package.main_next-adhesive
   'Is this package well-tested?'
 [x-badge-codecov-link]: https://codecov.io/gh/Xunnamius/react-utils
 [x-badge-downloads-image]:
-  https://img.shields.io/npm/dm/next-api-glue?style=flat-square
+  https://img.shields.io/npm/dm/@-xun/next-adhesive?style=flat-square
   'Number of times this package has been downloaded per month'
-[x-badge-downloads-link]: https://npmtrends.com/next-api-glue
+[x-badge-downloads-link]: https://npmtrends.com/@-xun/next-adhesive
 [x-badge-lastcommit-image]:
   https://img.shields.io/github/last-commit/Xunnamius/react-utils?style=flat-square
   'Latest commit timestamp'
 [x-badge-license-image]:
-  https://img.shields.io/npm/l/next-api-glue?style=flat-square
+  https://img.shields.io/npm/l/@-xun/next-adhesive?style=flat-square
   "This package's source license"
 [x-badge-license-link]:
   https://github.com/Xunnamius/react-utils/blob/main/LICENSE
 [x-badge-npm-image]:
-  https://xunn.at/npm-pkg-version/next-api-glue
+  https://xunn.at/npm-pkg-version/@-xun/next-adhesive
   'Install this package using npm or yarn!'
-[x-badge-npm-link]: https://npm.im/next-api-glue
+[x-badge-npm-link]: https://npm.im/@-xun/next-adhesive
 [x-badge-repo-link]: https://github.com/Xunnamius/react-utils
 [x-badge-semanticrelease-image]:
   https://xunn.at/badge-semantic-release

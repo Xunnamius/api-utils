@@ -1,9 +1,9 @@
 {
-  "name": "next-api-glue",
+  "name": "@-xun/next-api-glue",
   "version": "1.0.0",
-  "description": "Powerful locally-runnable middleware for Next.js API routes",
+  "description": "Functions meant for use as middleware with @-xun/next-api-middleware",
   "keywords": [],
-  "homepage": "https://github.com/Xunnamius/react-utils/tree/main/packages/next-api-glue#readme",
+  "homepage": "https://github.com/Xunnamius/react-utils/tree/main/packages/next-adhesive#readme",
   "bugs": {
     "url": "https://github.com/Xunnamius/react-utils/issues"
   },
@@ -17,8 +17,8 @@
   "type": "commonjs",
   "exports": {
     ".": {
-      "types": "./dist/packages/next-api-glue/src/index.d.ts",
-      "default": "./dist/packages/next-api-glue/src/index.js"
+      "types": "./dist/packages/next-adhesive/src/index.d.ts",
+      "default": "./dist/packages/next-adhesive/src/index.js"
     },
     "./package": "./package.json",
     "./package.json": "./package.json"
@@ -26,7 +26,7 @@
   "typesVersions": {
     "*": {
       "index": [
-        "dist/packages/next-api-glue/src/index.d.ts"
+        "dist/packages/next-adhesive/src/index.d.ts"
       ],
       "package": [
         "package.json"

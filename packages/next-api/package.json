@@ -1,9 +1,9 @@
 {
-  "name": "@-xun/next-adhesive",
+  "name": "@-xun/next-api",
   "version": "1.0.0",
-  "description": "Middleware functions for @-xun/next-api-glue",
+  "description": "Common business logic for Next.js API routes",
   "keywords": [],
-  "homepage": "https://github.com/Xunnamius/react-utils/tree/main/packages/next-adhesive#readme",
+  "homepage": "https://github.com/Xunnamius/react-utils/tree/main/packages/next-auth#readme",
   "bugs": {
     "url": "https://github.com/Xunnamius/react-utils/issues"
   },
@@ -17,8 +17,8 @@
   "type": "commonjs",
   "exports": {
     ".": {
-      "types": "./dist/packages/next-adhesive/src/index.d.ts",
-      "default": "./dist/packages/next-adhesive/src/index.js"
+      "types": "./dist/packages/next-auth/src/index.d.ts",
+      "default": "./dist/packages/next-auth/src/index.js"
     },
     "./package": "./package.json",
     "./package.json": "./package.json"
@@ -26,7 +26,7 @@
   "typesVersions": {
     "*": {
       "index": [
-        "dist/packages/next-adhesive/src/index.d.ts"
+        "dist/packages/next-auth/src/index.d.ts"
       ],
       "package": [
         "package.json"

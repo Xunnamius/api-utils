@@ -1,9 +1,9 @@
 {
-  "name": "@-xun/next-log",
+  "name": "next-api-middleware",
   "version": "1.0.0",
-  "description": "Request logging for Next.js + MongoDB",
+  "description": "Powerful locally-runnable middleware for Next.js API routes",
   "keywords": [],
-  "homepage": "https://github.com/Xunnamius/react-utils/tree/main/packages/next-log#readme",
+  "homepage": "https://github.com/Xunnamius/react-utils/tree/main/packages/next-api-glue#readme",
   "bugs": {
     "url": "https://github.com/Xunnamius/react-utils/issues"
   },
@@ -17,8 +17,8 @@
   "type": "commonjs",
   "exports": {
     ".": {
-      "types": "./dist/packages/next-log/src/index.d.ts",
-      "default": "./dist/packages/next-log/src/index.js"
+      "types": "./dist/packages/next-api-glue/src/index.d.ts",
+      "default": "./dist/packages/next-api-glue/src/index.js"
     },
     "./package": "./package.json",
     "./package.json": "./package.json"
@@ -26,7 +26,7 @@
   "typesVersions": {
     "*": {
       "index": [
-        "dist/packages/next-log/src/index.d.ts"
+        "dist/packages/next-api-glue/src/index.d.ts"
       ],
       "package": [
         "package.json"
