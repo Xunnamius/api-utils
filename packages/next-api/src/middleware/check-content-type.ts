@@ -1,5 +1,4 @@
 import { createDebugLogger } from 'rejoinder';
-import { InvalidAppConfigurationError } from 'named-app-errors';
 import { toss } from 'toss-expression';
 
 import { sendHttpBadContentType, sendHttpBadRequest } from '@-xun/next-api-respond';

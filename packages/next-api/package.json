@@ -1,5 +1,5 @@
 {
-  "name": "next-api",
+  "name": "@-xun/next-api",
   "version": "1.0.0",
   "description": "Powerful locally-runnable middleware for Next.js API routes",
   "keywords": [],

@@ -1,10 +1,10 @@
 import { isNativeError } from 'node:util/types';
-import { InvalidAppConfigurationError, NotAuthorizedError } from 'named-app-errors';
 
 import { createDebugLogger } from 'rejoinder';
-import { getTokenByDerivation } from './token';
 
-const debug = createDebugLogger('next-auth:authenticate');
+import { getTokenByDerivation } from 'universe+next-api-common:auth/token/index.ts';
+
+const debug = createDebugLogger({ namespace: 'next-api:authenticate' });
 
 /**
  * An array of supported well-known authorization (Authorization header)
@@ -68,6 +68,7 @@ export async function authorizeHeader({
               );
             };
 
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             if (constraint === 'isGlobalAdmin') {
               if (!attributes.isGlobalAdmin) {
                 failAuthorization('isGlobalAdmin');
@@ -76,6 +77,7 @@ export async function authorizeHeader({
               ...
             }*/ else {
               throw new InvalidAppConfigurationError(
+                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
                 `encountered unknown or unhandled authorization constraint "${constraint}"`
               );
             }
@@ -84,7 +86,7 @@ export async function authorizeHeader({
       }
     }
   } catch (error) {
-    debug.error(`authorization failure: ${error}`);
+    debug.error(`authorization failure: %O`, error);
 
     if (
       isNativeError(error) &&

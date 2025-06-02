@@ -1,132 +1,47 @@
 import { randomUUID as generateUUID } from 'node:crypto';
+
+import { itemToObjectId } from '@-xun/mongo-item';
+import { getEnv } from '@-xun/next-env';
 import { MongoServerError, ObjectId } from 'mongodb';
 
-import {
-  AppValidationError,
-  InvalidSecretError,
-  ItemNotFoundError
-} from 'named-app-errors';
-
-import { getEnv } from '@-xun/next-env';
 import { createDebugLogger } from 'rejoinder';
-import { itemToObjectId } from '@-xun/mongo-item';
-
-import { validAuthenticationSchemes, type AuthenticationScheme } from './authenticate';
 
 import {
-  type InternalAuthBearerEntry,
-  type NewAuthEntry,
-  type PublicAuthEntry,
+  getConfig,
+  validAuthenticationSchemes
+} from 'universe+next-api-common:auth/constants.ts';
+
+import {
   getAuthDb,
   isNewAuthEntry,
   publicAuthEntryProjection,
   toPublicAuthEntry
-} from './db';
+} from 'universe+next-api-common:auth/db.ts';
 
-// ? Used by a comment eslint-disable-next-line
-// @typescript-eslint/no-unused-vars
-import { getConfig } from './constants';
+import {
+  isTokenAttributes,
+  validTokenAttributes
+} from 'universe+next-api-common:auth/token/types.ts';
 
-import type { JsonObject, JsonValue } from 'type-fest';
-import type { LiteralUnknownUnion } from 'types/global';
+import type { LiteralUnknownUnion } from '@-xun/types';
+import type { AuthenticationScheme } from 'universe+next-api-common:auth/constants.ts';
 
-const debug = createDebugLogger('next-auth:token');
+import type {
+  InternalAuthBearerEntry,
+  NewAuthEntry,
+  PublicAuthEntry
+} from 'universe+next-api-common:auth/db.ts';
 
-/**
- * The shape of the actual token and scheme data contained within an entry in
- * the well-known "auth" collection.
- */
-export type Token = {
-  /**
-   * The authentication scheme this token supports.
-   */
-  scheme: AuthenticationScheme;
-  /**
-   * The actual token.
-   */
-  token: JsonObject;
-};
+import type {
+  BearerToken,
+  Token,
+  TokenAttribute,
+  TokenAttributes,
+  TokenAttributesFilter,
+  TokenFilter
+} from 'universe+next-api-common:auth/token/types.ts';
 
-/**
- * The potential token/scheme of one or more entries in the well-known "auth"
- * collection.
- */
-export type TokenFilter = Partial<{
-  /**
-   * The authentication scheme of the target token(s).
-   */
-  scheme: string;
-  /**
-   * The target token(s).
-   */
-  token: Record<string, JsonValue>;
-}>;
-
-/**
- * An array of allowed "auth" full token entry attributes. Each array element
- * must correspond to a field in the {@link TokenAttributes} type and
- * vice-versa.
- */
-export const validTokenAttributes = ['owner', 'isGlobalAdmin'] as const;
-
-/**
- * A supported "auth" full token entry attribute (i.e. a field/property name as
- * a string) associated with a specific token and scheme.
- */
-export type TokenAttribute = (typeof validTokenAttributes)[number];
-
-/**
- * The shape of the attributes corresponding to a full token entry in the
- * well-known "auth" collection. Each property must correspond to an array
- * element in the {@link validTokenAttributes} array and vice-versa.
- */
-// ! `owner` must be the only required property. All others must be optional.
-export type TokenAttributes = {
-  /**
-   * A string (or stringified `ObjectId`) representing the owner of the token.
-   */
-  owner: string;
-  /**
-   * If `true`, the token grants access to potentially dangerous abilities via
-   * the well-known "/sys" API endpoint.
-   *
-   * @default undefined
-   */
-  isGlobalAdmin?: boolean;
-};
-
-/**
- * The shape of a filter used to search through the well-known "auth"
- * collection.
- */
-export type TokenAttributesFilter = Partial<{
-  /**
-   * As a string, this represents the target _owner_ of the target token. As an
-   * array, this represents the target _owners_ of the target tokens, any of
-   * which could be returned.
-   */
-  owner: string | string[];
-  /**
-   * The target global administrator status of the target token(s).
-   */
-  isGlobalAdmin: boolean;
-}>;
-
-/**
- * The shape of a bearer token object.
- */
-export type BearerToken = {
-  /**
-   * The authentication scheme this token supports.
-   */
-  scheme: 'bearer';
-  /**
-   * The bearer token.
-   */
-  token: {
-    bearer: string;
-  };
-};
+const debug = createDebugLogger({ namespace: 'next-api:token' });
 
 /**
  * Transforms `filter`, the token attributes filter, into a MongoDb update
@@ -150,7 +65,7 @@ function tokenAttributesFilterToMongoFilter(filter: TokenAttributesFilter) {
  * Transforms `update`, a patch to update  {@link TokenAttributes} in the
  * MongoDb "auth" collection, into a valid MongoDb update expression.
  */
-function tokenAttributesUpdateToMongoUpdate(update: TokenAttributes) {
+function tokenAttributesUpdateToMongoUpdate(update: Partial<TokenAttributes>) {
   return {
     $set: {
       ...(update.owner !== undefined ? { 'attributes.owner': update.owner } : {}),
@@ -174,45 +89,6 @@ export function isAllowedScheme(
   return !![onlyAllowSubset || validAuthenticationSchemes]
     .flat()
     .includes(obj as AuthenticationScheme);
-}
-
-/**
- * Type guard that returns `true` if `obj` satisfies the {@link TokenAttributes}
- * interface.
- */
-export function isTokenAttributes(
-  obj: unknown,
-  { partial = false } = {}
-): obj is TokenAttributes {
-  const attribute = obj as TokenAttributes;
-  let returnValue = false;
-
-  if (!!attribute && typeof attribute === 'object') {
-    const isValidOwner = !!attribute.owner && typeof attribute.owner === 'string';
-
-    const isValidGlobalAdmin =
-      attribute.isGlobalAdmin === undefined ||
-      typeof attribute.isGlobalAdmin === 'boolean';
-
-    const allKeysAreValid = Object.keys(attribute).every((key) =>
-      validTokenAttributes.includes(key as TokenAttribute)
-    );
-
-    if (allKeysAreValid) {
-      returnValue = true;
-
-      // eslint-disable-next-line unicorn/prefer-ternary
-      if (partial) {
-        returnValue &&= attribute.owner === undefined || isValidOwner;
-      } else {
-        returnValue &&= isValidOwner;
-      }
-
-      returnValue &&= isValidGlobalAdmin;
-    }
-  }
-
-  return returnValue;
 }
 
 /**
@@ -520,13 +396,12 @@ export async function getTokensByAttribute({
 
     return (await getAuthDb())
       .find<PublicAuthEntry>(
-        // eslint-disable-next-line unicorn/no-array-callback-reference
         Object.assign(
           { deleted: false },
           after_id ? { _id: { $gt: itemToObjectId(after_id) } } : {},
           returnAll ? {} : tokenAttributesFilterToMongoFilter(filter)
         ),
-        // eslint-disable-next-line unicorn/no-array-method-this-argument
+
         {
           projection: publicAuthEntryProjection,
           sort: { _id: 1 },

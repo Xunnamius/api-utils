@@ -1,14 +1,15 @@
 import { getDb } from '@-xun/mongo-schema';
 
-import {
-  isTokenAttributes,
-  type BearerToken,
-  type Token,
-  type TokenAttributes
-} from './token';
+import { isTokenAttributes } from 'universe+next-api-common:auth/token/types.ts';
 
 import type { WithId } from 'mongodb';
 import type { Merge } from 'type-fest';
+
+import type {
+  BearerToken,
+  Token,
+  TokenAttributes
+} from 'universe+next-api-common:auth/token/types.ts';
 
 /**
  * The base shape of an entry in the well-known "auth" collection. Consists of a
@@ -98,6 +99,10 @@ export function toPublicAuthEntry(entry: InternalAuthEntry): PublicAuthEntry {
  * interface.
  */
 export function isNewAuthEntry(obj: unknown): obj is NewAuthEntry {
-  const entry = obj as NewAuthEntry;
-  return isTokenAttributes(entry?.attributes);
+  return isTokenAttributes(
+    obj &&
+      typeof obj === 'object' &&
+      'attributes' in obj &&
+      isTokenAttributes(obj.attributes)
+  );
 }

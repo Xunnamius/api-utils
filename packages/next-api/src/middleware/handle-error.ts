@@ -1,16 +1,6 @@
 import { createDebugLogger } from 'rejoinder';
 
 import {
-  NotImplementedError,
-  GuruMeditationError,
-  ValidationError,
-  NotFoundError,
-  AuthError,
-  AppError,
-  AppValidationError
-} from 'named-app-errors';
-
-import {
   sendHttpError,
   sendHttpNotFound,
   sendHttpUnauthorized,

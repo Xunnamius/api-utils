@@ -11,6 +11,17 @@ export function getConfig() {
   };
 }
 
+/**
+ * An array of supported authentication schemes.
+ */
+// ! Must be lowercase alphanumeric (enforced by unit tests)
+export const validAuthenticationSchemes = ['bearer'] as const;
+
+/**
+ * A supported authentication scheme.
+ */
+export type AuthenticationScheme = (typeof validAuthenticationSchemes)[number];
+
 // * Well-known tokens
 
 /**

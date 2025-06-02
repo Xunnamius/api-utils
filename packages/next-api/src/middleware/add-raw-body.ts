@@ -1,15 +1,15 @@
 import querystring from 'node:querystring';
 import { isNativeError } from 'node:util/types';
+
 import { parse } from 'content-type';
-import getRawBody, { type RawBodyError } from 'raw-body';
-
-import { ClientValidationError, InvalidAppConfigurationError } from 'named-app-errors';
-
-import { sendHttpTooLarge } from '@-xun/next-api-respond';
+import getRawBody from 'raw-body';
 import { createDebugLogger } from 'rejoinder';
 
+import { sendHttpTooLarge } from 'universe+next-api:respond.ts';
+
+import type { MiddlewareContext } from 'universe+next-api';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import type { MiddlewareContext } from '@-xun/next-api-glue';
+import type { RawBodyError } from 'raw-body';
 
 const debug = createDebugLogger('next-adhesive:add-raw-body');
 

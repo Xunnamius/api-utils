@@ -1,11 +1,9 @@
-import { InvalidAppConfigurationError } from 'named-app-errors';
-
 import {
   authenticateHeader,
   authorizeHeader,
   type AuthenticationScheme,
   type AuthorizationConstraint
-} from '@-xun/next-auth';
+} from 'universe-auth';
 
 import { sendHttpUnauthenticated, sendHttpUnauthorized } from '@-xun/next-api-respond';
 

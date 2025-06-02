@@ -1,20 +1,12 @@
 import { isNativeError } from 'node:util/types';
 
 import { createDebugLogger } from 'rejoinder';
-import { getTokenByDerivation } from './token';
 
-const debug = createDebugLogger('next-auth:authenticate');
+import { getTokenByDerivation } from 'universe+next-api-common:auth/token/index.ts';
 
-/**
- * An array of supported authentication schemes.
- */
-// ! Must be lowercase alphanumeric (enforced by unit tests)
-export const validAuthenticationSchemes = ['bearer'] as const;
+import type { AuthenticationScheme } from 'universe+next-api-common:auth/constants.ts';
 
-/**
- * A supported authentication scheme.
- */
-export type AuthenticationScheme = (typeof validAuthenticationSchemes)[number];
+const debug = createDebugLogger({ namespace: 'next-api:authenticate' });
 
 /**
  * Authenticates a client via their Authorization header using the well-known

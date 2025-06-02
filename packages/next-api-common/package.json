@@ -78,6 +78,7 @@
     "test:packages:all": "symbiote test --env NODE_NO_WARNINGS=1 --tests all-local --scope unlimited --coverage"
   },
   "dependencies": {
+    "@-xun/mongo-item": "^1.0.0",
     "@-xun/mongo-test": "^1.0.0"
   },
   "engines": {
