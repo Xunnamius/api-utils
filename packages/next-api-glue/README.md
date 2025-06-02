@@ -1,12 +1,12 @@
 <!-- symbiote-template-region-start 1 -->
 
 <p align="center" width="100%">
-  <img width="300" src="https://raw.githubusercontent.com/Xunnamius/react-utils/refs/heads/main/packages/next-adhesive/logo.png">
+  <img width="300" src="https://raw.githubusercontent.com/Xunnamius/react-utils/refs/heads/main/packages/next-api-glue/logo.png">
 </p>
 
 <p align="center" width="100%">
 <!-- symbiote-template-region-end -->
-Middleware functions for @-xun/next-api-glue
+Middleware functions for use with @-xun/next-api-middleware
 <!-- symbiote-template-region-start 2 -->
 </p>
 
@@ -27,11 +27,11 @@ Middleware functions for @-xun/next-api-glue
 
 <br />
 
-# @-xun/next-adhesive
+# @-xun/next-api-glue
 
 <!-- symbiote-template-region-end -->
 
-Middleware functions for @-xun/next-api-glue.
+Functions meant for use as middleware with @-xun/next-api-middleware.
 
 <!-- symbiote-template-region-start 3 -->
 
@@ -63,7 +63,7 @@ Middleware functions for @-xun/next-api-glue.
 To install:
 
 ```shell
-npm install @-xun/next-adhesive
+npm install @-xun/next-api-glue
 ```
 
 ## Usage
@@ -85,16 +85,33 @@ Further documentation can be found under [`docs/`][x-repo-docs].
 
 ### Published Package Details
 
+<!-- TODO: choose one of the following and --✄--delete--✄-- the others: -->
+
 This is a [CJS2 package][x-pkg-cjs-mojito] with statically-analyzable exports
 built by Babel for use in Node.js versions that are not end-of-life. For
 TypeScript users, this package supports both `"Node10"` and `"Node16"` module
 resolution strategies.
 
+✄------------✄-----------⏶-⏷-----------✄------------✄
+
+This is an [ESM-only package][x-pkg-esm-wine] built by Babel for use in Node.js
+versions that are not end-of-life. For TypeScript users, this package supports
+both `"Node10"` and `"Node16"` module resolution strategies.
+
+✄------------✄-----------⏶-⏷-----------✄------------✄
+
+This is an [ESM-only package][x-pkg-esm-wine] built by Babel for use in
+browser-like environments. For TypeScript users, this package supports both
+`"Node10"` and `"Node16"` module resolution strategies.
+
+<!-- TODO: choose one of the above and --✄--delete--✄-- the others! -->
 <!-- symbiote-template-region-end -->
 <!-- TODO: additional package details here -->
 <!-- symbiote-template-region-start 7 -->
 
 <details><summary>Expand details</summary>
+
+<!-- TODO: choose one of the following and --✄--delete--✄-- the others: -->
 
 That means both CJS2 (via `require(...)`) and ESM (via `import { ... } from ...`
 or `await import(...)`) source will load this package from the same entry points
@@ -103,6 +120,22 @@ shipped/smaller package size, avoiding [dual package
 hazard][x-pkg-dual-package-hazard] entirely, distributables are not
 packed/bundled/uglified, a drastically less complex build process, and CJS
 consumers aren't shafted.
+
+✄------------✄-----------⏶-⏷-----------✄------------✄
+
+That means ESM source will load this package via `import { ... } from ...` or
+`await import(...)` and CJS source will load this package via dynamic
+`import()`. This has several benefits, the foremost being: less code
+shipped/smaller package size, avoiding [dual package
+hazard][x-pkg-dual-package-hazard] entirely, distributables are not
+packed/bundled/uglified, and a drastically less complex build process.
+
+The glaring downside, which may or may not be relevant, is that CJS consumers
+cannot `require()` this package and can only use `import()` in an asynchronous
+context. This means, in effect, CJS consumers may not be able to use this
+package at all.
+
+<!-- TODO: choose one of the above and --✄--delete--✄-- the others! -->
 
 Each entry point (i.e. `ENTRY`) in [`package.json`'s
 `exports[ENTRY]`][x-repo-package-json] object includes one or more [export
@@ -168,25 +201,25 @@ See the [table of contributors][x-repo-contributors].
 [x-badge-blm-image]: https://xunn.at/badge-blm 'Join the movement!'
 [x-badge-blm-link]: https://xunn.at/donate-blm
 [x-badge-codecov-image]:
-  https://img.shields.io/codecov/c/github/Xunnamius/react-utils/main?style=flat-square&token=HWRIOBAAPW&flag=package.main_next-adhesive
+  https://img.shields.io/codecov/c/github/Xunnamius/react-utils/main?style=flat-square&token=HWRIOBAAPW&flag=package.main_next-api-glue
   'Is this package well-tested?'
 [x-badge-codecov-link]: https://codecov.io/gh/Xunnamius/react-utils
 [x-badge-downloads-image]:
-  https://img.shields.io/npm/dm/@-xun/next-adhesive?style=flat-square
+  https://img.shields.io/npm/dm/@-xun/next-api-glue?style=flat-square
   'Number of times this package has been downloaded per month'
-[x-badge-downloads-link]: https://npmtrends.com/@-xun/next-adhesive
+[x-badge-downloads-link]: https://npmtrends.com/@-xun/next-api-glue
 [x-badge-lastcommit-image]:
   https://img.shields.io/github/last-commit/Xunnamius/react-utils?style=flat-square
   'Latest commit timestamp'
 [x-badge-license-image]:
-  https://img.shields.io/npm/l/@-xun/next-adhesive?style=flat-square
+  https://img.shields.io/npm/l/@-xun/next-api-glue?style=flat-square
   "This package's source license"
 [x-badge-license-link]:
   https://github.com/Xunnamius/react-utils/blob/main/LICENSE
 [x-badge-npm-image]:
-  https://xunn.at/npm-pkg-version/@-xun/next-adhesive
+  https://xunn.at/npm-pkg-version/@-xun/next-api-glue
   'Install this package using npm or yarn!'
-[x-badge-npm-link]: https://npm.im/@-xun/next-adhesive
+[x-badge-npm-link]: https://npm.im/@-xun/next-api-glue
 [x-badge-repo-link]: https://github.com/Xunnamius/react-utils
 [x-badge-semanticrelease-image]:
   https://xunn.at/badge-semantic-release
@@ -197,6 +230,8 @@ See the [table of contributors][x-repo-contributors].
   https://dev.to/jakobjingleheimer/configuring-commonjs-es-modules-for-nodejs-12ed#publish-only-a-cjs-distribution-with-property-exports
 [x-pkg-dual-package-hazard]:
   https://nodejs.org/api/packages.html#dual-package-hazard
+[x-pkg-esm-wine]:
+  https://dev.to/jakobjingleheimer/configuring-commonjs-es-modules-for-nodejs-12ed#esm-source-and-distribution
 [x-pkg-exports-conditions]:
   https://webpack.js.org/guides/package-exports#reference-syntax
 [x-pkg-exports-module-key]:

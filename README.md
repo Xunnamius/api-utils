@@ -54,19 +54,15 @@ Packages that improve on Next.js and React in tiny, opinionated ways.
 
 - [common][1] — Common unpublished multiversal imports (beware the dual package
   hazard!).
-- [@-xun/next-adhesive][2] — Middleware functions for @-xun/next-api-glue.
-- [next-api-glue][3] — Powerful locally-runnable middleware for Next.js API
-  routes.
-- [@-xun/next-api-respond][4] — A consistent set of functions offering various
+- [@-xun/next-api][2] — Common business logic for Next.js API routes.
+- [@-xun/next-api-glue][3] — Functions meant for use as middleware with
+  @-xun/next-api-middleware.
+- [next-api-middleware][4] — Powerful locally-runnable middleware for Next.js
+  API routes.
+- [@-xun/next-api-respond][5] — A consistent set of functions offering various
   standard HTTP responses.
-- [@-xun/next-auth][5] — Bare bones authentication primitives for Next.js +
-  MongoDB.
-- [@-xun/next-contrived][6] — Contrived error response generation for Next.js +
-  MongoDB.
-- [@-xun/next-env][7] — Unified environment resolution and validation for
+- [@-xun/next-env][6] — Unified environment resolution and validation for
   Next.js.
-- [@-xun/next-limit][8] — Client rate limiting for Next.js + MongoDB.
-- [@-xun/next-log][9] — Request logging for Next.js + MongoDB.
 
 <!-- symbiote-template-region-start 5 -->
 
@@ -156,11 +152,8 @@ specification. Contributions of any kind welcome!
 [x-repo-sponsor]: https://github.com/sponsors/Xunnamius
 [x-repo-support]: /.github/SUPPORT.md
 [1]: ./packages/common
-[2]: ./packages/next-adhesive
+[2]: ./packages/next-api
 [3]: ./packages/next-api-glue
-[4]: ./packages/next-api-respond
-[5]: ./packages/next-auth
-[6]: ./packages/next-contrived
-[7]: ./packages/next-env
-[8]: ./packages/next-limit
-[9]: ./packages/next-log
+[4]: ./packages/next-api-middleware
+[5]: ./packages/next-api-respond
+[6]: ./packages/next-env
