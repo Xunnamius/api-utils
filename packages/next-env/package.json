@@ -1,6 +1,6 @@
 {
   "name": "@-xun/next-env",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Unified environment resolution and validation for Next.js",
   "keywords": [],
   "homepage": "https://github.com/Xunnamius/react-utils/tree/main/packages/next-env#readme",

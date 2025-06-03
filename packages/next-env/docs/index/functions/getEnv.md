@@ -8,7 +8,7 @@
 
 > **getEnv**\<`T`\>(`customizedEnv?`): `object` & `T`
 
-Defined in: [index.ts:33](https://github.com/Xunnamius/react-utils/blob/b1b45cf09cd5af6593920ea281ef27f4c3efd32f/packages/next-env/src/index.ts#L33)
+Defined in: [index.ts:33](https://github.com/Xunnamius/react-utils/blob/1f41a709ea64f9e7c32e353711451214fa86d1a1/packages/next-env/src/index.ts#L33)
 
 Returns an object representing the current runtime environment. Performs
 light validation.
