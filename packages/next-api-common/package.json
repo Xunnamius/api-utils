@@ -16,36 +16,20 @@
   "sideEffects": false,
   "type": "commonjs",
   "exports": {
-    ".": {
-      "types": "./dist/packages/next-api-common/src/index.d.ts",
-      "default": "./dist/packages/next-api-common/src/index.js"
-    },
-    "./auth": {
-      "types": "./dist/packages/next-api-common/src/auth/index.d.ts",
-      "default": "./dist/packages/next-api-common/src/auth/index.js"
-    },
-    "./contrived": {
-      "types": "./dist/packages/next-api-common/src/contrived/index.d.ts",
-      "default": "./dist/packages/next-api-common/src/contrived/index.js"
-    },
-    "./limit": {
-      "types": "./dist/packages/next-api-common/src/limit/index.d.ts",
-      "default": "./dist/packages/next-api-common/src/limit/index.js"
-    },
-    "./log": {
-      "types": "./dist/packages/next-api-common/src/log/index.d.ts",
-      "default": "./dist/packages/next-api-common/src/log/index.js"
+    "./*": {
+      "types": "./dist/packages/next-api-common/src/*.d.ts",
+      "default": "./dist/packages/next-api-common/src/*.js"
     },
     "./package": "./package.json",
     "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
-      "index": [
-        "dist/packages/next-api-common/src/index.d.ts"
-      ],
       "package": [
         "package.json"
+      ],
+      "*": [
+        "dist/packages/next-api-common/src/*.d.ts"
       ]
     }
   },
@@ -79,7 +63,7 @@
   },
   "dependencies": {
     "@-xun/mongo-item": "^1.0.0",
-    "@-xun/mongo-test": "^1.0.0"
+    "@-xun/mongo-test": "^1.0.1"
   },
   "engines": {
     "node": "^20.18.0 || >=22.12.0"
