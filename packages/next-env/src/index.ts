@@ -38,10 +38,7 @@ export function getEnv<T extends Environment>(customizedEnv?: T) {
 
   const env = {
     NODE_ENV:
-      process.env.APP_ENV ||
-      (process.env.NODE_ENV as string) ||
-      process.env.BABEL_ENV ||
-      'unknown',
+      process.env.APP_ENV || process.env.NODE_ENV || process.env.BABEL_ENV || 'unknown',
     MONGODB_URI: process.env.MONGODB_URI || '',
     MONGODB_MS_PORT: Number(process.env.MONGODB_MS_PORT) || 6666,
     DISABLED_API_VERSIONS: process.env.DISABLED_API_VERSIONS
