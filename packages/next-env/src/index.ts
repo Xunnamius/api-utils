@@ -41,6 +41,7 @@ export function getEnv<T extends Environment>(customizedEnv?: T) {
       process.env.APP_ENV || process.env.NODE_ENV || process.env.BABEL_ENV || 'unknown',
     MONGODB_URI: process.env.MONGODB_URI || '',
     MONGODB_MS_PORT: Number(process.env.MONGODB_MS_PORT) || 6666,
+    API_HYDRATE_DB: !!process.env.API_HYDRATE_DB,
     DISABLED_API_VERSIONS: process.env.DISABLED_API_VERSIONS
       ? arrayFromEnvironmentValue(process.env.DISABLED_API_VERSIONS.toLowerCase())
       : [],
