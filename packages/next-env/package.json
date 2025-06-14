@@ -65,7 +65,7 @@
     "@-xun/types": "^1.1.0",
     "bytes": "^3.1.2",
     "core-js": "^3.43.0",
-    "rejoinder": "^1.2.5",
+    "rejoinder": "^2.0.1",
     "type-fest": "^4.41.0"
   },
   "devDependencies": {
