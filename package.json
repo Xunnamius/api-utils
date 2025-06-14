@@ -39,7 +39,7 @@
     "test:topological": "symbiote project topology --run test --env NODE_NO_WARNINGS=1"
   },
   "devDependencies": {
-    "@-xun/symbiote": "^4.2.7",
+    "@-xun/symbiote": "^4.4.4",
     "mongodb": "^6.17.0"
   },
   "engines": {
