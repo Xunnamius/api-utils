@@ -1,12 +1,12 @@
 <!-- symbiote-template-region-start 1 -->
 
 <p align="center" width="100%">
-  <img width="300" src="https://raw.githubusercontent.com/Xunnamius/react-utils/refs/heads/main/packages/next-api-common/logo.png">
+  <img width="300" src="https://raw.githubusercontent.com/Xunnamius/react-utils/refs/heads/main/packages/respond/logo.png">
 </p>
 
 <p align="center" width="100%">
 <!-- symbiote-template-region-end -->
-Common business logic for Next.js API routes
+Simple JSON response objects for various HTTP response codes
 <!-- symbiote-template-region-start 2 -->
 </p>
 
@@ -27,11 +27,11 @@ Common business logic for Next.js API routes
 
 <br />
 
-# @-xun/next-api-common
+# @-xun/respond
 
 <!-- symbiote-template-region-end -->
 
-Common business logic for Next.js API routes.
+Simple JSON response objects for various HTTP response codes.
 
 <!-- symbiote-template-region-start 3 -->
 
@@ -63,7 +63,7 @@ Common business logic for Next.js API routes.
 To install:
 
 ```shell
-npm install @-xun/next-api-common
+npm install @-xun/respond
 ```
 
 ## Usage
@@ -168,25 +168,25 @@ See the [table of contributors][x-repo-contributors].
 [x-badge-blm-image]: https://xunn.at/badge-blm 'Join the movement!'
 [x-badge-blm-link]: https://xunn.at/donate-blm
 [x-badge-codecov-image]:
-  https://img.shields.io/codecov/c/github/Xunnamius/react-utils/main?style=flat-square&token=HWRIOBAAPW&flag=package.main_next-api-common
+  https://img.shields.io/codecov/c/github/Xunnamius/react-utils/main?style=flat-square&token=HWRIOBAAPW&flag=package.main_respond
   'Is this package well-tested?'
 [x-badge-codecov-link]: https://codecov.io/gh/Xunnamius/react-utils
 [x-badge-downloads-image]:
-  https://img.shields.io/npm/dm/@-xun/next-api-common?style=flat-square
+  https://img.shields.io/npm/dm/@-xun/respond?style=flat-square
   'Number of times this package has been downloaded per month'
-[x-badge-downloads-link]: https://npmtrends.com/@-xun/next-api-common
+[x-badge-downloads-link]: https://npmtrends.com/@-xun/respond
 [x-badge-lastcommit-image]:
   https://img.shields.io/github/last-commit/Xunnamius/react-utils?style=flat-square
   'Latest commit timestamp'
 [x-badge-license-image]:
-  https://img.shields.io/npm/l/@-xun/next-api-common?style=flat-square
+  https://img.shields.io/npm/l/@-xun/respond?style=flat-square
   "This package's source license"
 [x-badge-license-link]:
   https://github.com/Xunnamius/react-utils/blob/main/LICENSE
 [x-badge-npm-image]:
-  https://xunn.at/npm-pkg-version/@-xun/next-api-common
+  https://xunn.at/npm-pkg-version/@-xun/respond
   'Install this package using npm or yarn!'
-[x-badge-npm-link]: https://npm.im/@-xun/next-api-common
+[x-badge-npm-link]: https://npm.im/@-xun/respond
 [x-badge-repo-link]: https://github.com/Xunnamius/react-utils
 [x-badge-semanticrelease-image]:
   https://xunn.at/badge-semantic-release

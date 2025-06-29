@@ -14,9 +14,36 @@ const config = await moduleExport({
   ...(await assertEnvironment())
 });
 
-config.push({
-  /* Add custom config here, such as disabling certain rules */
-});
+/* Add custom config objects here, such as those disabling certain rules */
+config
+  .push
+  // ? Paths listed here are ignored by Eslint and related tooling.
+  // { ignores: [] },
+  // * Configs applying to both JavaScript & TypeScript files (all extensions)
+  // ? Keep in mind that JS files can use @ts-check and "become" TS files,
+  // ? hence the existence of this block. Logically, most rules should be
+  // ? loaded here.
+  // ...[
+  //   { ...eslintPluginReactConfigs.flat.recommended, name: 'react:recommended' },
+  //   // ? For react@>=17
+  //   { ...eslintPluginReactConfigs.flat['jsx-runtime'], name: 'react:jsx-runtime' },
+  //   {
+  //     ...eslintPluginReactHooksConfigs['recommended-latest'],
+  //     name: 'react-hooks:recommended-latest'
+  //   },
+  //   { ...eslintPluginJsxA11yFlatConfigs.recommended, name: 'jsx-a11y:recommended' }
+  // ].flatMap((configs) =>
+  //   overwriteProperty(configs, 'files', [
+  //     `**/*.{ts,cts,mts,tsx}`
+  //   ])
+  // ),
+  // {
+  //   rules: {
+  //     'unicorn/no-keyword-prefix': 'off',
+  //     'no-restricted-syntax': 'off'
+  //   }
+  // }
+  ();
 
 export default config;
 
@@ -28,31 +55,31 @@ function getEslintAliases() {
   // ! `npx symbiote project renovate --regenerate-assets --assets-preset ...`
   return [
     ['multiverse+next-api:*', './packages/next-api/src/*'],
-    ['multiverse+next-api-common:*', './packages/next-api-common/src/*'],
     ['multiverse+next-env:*', './packages/next-env/src/*'],
+    ['multiverse+respond:*', './packages/respond/src/*'],
     ['multiverse+shared:*', './packages/shared/src/*'],
     ['multiverse+next-api', './packages/next-api/src/index.ts'],
-    ['multiverse+next-api-common', './packages/next-api-common/src/index.ts'],
     ['multiverse+next-env', './packages/next-env/src/index.ts'],
+    ['multiverse+respond', './packages/respond/src/index.ts'],
     ['multiverse+shared', './packages/shared/src/index.ts'],
     ['rootverse+next-api:*', './packages/next-api/*'],
-    ['rootverse+next-api-common:*', './packages/next-api-common/*'],
     ['rootverse+next-env:*', './packages/next-env/*'],
+    ['rootverse+respond:*', './packages/respond/*'],
     ['rootverse+shared:*', './packages/shared/*'],
     ['rootverse:*', './*'],
     ['universe+next-api:*', './packages/next-api/src/*'],
-    ['universe+next-api-common:*', './packages/next-api-common/src/*'],
     ['universe+next-env:*', './packages/next-env/src/*'],
+    ['universe+respond:*', './packages/respond/src/*'],
     ['universe+shared:*', './packages/shared/src/*'],
     ['universe+next-api', './packages/next-api/src/index.ts'],
-    ['universe+next-api-common', './packages/next-api-common/src/index.ts'],
     ['universe+next-env', './packages/next-env/src/index.ts'],
+    ['universe+respond', './packages/respond/src/index.ts'],
     ['universe+shared', './packages/shared/src/index.ts'],
     ['universe:*', './src/*'],
     ['universe', './src/index.ts'],
     ['testverse+next-api:*', './packages/next-api/test/*'],
-    ['testverse+next-api-common:*', './packages/next-api-common/test/*'],
     ['testverse+next-env:*', './packages/next-env/test/*'],
+    ['testverse+respond:*', './packages/respond/test/*'],
     ['testverse+shared:*', './packages/shared/test/*'],
     ['testverse:*', './test/*'],
     ['typeverse:*', './types/*']

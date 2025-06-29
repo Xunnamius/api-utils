@@ -27,7 +27,8 @@ Nibbling around the edges of Next.js and React for modest (opinionated) DX gains
 
 <!-- symbiote-template-region-end -->
 
-Packages that improve on Next.js and React in tiny, opinionated ways.
+Packages that improve on Next.js, React, and related API tooling in tiny,
+opinionated ways.
 
 <!-- symbiote-template-region-start 3 -->
 
@@ -54,11 +55,12 @@ Packages that improve on Next.js and React in tiny, opinionated ways.
 
 - [@-xun/next-api][1] — Powerful locally-runnable middleware for Next.js API
   routes.
-- [@-xun/next-api-common][2] — Common business logic for Next.js API routes.
-- [shared][3] — Common unpublished multiversal imports (beware the dual package
-  hazard!).
-- [@-xun/next-env][4] — Unified environment resolution and validation for
+- [@-xun/respond][2] — Simple JSON response objects for various HTTP response
+  codes.
+- [@-xun/next-env][3] — Unified environment resolution and validation for
   Next.js.
+- [shared][4] — Common unpublished multiversal imports (beware the dual package
+  hazard!).
 
 <!-- symbiote-template-region-start 5 -->
 
@@ -148,6 +150,6 @@ specification. Contributions of any kind welcome!
 [x-repo-sponsor]: https://github.com/sponsors/Xunnamius
 [x-repo-support]: /.github/SUPPORT.md
 [1]: ./packages/next-api
-[2]: ./packages/next-api-common
-[3]: ./packages/shared
-[4]: ./packages/next-env
+[2]: ./packages/respond
+[3]: ./packages/next-env
+[4]: ./packages/shared

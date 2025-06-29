@@ -26,36 +26,32 @@ function getJestAliases() {
   // ! `npx symbiote project renovate --regenerate-assets --assets-preset ...`
   return {
     '^multiverse\\+next\\x2dapi:(.+)$': '<rootDir>/packages/next-api/src/$1',
-    '^multiverse\\+next\\x2dapi\\x2dcommon:(.+)$':
-      '<rootDir>/packages/next-api-common/src/$1',
     '^multiverse\\+next\\x2denv:(.+)$': '<rootDir>/packages/next-env/src/$1',
+    '^multiverse\\+respond:(.+)$': '<rootDir>/packages/respond/src/$1',
     '^multiverse\\+shared:(.+)$': '<rootDir>/packages/shared/src/$1',
     '^multiverse\\+next\\x2dapi$': `<rootDir>/packages/next-api/src/index.${extension}`,
-    '^multiverse\\+next\\x2dapi\\x2dcommon$': `<rootDir>/packages/next-api-common/src/index.${extension}`,
     '^multiverse\\+next\\x2denv$': `<rootDir>/packages/next-env/src/index.${extension}`,
+    '^multiverse\\+respond$': `<rootDir>/packages/respond/src/index.${extension}`,
     '^multiverse\\+shared$': `<rootDir>/packages/shared/src/index.${extension}`,
     '^universe\\+next\\x2dapi:(.+)$': '<rootDir>/packages/next-api/src/$1',
-    '^universe\\+next\\x2dapi\\x2dcommon:(.+)$':
-      '<rootDir>/packages/next-api-common/src/$1',
     '^universe\\+next\\x2denv:(.+)$': '<rootDir>/packages/next-env/src/$1',
+    '^universe\\+respond:(.+)$': '<rootDir>/packages/respond/src/$1',
     '^universe\\+shared:(.+)$': '<rootDir>/packages/shared/src/$1',
     '^universe\\+next\\x2dapi$': `<rootDir>/packages/next-api/src/index.${extension}`,
-    '^universe\\+next\\x2dapi\\x2dcommon$': `<rootDir>/packages/next-api-common/src/index.${extension}`,
     '^universe\\+next\\x2denv$': `<rootDir>/packages/next-env/src/index.${extension}`,
+    '^universe\\+respond$': `<rootDir>/packages/respond/src/index.${extension}`,
     '^universe\\+shared$': `<rootDir>/packages/shared/src/index.${extension}`,
     '^universe:(.+)$': '<rootDir>/src/$1',
     '^universe$': `<rootDir>/src/index.${extension}`,
     '^testverse\\+next\\x2dapi:(.+)$': '<rootDir>/packages/next-api/test/$1',
-    '^testverse\\+next\\x2dapi\\x2dcommon:(.+)$':
-      '<rootDir>/packages/next-api-common/test/$1',
     '^testverse\\+next\\x2denv:(.+)$': '<rootDir>/packages/next-env/test/$1',
+    '^testverse\\+respond:(.+)$': '<rootDir>/packages/respond/test/$1',
     '^testverse\\+shared:(.+)$': '<rootDir>/packages/shared/test/$1',
     '^testverse:(.+)$': '<rootDir>/test/$1',
     '^typeverse:(.+)$': '<rootDir>/types/$1',
     '^rootverse\\+next\\x2dapi:(.+)$': '<rootDir>/packages/next-api/$1',
-    '^rootverse\\+next\\x2dapi\\x2dcommon:(.+)$':
-      '<rootDir>/packages/next-api-common/$1',
     '^rootverse\\+next\\x2denv:(.+)$': '<rootDir>/packages/next-env/$1',
+    '^rootverse\\+respond:(.+)$': '<rootDir>/packages/respond/$1',
     '^rootverse\\+shared:(.+)$': '<rootDir>/packages/shared/$1',
     '^rootverse:(.+)$': '<rootDir>/$1'
   };
