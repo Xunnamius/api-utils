@@ -24,9 +24,17 @@
       "types": "./dist/packages/next-api/src/respond.d.ts",
       "default": "./dist/packages/next-api/src/respond.js"
     },
+    "./middleware": {
+      "types": "./dist/packages/next-api/src/middleware.d.ts",
+      "default": "./dist/packages/next-api/src/middleware.js"
+    },
     "./middleware/*": {
       "types": "./dist/packages/next-api/src/middleware/*.d.ts",
       "default": "./dist/packages/next-api/src/middleware/*.js"
+    },
+    "./strategy/*": {
+      "types": "./dist/packages/next-api/src/strategy/*.d.ts",
+      "default": "./dist/packages/next-api/src/strategy/*.js"
     },
     "./package": "./package.json",
     "./package.json": "./package.json"
@@ -68,6 +76,9 @@
     "test:package:integration": "symbiote test --env NODE_NO_WARNINGS=1 --tests integration",
     "test:package:unit": "symbiote test --env NODE_NO_WARNINGS=1 --tests unit type",
     "test:packages:all": "symbiote test --env NODE_NO_WARNINGS=1 --tests all-local --scope unlimited --coverage"
+  },
+  "dependencies": {
+    "next-test-api-route-handler": "^4.0.16"
   },
   "engines": {
     "node": "^20.18.0 || >=22.12.0"

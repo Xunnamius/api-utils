@@ -1,9 +1,9 @@
 {
-  "name": "@-xun/next-api-common",
+  "name": "@-xun/respond",
   "version": "1.0.0",
-  "description": "Common business logic for Next.js API routes",
+  "description": "Simple JSON response objects for various HTTP response codes",
   "keywords": [],
-  "homepage": "https://github.com/Xunnamius/react-utils/tree/main/packages/next-api-common#readme",
+  "homepage": "https://github.com/Xunnamius/react-utils/tree/main/packages/respond#readme",
   "bugs": {
     "url": "https://github.com/Xunnamius/react-utils/issues"
   },
@@ -16,20 +16,20 @@
   "sideEffects": false,
   "type": "commonjs",
   "exports": {
-    "./*": {
-      "types": "./dist/packages/next-api-common/src/*.d.ts",
-      "default": "./dist/packages/next-api-common/src/*.js"
+    ".": {
+      "types": "./dist/packages/respond/src/index.d.ts",
+      "default": "./dist/packages/respond/src/index.js"
     },
     "./package": "./package.json",
     "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
+      "index": [
+        "dist/packages/respond/src/index.d.ts"
+      ],
       "package": [
         "package.json"
-      ],
-      "*": [
-        "dist/packages/next-api-common/src/*.d.ts"
       ]
     }
   },
@@ -60,10 +60,6 @@
     "test:package:integration": "symbiote test --env NODE_NO_WARNINGS=1 --tests integration",
     "test:package:unit": "symbiote test --env NODE_NO_WARNINGS=1 --tests unit type",
     "test:packages:all": "symbiote test --env NODE_NO_WARNINGS=1 --tests all-local --scope unlimited --coverage"
-  },
-  "dependencies": {
-    "@-xun/mongo-item": "^1.0.0",
-    "@-xun/mongo-test": "^1.1.2"
   },
   "engines": {
     "node": "^20.18.0 || >=22.12.0"

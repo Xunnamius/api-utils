@@ -1,14 +1,14 @@
 import { asMockedFunction } from '@-xun/jest-types';
 import limitRequest from '@-xun/next-adhesive/limit-request';
 import { withMiddleware } from '@-xun/next-api-glue';
-import { isclientRateLimited } from '@-xun/next-limit';
+import { isClientRateLimited } from '@-xun/next-limit';
 import { testApiHandler } from 'next-test-api-route-handler';
 import { mockEnvFactory, noopHandler, wrapHandler } from 'testverse/setup';
 
 jest.mock('@-xun/next-limit');
 
 const withMockedEnv = mockEnvFactory({ NODE_ENV: 'test' });
-const mockisclientRateLimited = asMockedFunction(isclientRateLimited);
+const mockisclientRateLimited = asMockedFunction(isClientRateLimited);
 
 beforeEach(() => {
   mockisclientRateLimited.mockReturnValue(

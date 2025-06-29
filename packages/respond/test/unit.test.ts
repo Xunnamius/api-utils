@@ -1,3 +1,5 @@
+import { testApiHandler } from 'next-test-api-route-handler';
+
 import {
   sendGenericHttpResponse,
   sendHttpBadContentType,
@@ -14,8 +16,7 @@ import {
   sendHttpUnauthenticated,
   sendHttpUnauthorized,
   sendNotImplemented
-} from '@-xun/next-api-respond';
-import { testApiHandler } from 'next-test-api-route-handler';
+} from 'universe+respond:index.ts';
 
 describe('::sendGenericHttpResponse', () => {
   it('sends appropriate response given arguments', async () => {

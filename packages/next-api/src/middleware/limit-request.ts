@@ -1,5 +1,5 @@
 import { getEnv } from '@-xun/next-env';
-import { isclientRateLimited } from '@-xun/next-limit';
+import { isClientRateLimited } from '@-xun/next-limit';
 import { createDebugLogger } from 'rejoinder';
 
 import { sendHttpRateLimited, sendHttpUnauthorized } from '@-xun/next-api-respond';
@@ -26,7 +26,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
   } else if (getEnv().IGNORE_RATE_LIMITS) {
     debug('skipped rate-limit check');
   } else {
-    const { isLimited, retryAfter } = await isclientRateLimited(req);
+    const { isLimited, retryAfter } = await isClientRateLimited(req);
 
     if (isLimited) {
       debug('rate-limit check failed: client is rate-limited');

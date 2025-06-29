@@ -33,7 +33,7 @@ export type NewLimitedLogEntry = WithoutId<InternalLimitedLogEntry>;
  * is true, then the request should be rejected. The client should be instructed
  * to retry their request after `retryAfter` milliseconds have passed.
  */
-export async function isclientRateLimited(req: NextApiRequest) {
+export async function isClientRateLimited(req: NextApiRequest) {
   const ip = getClientIp(req);
   const header = req.headers.authorization
     ?.slice(0, getEnv().AUTH_HEADER_MAX_LENGTH)

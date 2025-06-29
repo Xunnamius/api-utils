@@ -2,7 +2,7 @@ import { dummyRootData, useMockDateNow } from 'multiverse/mongo-common';
 import { getDb } from 'multiverse/mongo-schema';
 import { BANNED_BEARER_TOKEN } from 'multiverse/next-auth';
 import {
-  isclientRateLimited,
+  isClientRateLimited,
   getAllRateLimits,
   removeRateLimit
 } from 'multiverse/next-limit';
@@ -14,17 +14,17 @@ import type { NextApiRequest } from 'next';
 setupMemoryServerOverride();
 useMockDateNow();
 
-describe('::isclientRateLimited', () => {
+describe('::isClientRateLimited', () => {
   it('returns true if ip or header (case-insensitive) are rate limited', async () => {
     expect.hasAssertions();
 
-    const req1 = await isclientRateLimited({
+    const req1 = await isClientRateLimited({
       headers: { 'x-forwarded-for': '1.2.3.4' },
       method: 'POST',
       url: '/api/route/path1'
     } as unknown as NextApiRequest);
 
-    const req2 = await isclientRateLimited({
+    const req2 = await isClientRateLimited({
       headers: {
         'x-forwarded-for': '8.8.8.8',
         // ? Should work with different cases too
@@ -34,7 +34,7 @@ describe('::isclientRateLimited', () => {
       url: '/api/route/path2'
     } as unknown as NextApiRequest);
 
-    const req3 = await isclientRateLimited({
+    const req3 = await isClientRateLimited({
       headers: {
         'x-forwarded-for': '1.2.3.4',
         authorization: 'bearer fake-header'
@@ -43,7 +43,7 @@ describe('::isclientRateLimited', () => {
       url: '/api/route/path1'
     } as unknown as NextApiRequest);
 
-    const req4 = await isclientRateLimited({
+    const req4 = await isClientRateLimited({
       headers: {
         'x-forwarded-for': '5.6.7.8'
       },
@@ -51,7 +51,7 @@ describe('::isclientRateLimited', () => {
       url: '/api/route/path1'
     } as unknown as NextApiRequest);
 
-    const req5 = await isclientRateLimited({
+    const req5 = await isClientRateLimited({
       headers: {
         'x-forwarded-for': '1.2.3.4',
         authorization: `bearer ${BANNED_BEARER_TOKEN}`
@@ -60,7 +60,7 @@ describe('::isclientRateLimited', () => {
       url: '/api/route/path1'
     } as unknown as NextApiRequest);
 
-    const req6 = await isclientRateLimited({
+    const req6 = await isClientRateLimited({
       headers: {
         // ? Should work with different cases too
         authorization: `bEaReR ${BANNED_BEARER_TOKEN}`
@@ -103,11 +103,11 @@ describe('::isclientRateLimited', () => {
       url: '/api/route/path2'
     } as unknown as NextApiRequest;
 
-    await expect(isclientRateLimited(req1)).resolves.toStrictEqual({
+    await expect(isClientRateLimited(req1)).resolves.toStrictEqual({
       isLimited: false,
       retryAfter: 0
     });
-    await expect(isclientRateLimited(req2)).resolves.toStrictEqual({
+    await expect(isClientRateLimited(req2)).resolves.toStrictEqual({
       isLimited: false,
       retryAfter: 0
     });
@@ -122,7 +122,7 @@ describe('::isclientRateLimited', () => {
       url: '/api/route/path1'
     } as unknown as NextApiRequest;
 
-    await expect(isclientRateLimited(req)).resolves.toStrictEqual({
+    await expect(isClientRateLimited(req)).resolves.toStrictEqual({
       isLimited: true,
       retryAfter: expect.any(Number)
     });
@@ -131,7 +131,7 @@ describe('::isclientRateLimited', () => {
       .collection<InternalLimitedLogEntry>('limited-log')
       .updateOne({ ip: '1.2.3.4' }, { $set: { until: Date.now() - 10 ** 5 } });
 
-    await expect(isclientRateLimited(req)).resolves.toStrictEqual({
+    await expect(isClientRateLimited(req)).resolves.toStrictEqual({
       isLimited: false,
       retryAfter: 0
     });
