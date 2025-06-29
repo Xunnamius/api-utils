@@ -57,8 +57,7 @@ opinionated ways.
   routes.
 - [@-xun/respond][2] — Simple JSON response objects for various HTTP response
   codes.
-- [@-xun/next-env][3] — Unified environment resolution and validation for
-  Next.js.
+- [@-xun/env][3] — Unified environment resolution and validation for Next.js.
 - [shared][4] — Common unpublished multiversal imports (beware the dual package
   hazard!).
 
@@ -151,5 +150,5 @@ specification. Contributions of any kind welcome!
 [x-repo-support]: /.github/SUPPORT.md
 [1]: ./packages/next-api
 [2]: ./packages/respond
-[3]: ./packages/next-env
+[3]: ./packages/env
 [4]: ./packages/shared

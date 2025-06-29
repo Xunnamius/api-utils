@@ -2,12 +2,12 @@ import { validHttpMethods } from '@-xun/types';
 import { parse as parseAsBytes } from 'bytes';
 import { createDebugLogger } from 'rejoinder';
 
-import { ErrorMessage } from 'universe+next-env:error.ts';
+import { ErrorMessage } from 'universe+env:error.ts';
 
 import type { ValidHttpMethod } from '@-xun/types';
 import type { Primitive } from 'type-fest';
 
-const debug = createDebugLogger({ namespace: 'next-env' });
+const debug = createDebugLogger({ namespace: 'env' });
 
 /**
  * This method takes an environment variable value (string), removes illegal
@@ -31,14 +31,16 @@ export type Environment = Record<string, Primitive | Primitive[]>;
  * otherwise affect `process.env`. The environment must be mutated manually.
  */
 export function getEnv<T extends Environment>(customizedEnv?: T) {
+  const initialNodeEnv = process.env.NODE_ENV as string | undefined;
+
   debug('environment definitions (resolved as NODE_ENV) listed in order of precedence:');
   debug(`APP_ENV: %O`, process.env.APP_ENV ?? '(undefined)');
-  debug(`NODE_ENV: %O`, (process.env.NODE_ENV as unknown) ?? '(undefined)');
+  debug(`NODE_ENV: %O`, initialNodeEnv ?? '(undefined)');
   debug(`BABEL_ENV: %O`, process.env.BABEL_ENV ?? '(undefined)');
 
   const env = {
     NODE_ENV:
-      process.env.APP_ENV || process.env.NODE_ENV || process.env.BABEL_ENV || 'unknown',
+      process.env.APP_ENV || initialNodeEnv || process.env.BABEL_ENV || 'unknown',
     MONGODB_URI: process.env.MONGODB_URI || '',
     MONGODB_MS_PORT: Number(process.env.MONGODB_MS_PORT) || 6666,
     API_HYDRATE_DB: !!process.env.API_HYDRATE_DB,

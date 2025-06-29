@@ -12,7 +12,7 @@ import { createDebugLogger } from 'rejoinder';
 import {
   exports as packageExports,
   name as packageName
-} from 'rootverse+next-env:package.json';
+} from 'rootverse+env:package.json';
 
 import {
   ensurePackageHasBeenBuilt,
@@ -20,7 +20,7 @@ import {
 } from 'testverse:util.ts';
 
 const TEST_IDENTIFIER = `${packageName.split('/').at(-1)!}-e2e`;
-const debug = createDebugLogger({ namespace: 'next-env' }).extend(TEST_IDENTIFIER);
+const debug = createDebugLogger({ namespace: 'env' }).extend(TEST_IDENTIFIER);
 const nodeVersion = process.env.XPIPE_MATRIX_NODE_VERSION || process.version;
 
 debug(`nodeVersion: "${nodeVersion}" (process.version=${process.version})`);
@@ -29,7 +29,7 @@ reconfigureJestGlobalsToSkipTestsInThisFileIfRequested({ it: true, test: true })
 
 beforeAll(async () => {
   await ensurePackageHasBeenBuilt(
-    toDirname(toAbsolutePath(require.resolve('rootverse+next-env:package.json'))),
+    toDirname(toAbsolutePath(require.resolve('rootverse+env:package.json'))),
     packageName,
     packageExports
   );

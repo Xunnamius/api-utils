@@ -1,9 +1,9 @@
 {
-  "name": "@-xun/next-env",
-  "version": "1.1.0",
-  "description": "Unified environment resolution and validation for Next.js",
+  "name": "@-xun/env",
+  "version": "1.0.0",
+  "description": "Unified environment resolution and validation for any JS runtime",
   "keywords": [],
-  "homepage": "https://github.com/Xunnamius/react-utils/tree/main/packages/next-env#readme",
+  "homepage": "https://github.com/Xunnamius/react-utils/tree/main/packages/env#readme",
   "bugs": {
     "url": "https://github.com/Xunnamius/react-utils/issues"
   },
@@ -17,8 +17,8 @@
   "type": "commonjs",
   "exports": {
     ".": {
-      "types": "./dist/packages/next-env/src/index.d.ts",
-      "default": "./dist/packages/next-env/src/index.js"
+      "types": "./dist/packages/env/src/index.d.ts",
+      "default": "./dist/packages/env/src/index.js"
     },
     "./package": "./package.json",
     "./package.json": "./package.json"
@@ -26,7 +26,7 @@
   "typesVersions": {
     "*": {
       "index": [
-        "dist/packages/next-env/src/index.d.ts"
+        "dist/packages/env/src/index.d.ts"
       ],
       "package": [
         "package.json"

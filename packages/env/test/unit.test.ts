@@ -1,7 +1,7 @@
 import { validHttpMethods } from '@-xun/types';
 
-import { getEnv } from 'universe+next-env';
-import { ErrorMessage } from 'universe+next-env:error.ts';
+import { getEnv } from 'universe+env';
+import { ErrorMessage } from 'universe+env:error.ts';
 
 import { withMockedEnv } from 'testverse:util.ts';
 

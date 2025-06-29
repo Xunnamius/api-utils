@@ -1,7 +1,7 @@
 <!-- symbiote-template-region-start 1 -->
 
 <p align="center" width="100%">
-  <img width="300" src="https://raw.githubusercontent.com/Xunnamius/react-utils/refs/heads/main/packages/next-env/logo.png">
+  <img width="300" src="https://raw.githubusercontent.com/Xunnamius/react-utils/refs/heads/main/packages/env/logo.png">
 </p>
 
 <p align="center" width="100%">
@@ -27,7 +27,7 @@ Unified environment resolution and validation for Next.js
 
 <br />
 
-# @-xun/next-env
+# @-xun/env
 
 <!-- symbiote-template-region-end -->
 
@@ -63,7 +63,7 @@ Unified environment resolution and validation for Next.js.
 To install:
 
 ```shell
-npm install @-xun/next-env
+npm install @-xun/env
 ```
 
 ## Usage
@@ -172,21 +172,21 @@ See the [table of contributors][x-repo-contributors].
   'Is this package well-tested?'
 [x-badge-codecov-link]: https://codecov.io/gh/Xunnamius/react-utils
 [x-badge-downloads-image]:
-  https://img.shields.io/npm/dm/@-xun/next-env?style=flat-square
+  https://img.shields.io/npm/dm/@-xun/env?style=flat-square
   'Number of times this package has been downloaded per month'
-[x-badge-downloads-link]: https://npmtrends.com/@-xun/next-env
+[x-badge-downloads-link]: https://npmtrends.com/@-xun/env
 [x-badge-lastcommit-image]:
   https://img.shields.io/github/last-commit/Xunnamius/react-utils?style=flat-square
   'Latest commit timestamp'
 [x-badge-license-image]:
-  https://img.shields.io/npm/l/@-xun/next-env?style=flat-square
+  https://img.shields.io/npm/l/@-xun/env?style=flat-square
   "This package's source license"
 [x-badge-license-link]:
   https://github.com/Xunnamius/react-utils/blob/main/LICENSE
 [x-badge-npm-image]:
-  https://xunn.at/npm-pkg-version/@-xun/next-env
+  https://xunn.at/npm-pkg-version/@-xun/env
   'Install this package using npm or yarn!'
-[x-badge-npm-link]: https://npm.im/@-xun/next-env
+[x-badge-npm-link]: https://npm.im/@-xun/env
 [x-badge-repo-link]: https://github.com/Xunnamius/react-utils
 [x-badge-semanticrelease-image]:
   https://xunn.at/badge-semantic-release

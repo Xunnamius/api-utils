@@ -1,8 +1,8 @@
-**@-xun/next-env**
+**@-xun/env**
 
 ***
 
-# @-xun/next-env
+# @-xun/env
 
 ## Modules
 

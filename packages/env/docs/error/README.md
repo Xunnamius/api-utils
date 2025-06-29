@@ -1,8 +1,8 @@
-[**@-xun/next-env**](../README.md)
+[**@-xun/env**](../README.md)
 
 ***
 
-[@-xun/next-env](../README.md) / error
+[@-xun/env](../README.md) / error
 
 # error
 
