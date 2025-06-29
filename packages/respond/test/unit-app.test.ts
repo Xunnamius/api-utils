@@ -6,7 +6,6 @@ import {
   sendHttpBadMethod,
   sendHttpBadRequest,
   sendHttpContrivedError,
-  sendHttpError,
   sendHttpErrorResponse,
   sendHttpNotFound,
   sendHttpOk,
@@ -15,16 +14,21 @@ import {
   sendHttpTooLarge,
   sendHttpUnauthenticated,
   sendHttpUnauthorized,
+  sendHttpUnspecifiedError,
   sendNotImplemented
 } from 'universe+respond';
+
+import { ErrorMessage } from 'universe+respond:error.ts';
 
 describe('::sendGenericHttpResponse', () => {
   it('sends appropriate response given arguments', async () => {
     expect.hasAssertions();
 
     await testApiHandler({
-      pagesHandler: (_, res) => {
-        sendGenericHttpResponse(res, 201);
+      appHandler: {
+        GET() {
+          return sendGenericHttpResponse({ status: 201 });
+        }
       },
       test: async ({ fetch }) => {
         const res = await fetch();
@@ -34,8 +38,10 @@ describe('::sendGenericHttpResponse', () => {
     });
 
     await testApiHandler({
-      pagesHandler: (_, res) => {
-        sendGenericHttpResponse(res, 201, { json: 'data' });
+      appHandler: {
+        GET() {
+          return sendGenericHttpResponse({ status: 201 }, { json: 'data' });
+        }
       },
       test: async ({ fetch }) => {
         const res = await fetch();
@@ -49,8 +55,10 @@ describe('::sendGenericHttpResponse', () => {
     expect.hasAssertions();
 
     await testApiHandler({
-      pagesHandler: (_, res) => {
-        sendGenericHttpResponse(res, 200);
+      appHandler: {
+        GET() {
+          return sendGenericHttpResponse({ status: 200 });
+        }
       },
       test: async ({ fetch }) => {
         const res = await fetch();
@@ -61,34 +69,104 @@ describe('::sendGenericHttpResponse', () => {
   });
 });
 
-describe('::sendHttpBadMethod', () => {
+describe('::sendHttpErrorResponse', () => {
   it('sends appropriate response given arguments', async () => {
     expect.hasAssertions();
 
     await testApiHandler({
-      pagesHandler: (_, res) => {
-        sendHttpBadMethod(res);
+      appHandler: {
+        GET() {
+          return sendHttpErrorResponse(
+            { status: 400 },
+            {
+              json: 'data',
+              error: ErrorMessage.SendHttpErrorResponse()
+            }
+          );
+        }
       },
       test: async ({ fetch }) => {
         const res = await fetch();
-        expect(res.status).toBe(405);
+        expect(res.status).toBe(400);
         await expect(res.json()).resolves.toStrictEqual({
           success: false,
-          error: 'bad method'
+          json: 'data',
+          error: ErrorMessage.SendHttpErrorResponse()
+        });
+      }
+    });
+  });
+});
+
+describe('::sendHttpSuccessResponse', () => {
+  it('sends appropriate response given arguments', async () => {
+    expect.hasAssertions();
+
+    await testApiHandler({
+      appHandler: {
+        GET() {
+          return sendHttpSuccessResponse({ status: 202 });
+        }
+      },
+      test: async ({ fetch }) => {
+        const res = await fetch();
+        expect(res.status).toBe(202);
+        await expect(res.json()).resolves.toStrictEqual({
+          success: true
         });
       }
     });
 
     await testApiHandler({
-      pagesHandler: (_, res) => {
-        sendHttpBadMethod(res, { json: 'data' });
+      appHandler: {
+        GET() {
+          return sendHttpSuccessResponse({ status: 202 }, { json: 'data' });
+        }
+      },
+      test: async ({ fetch }) => {
+        const res = await fetch();
+        expect(res.status).toBe(202);
+        await expect(res.json()).resolves.toStrictEqual({
+          success: true,
+          json: 'data'
+        });
+      }
+    });
+  });
+});
+
+describe('::sendHttpBadMethod', () => {
+  it('sends appropriate response given arguments', async () => {
+    expect.hasAssertions();
+
+    await testApiHandler({
+      appHandler: {
+        GET() {
+          return sendHttpBadMethod();
+        }
       },
       test: async ({ fetch }) => {
         const res = await fetch();
         expect(res.status).toBe(405);
         await expect(res.json()).resolves.toStrictEqual({
           success: false,
-          error: 'bad method',
+          error: ErrorMessage.SendHttpBadMethod()
+        });
+      }
+    });
+
+    await testApiHandler({
+      appHandler: {
+        GET() {
+          return sendHttpBadMethod({ json: 'data' });
+        }
+      },
+      test: async ({ fetch }) => {
+        const res = await fetch();
+        expect(res.status).toBe(405);
+        await expect(res.json()).resolves.toStrictEqual({
+          success: false,
+          error: ErrorMessage.SendHttpBadMethod(),
           json: 'data'
         });
       }
@@ -101,29 +179,33 @@ describe('::sendHttpBadRequest', () => {
     expect.hasAssertions();
 
     await testApiHandler({
-      pagesHandler: (_, res) => {
-        sendHttpBadRequest(res);
+      appHandler: {
+        GET() {
+          return sendHttpBadRequest();
+        }
       },
       test: async ({ fetch }) => {
         const res = await fetch();
         expect(res.status).toBe(400);
         await expect(res.json()).resolves.toStrictEqual({
           success: false,
-          error: 'request was malformed or otherwise bad'
+          error: ErrorMessage.SendHttpBadRequest()
         });
       }
     });
 
     await testApiHandler({
-      pagesHandler: (_, res) => {
-        sendHttpBadRequest(res, { json: 'data' });
+      appHandler: {
+        GET() {
+          return sendHttpBadRequest({ json: 'data' });
+        }
       },
       test: async ({ fetch }) => {
         const res = await fetch();
         expect(res.status).toBe(400);
         await expect(res.json()).resolves.toStrictEqual({
           success: false,
-          error: 'request was malformed or otherwise bad',
+          error: ErrorMessage.SendHttpBadRequest(),
           json: 'data'
         });
       }
@@ -136,29 +218,33 @@ describe('::sendHttpContrivedError', () => {
     expect.hasAssertions();
 
     await testApiHandler({
-      pagesHandler: (_, res) => {
-        sendHttpContrivedError(res);
+      appHandler: {
+        GET() {
+          return sendHttpContrivedError();
+        }
       },
       test: async ({ fetch }) => {
         const res = await fetch();
         expect(res.status).toBe(555);
         await expect(res.json()).resolves.toStrictEqual({
           success: false,
-          error: '(note: do not report this contrived error)'
+          error: ErrorMessage.SendHttpContrivedError()
         });
       }
     });
 
     await testApiHandler({
-      pagesHandler: (_, res) => {
-        sendHttpContrivedError(res, { json: 'data' });
+      appHandler: {
+        GET() {
+          return sendHttpContrivedError({ json: 'data' });
+        }
       },
       test: async ({ fetch }) => {
         const res = await fetch();
         expect(res.status).toBe(555);
         await expect(res.json()).resolves.toStrictEqual({
           success: false,
-          error: '(note: do not report this contrived error)',
+          error: ErrorMessage.SendHttpContrivedError(),
           json: 'data'
         });
       }
@@ -166,34 +252,38 @@ describe('::sendHttpContrivedError', () => {
   });
 });
 
-describe('::sendHttpError', () => {
+describe('::sendHttpUnspecifiedError', () => {
   it('sends appropriate response given arguments', async () => {
     expect.hasAssertions();
 
     await testApiHandler({
-      pagesHandler: (_, res) => {
-        sendHttpError(res);
+      appHandler: {
+        GET() {
+          return sendHttpUnspecifiedError();
+        }
       },
       test: async ({ fetch }) => {
         const res = await fetch();
         expect(res.status).toBe(500);
         await expect(res.json()).resolves.toStrictEqual({
           success: false,
-          error: '🤯 something unexpected happened on our end 🤯'
+          error: ErrorMessage.SendHttpUnspecifiedError()
         });
       }
     });
 
     await testApiHandler({
-      pagesHandler: (_, res) => {
-        sendHttpError(res, { json: 'data' });
+      appHandler: {
+        GET() {
+          return sendHttpUnspecifiedError({ json: 'data' });
+        }
       },
       test: async ({ fetch }) => {
         const res = await fetch();
         expect(res.status).toBe(500);
         await expect(res.json()).resolves.toStrictEqual({
           success: false,
-          error: '🤯 something unexpected happened on our end 🤯',
+          error: ErrorMessage.SendHttpUnspecifiedError(),
           json: 'data'
         });
       }
@@ -206,8 +296,10 @@ describe('::sendHttpOk', () => {
     expect.hasAssertions();
 
     await testApiHandler({
-      pagesHandler: (_, res) => {
-        sendHttpOk(res);
+      appHandler: {
+        GET() {
+          return sendHttpOk();
+        }
       },
       test: async ({ fetch }) => {
         const res = await fetch();
@@ -219,8 +311,10 @@ describe('::sendHttpOk', () => {
     });
 
     await testApiHandler({
-      pagesHandler: (_, res) => {
-        sendHttpOk(res, { json: 'data' });
+      appHandler: {
+        GET() {
+          return sendHttpOk({ json: 'data' });
+        }
       },
       test: async ({ fetch }) => {
         const res = await fetch();
@@ -234,55 +328,38 @@ describe('::sendHttpOk', () => {
   });
 });
 
-describe('::sendHttpErrorResponse', () => {
-  it('sends appropriate response given arguments', async () => {
-    expect.hasAssertions();
-
-    await testApiHandler({
-      pagesHandler: (_, res) => {
-        sendHttpErrorResponse(res, 400, { json: 'data', error: 'error' });
-      },
-      test: async ({ fetch }) => {
-        const res = await fetch();
-        expect(res.status).toBe(400);
-        await expect(res.json()).resolves.toStrictEqual({
-          success: false,
-          json: 'data',
-          error: 'error'
-        });
-      }
-    });
-  });
-});
-
 describe('::sendHttpNotFound', () => {
   it('sends appropriate response given arguments', async () => {
     expect.hasAssertions();
 
     await testApiHandler({
-      pagesHandler: (_, res) => {
-        sendHttpNotFound(res);
+      appHandler: {
+        GET() {
+          return sendHttpNotFound();
+        }
       },
       test: async ({ fetch }) => {
         const res = await fetch();
         expect(res.status).toBe(404);
         await expect(res.json()).resolves.toStrictEqual({
           success: false,
-          error: 'resource was not found'
+          error: ErrorMessage.SendHttpNotFound()
         });
       }
     });
 
     await testApiHandler({
-      pagesHandler: (_, res) => {
-        sendHttpNotFound(res, { json: 'data' });
+      appHandler: {
+        GET() {
+          return sendHttpNotFound({ json: 'data' });
+        }
       },
       test: async ({ fetch }) => {
         const res = await fetch();
         expect(res.status).toBe(404);
         await expect(res.json()).resolves.toStrictEqual({
           success: false,
-          error: 'resource was not found',
+          error: ErrorMessage.SendHttpNotFound(),
           json: 'data'
         });
       }
@@ -295,62 +372,33 @@ describe('::sendHttpRateLimited', () => {
     expect.hasAssertions();
 
     await testApiHandler({
-      pagesHandler: (_, res) => {
-        sendHttpRateLimited(res);
+      appHandler: {
+        GET() {
+          return sendHttpRateLimited();
+        }
       },
       test: async ({ fetch }) => {
         const res = await fetch();
         expect(res.status).toBe(429);
         await expect(res.json()).resolves.toStrictEqual({
           success: false,
-          error: 'client is rate limited'
+          error: ErrorMessage.SendHttpRateLimited()
         });
       }
     });
 
     await testApiHandler({
-      pagesHandler: (_, res) => {
-        sendHttpRateLimited(res, { json: 'data' });
+      appHandler: {
+        GET() {
+          return sendHttpRateLimited({ json: 'data' });
+        }
       },
       test: async ({ fetch }) => {
         const res = await fetch();
         expect(res.status).toBe(429);
         await expect(res.json()).resolves.toStrictEqual({
           success: false,
-          error: 'client is rate limited',
-          json: 'data'
-        });
-      }
-    });
-  });
-});
-
-describe('::sendHttpSuccessResponse', () => {
-  it('sends appropriate response given arguments', async () => {
-    expect.hasAssertions();
-
-    await testApiHandler({
-      pagesHandler: (_, res) => {
-        sendHttpSuccessResponse(res, 202);
-      },
-      test: async ({ fetch }) => {
-        const res = await fetch();
-        expect(res.status).toBe(202);
-        await expect(res.json()).resolves.toStrictEqual({
-          success: true
-        });
-      }
-    });
-
-    await testApiHandler({
-      pagesHandler: (_, res) => {
-        sendHttpSuccessResponse(res, 202, { json: 'data' });
-      },
-      test: async ({ fetch }) => {
-        const res = await fetch();
-        expect(res.status).toBe(202);
-        await expect(res.json()).resolves.toStrictEqual({
-          success: true,
+          error: ErrorMessage.SendHttpRateLimited(),
           json: 'data'
         });
       }
@@ -363,29 +411,33 @@ describe('::sendHttpTooLarge', () => {
     expect.hasAssertions();
 
     await testApiHandler({
-      pagesHandler: (_, res) => {
-        sendHttpTooLarge(res);
+      appHandler: {
+        GET() {
+          return sendHttpTooLarge();
+        }
       },
       test: async ({ fetch }) => {
         const res = await fetch();
         expect(res.status).toBe(413);
         await expect(res.json()).resolves.toStrictEqual({
           success: false,
-          error: 'request body is too large'
+          error: ErrorMessage.SendHttpTooLarge()
         });
       }
     });
 
     await testApiHandler({
-      pagesHandler: (_, res) => {
-        sendHttpTooLarge(res, { json: 'data' });
+      appHandler: {
+        GET() {
+          return sendHttpTooLarge({ json: 'data' });
+        }
       },
       test: async ({ fetch }) => {
         const res = await fetch();
         expect(res.status).toBe(413);
         await expect(res.json()).resolves.toStrictEqual({
           success: false,
-          error: 'request body is too large',
+          error: ErrorMessage.SendHttpTooLarge(),
           json: 'data'
         });
       }
@@ -398,29 +450,33 @@ describe('::sendHttpBadContentType', () => {
     expect.hasAssertions();
 
     await testApiHandler({
-      pagesHandler: (_, res) => {
-        sendHttpBadContentType(res);
+      appHandler: {
+        GET() {
+          return sendHttpBadContentType();
+        }
       },
       test: async ({ fetch }) => {
         const res = await fetch();
         expect(res.status).toBe(415);
         await expect(res.json()).resolves.toStrictEqual({
           success: false,
-          error: 'request payload is in an unsupported format'
+          error: ErrorMessage.SendHttpBadContentType()
         });
       }
     });
 
     await testApiHandler({
-      pagesHandler: (_, res) => {
-        sendHttpBadContentType(res, { json: 'data' });
+      appHandler: {
+        GET() {
+          return sendHttpBadContentType({ json: 'data' });
+        }
       },
       test: async ({ fetch }) => {
         const res = await fetch();
         expect(res.status).toBe(415);
         await expect(res.json()).resolves.toStrictEqual({
           success: false,
-          error: 'request payload is in an unsupported format',
+          error: ErrorMessage.SendHttpBadContentType(),
           json: 'data'
         });
       }
@@ -433,29 +489,33 @@ describe('::sendHttpUnauthenticated', () => {
     expect.hasAssertions();
 
     await testApiHandler({
-      pagesHandler: (_, res) => {
-        sendHttpUnauthenticated(res);
+      appHandler: {
+        GET() {
+          return sendHttpUnauthenticated();
+        }
       },
       test: async ({ fetch }) => {
         const res = await fetch();
         expect(res.status).toBe(401);
         await expect(res.json()).resolves.toStrictEqual({
           success: false,
-          error: 'client is not authenticated'
+          error: ErrorMessage.SendHttpUnauthenticated()
         });
       }
     });
 
     await testApiHandler({
-      pagesHandler: (_, res) => {
-        sendHttpUnauthenticated(res, { json: 'data' });
+      appHandler: {
+        GET() {
+          return sendHttpUnauthenticated({ json: 'data' });
+        }
       },
       test: async ({ fetch }) => {
         const res = await fetch();
         expect(res.status).toBe(401);
         await expect(res.json()).resolves.toStrictEqual({
           success: false,
-          error: 'client is not authenticated',
+          error: ErrorMessage.SendHttpUnauthenticated(),
           json: 'data'
         });
       }
@@ -468,29 +528,33 @@ describe('::sendHttpUnauthorized', () => {
     expect.hasAssertions();
 
     await testApiHandler({
-      pagesHandler: (_, res) => {
-        sendHttpUnauthorized(res);
+      appHandler: {
+        GET() {
+          return sendHttpUnauthorized();
+        }
       },
       test: async ({ fetch }) => {
         const res = await fetch();
         expect(res.status).toBe(403);
         await expect(res.json()).resolves.toStrictEqual({
           success: false,
-          error: 'client is not authorized to access this resource'
+          error: ErrorMessage.SendHttpUnauthorized()
         });
       }
     });
 
     await testApiHandler({
-      pagesHandler: (_, res) => {
-        sendHttpUnauthorized(res, { json: 'data' });
+      appHandler: {
+        GET() {
+          return sendHttpUnauthorized({ json: 'data' });
+        }
       },
       test: async ({ fetch }) => {
         const res = await fetch();
         expect(res.status).toBe(403);
         await expect(res.json()).resolves.toStrictEqual({
           success: false,
-          error: 'client is not authorized to access this resource',
+          error: ErrorMessage.SendHttpUnauthorized(),
           json: 'data'
         });
       }
@@ -503,29 +567,33 @@ describe('::sendNotImplemented', () => {
     expect.hasAssertions();
 
     await testApiHandler({
-      pagesHandler: (_, res) => {
-        sendNotImplemented(res);
+      appHandler: {
+        GET() {
+          return sendNotImplemented();
+        }
       },
       test: async ({ fetch }) => {
         const res = await fetch();
         expect(res.status).toBe(501);
         await expect(res.json()).resolves.toStrictEqual({
           success: false,
-          error: 'this endpoint has not yet been implemented'
+          error: ErrorMessage.SendNotImplemented()
         });
       }
     });
 
     await testApiHandler({
-      pagesHandler: (_, res) => {
-        sendNotImplemented(res, { json: 'data' });
+      appHandler: {
+        GET() {
+          return sendNotImplemented({ json: 'data' });
+        }
       },
       test: async ({ fetch }) => {
         const res = await fetch();
         expect(res.status).toBe(501);
         await expect(res.json()).resolves.toStrictEqual({
           success: false,
-          error: 'this endpoint has not yet been implemented',
+          error: ErrorMessage.SendNotImplemented(),
           json: 'data'
         });
       }
