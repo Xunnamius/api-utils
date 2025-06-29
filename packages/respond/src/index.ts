@@ -1,6 +1,15 @@
+import type { ServerResponse } from 'node:http';
 import type { HttpStatusCode } from '@-xun/types';
-import type { NextApiResponse } from 'next';
 import type { JsonObject } from 'type-fest';
+
+export type NextApiResponseLike = ServerResponse & {
+  status: (statusCode: number) => NextApiResponseLike;
+  /**
+   * Send data `any` data in response
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  send: (body: any) => void;
+};
 
 /**
  * Generic success JSON result object.
@@ -23,7 +32,7 @@ export interface JsonError extends JsonObject {
  * all other response functions.
  */
 export function sendGenericHttpResponse(
-  res: NextApiResponse,
+  res: NextApiResponseLike,
   statusCode: HttpStatusCode,
   responseJson?: Record<string, unknown>
 ) {
@@ -38,7 +47,7 @@ export function sendGenericHttpResponse(
  * additional properties. This function is called by all 2xx response functions.
  */
 export function sendHttpSuccessResponse(
-  res: NextApiResponse,
+  res: NextApiResponseLike,
   statusCode: HttpStatusCode,
   responseJson?: Record<string, unknown>
 ) {
@@ -53,7 +62,7 @@ export function sendHttpSuccessResponse(
  * functions.
  */
 export function sendHttpErrorResponse(
-  res: NextApiResponse,
+  res: NextApiResponseLike,
   statusCode: HttpStatusCode,
   responseJson: Record<string, unknown> & { error: string }
 ) {
@@ -66,7 +75,7 @@ export function sendHttpErrorResponse(
  * Sends an HTTP 200 "ok" response with optional `responseJson` data.
  */
 export function sendHttpOk(
-  res: NextApiResponse,
+  res: NextApiResponseLike,
   responseJson?: Record<string, unknown>
 ) {
   sendHttpSuccessResponse(res, 200, responseJson);
@@ -76,7 +85,7 @@ export function sendHttpOk(
  * Sends an HTTP 400 "client error" response with optional `responseJson` data.
  */
 export function sendHttpBadRequest(
-  res: NextApiResponse,
+  res: NextApiResponseLike,
   responseJson?: Record<string, unknown>
 ) {
   sendHttpErrorResponse(res, 400, {
@@ -90,7 +99,7 @@ export function sendHttpBadRequest(
  * data.
  */
 export function sendHttpUnauthenticated(
-  res: NextApiResponse,
+  res: NextApiResponseLike,
   responseJson?: Record<string, unknown>
 ) {
   sendHttpErrorResponse(res, 401, {
@@ -104,7 +113,7 @@ export function sendHttpUnauthenticated(
  * `responseJson` data.
  */
 export function sendHttpUnauthorized(
-  res: NextApiResponse,
+  res: NextApiResponseLike,
   responseJson?: Record<string, unknown>
 ) {
   sendHttpErrorResponse(res, 403, {
@@ -117,7 +126,7 @@ export function sendHttpUnauthorized(
  * Sends an HTTP 404 "not found" response with optional `responseJson` data.
  */
 export function sendHttpNotFound(
-  res: NextApiResponse,
+  res: NextApiResponseLike,
   responseJson?: Record<string, unknown>
 ) {
   sendHttpErrorResponse(res, 404, {
@@ -130,7 +139,7 @@ export function sendHttpNotFound(
  * Sends an HTTP 405 "bad method" response with optional `responseJson` data.
  */
 export function sendHttpBadMethod(
-  res: NextApiResponse,
+  res: NextApiResponseLike,
   responseJson?: Record<string, unknown>
 ) {
   sendHttpErrorResponse(res, 405, {
@@ -143,7 +152,7 @@ export function sendHttpBadMethod(
  * Sends an HTTP 413 "too big" response with optional `responseJson` data.
  */
 export function sendHttpTooLarge(
-  res: NextApiResponse,
+  res: NextApiResponseLike,
   responseJson?: Record<string, unknown>
 ) {
   sendHttpErrorResponse(res, 413, {
@@ -157,7 +166,7 @@ export function sendHttpTooLarge(
  * `responseJson` data.
  */
 export function sendHttpBadContentType(
-  res: NextApiResponse,
+  res: NextApiResponseLike,
   responseJson?: Record<string, unknown>
 ) {
   sendHttpErrorResponse(res, 415, {
@@ -171,7 +180,7 @@ export function sendHttpBadContentType(
  * data.
  */
 export function sendHttpRateLimited(
-  res: NextApiResponse,
+  res: NextApiResponseLike,
   responseJson?: Record<string, unknown>
 ) {
   sendHttpErrorResponse(res, 429, {
@@ -185,7 +194,7 @@ export function sendHttpRateLimited(
  * `responseJson` data.
  */
 export function sendHttpError(
-  res: NextApiResponse,
+  res: NextApiResponseLike,
   responseJson?: Record<string, unknown>
 ) {
   sendHttpErrorResponse(res, 500, {
@@ -199,7 +208,7 @@ export function sendHttpError(
  * data.
  */
 export function sendNotImplemented(
-  res: NextApiResponse,
+  res: NextApiResponseLike,
   responseJson?: Record<string, unknown>
 ) {
   sendHttpErrorResponse(res, 501, {
@@ -212,7 +221,7 @@ export function sendNotImplemented(
  * Sends an HTTP 555 "contrived" response with optional `responseJson` data.
  */
 export function sendHttpContrivedError(
-  res: NextApiResponse,
+  res: NextApiResponseLike,
   responseJson?: Record<string, unknown>
 ) {
   sendHttpErrorResponse(res, 555, {
