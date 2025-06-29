@@ -16,7 +16,7 @@ import {
   sendHttpUnauthenticated,
   sendHttpUnauthorized,
   sendNotImplemented
-} from 'universe+respond:index.ts';
+} from 'universe+respond';
 
 describe('::sendGenericHttpResponse', () => {
   it('sends appropriate response given arguments', async () => {
