@@ -2,9 +2,13 @@ import { getEnv } from '@-xun/env';
 import { getDb } from '@-xun/mongo-schema';
 import { getClientIp } from 'request-ip';
 
+import { globalDebugLogger } from 'universe+api-strategy:constant.ts';
+
 import type { UnixEpochMs } from '@-xun/types';
-import type { UpdateResult, WithId, WithoutId } from 'mongodb';
+import type { WithId, WithoutId } from 'mongodb';
 import type { NextApiRequestLike } from 'multiverse+shared';
+
+const debug = globalDebugLogger.extend('limit');
 
 /**
  * The shape of an entry in the well-known "limited log" collection.
@@ -80,7 +84,7 @@ export async function removeRateLimit({
       }
 
       const now = Date.now();
-      const result = (await (await getDb({ name: 'root' }))
+      const result = await (await getDb({ name: 'root' }))
         .collection<InternalLimitedLogEntry>('limited-log')
         .updateMany(
           {
@@ -88,7 +92,7 @@ export async function removeRateLimit({
             until: { $gt: now } // ? Skip the recently unbanned
           },
           { $set: { until: now } }
-        )) as UpdateResult;
+        );
 
       return result.modifiedCount;
     }

@@ -16,20 +16,23 @@
   "sideEffects": false,
   "type": "commonjs",
   "exports": {
-    ".": {
-      "types": "./dist/packages/api-strategy/src/index.d.ts",
-      "default": "./dist/packages/api-strategy/src/index.js"
-    },
     "./package": "./package.json",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./*": {
+      "types": "./dist/packages/api-strategy/src/*.d.ts",
+      "default": "./dist/packages/api-strategy/src/*.js"
+    }
   },
   "typesVersions": {
     "*": {
-      "index": [
-        "dist/packages/api-strategy/src/index.d.ts"
-      ],
       "package": [
         "package.json"
+      ],
+      "package.json": [
+        "package.json"
+      ],
+      "*": [
+        "dist/packages/api-strategy/src/*.d.ts"
       ]
     }
   },
@@ -62,13 +65,18 @@
     "test:packages:all": "symbiote test --env NODE_NO_WARNINGS=1 --tests all-local --scope unlimited --coverage"
   },
   "dependencies": {
+    "@-xun/env": "^1.0.0",
+    "@-xun/mongo-schema": "^1.1.2",
     "@-xun/types": "^1.1.0",
-    "type-fest": "^4.41.0"
+    "core-js": "^3.43.0",
+    "rejoinder": "^2.0.1",
+    "request-ip": "^3.3.0"
   },
   "devDependencies": {
-    "@-xun/fs": "^2.0.0",
-    "next-test-api-route-handler": "^4.0.16",
-    "rejoinder": "^2.0.1"
+    "@-xun/fs": "^2.0.0"
+  },
+  "peerDependencies": {
+    "mongodb": ">=6"
   },
   "engines": {
     "node": "^20.18.0 || >=22.12.0"

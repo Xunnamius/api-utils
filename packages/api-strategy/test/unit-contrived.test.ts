@@ -4,8 +4,11 @@ import { setupMemoryServerOverride } from 'multiverse/mongo-test';
 import { isDueForContrivedError } from 'multiverse/next-contrived';
 import { mockEnvFactory } from 'testverse/setup';
 
-setupMemoryServerOverride();
 useMockDateNow();
+setupMemoryServerOverride({
+  schema: getSchemaConfig(),
+  data: getDummyData()
+});
 
 const withMockedEnv = mockEnvFactory({ NODE_ENV: 'test' });
 const { _id, ...entry } = dummyRootData['request-log'][0];

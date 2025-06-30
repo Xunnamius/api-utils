@@ -1,8 +1,9 @@
 import { getEnv } from '@-xun/env';
-import { createDebugLogger } from 'rejoinder';
 import { getDb } from '@-xun/mongo-schema';
 
-const debug = createDebugLogger('next-contrived:isDueForContrivedError');
+import { globalDebugLogger } from 'universe+api-strategy:constant.ts';
+
+const debug = globalDebugLogger.extend('contrived');
 
 /**
  * Returns `true` if a request should be rejected with a pseudo-error.

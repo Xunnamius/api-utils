@@ -11,8 +11,11 @@ import { setupMemoryServerOverride } from 'multiverse/mongo-test';
 import type { InternalLimitedLogEntry } from 'multiverse/next-limit';
 import type { NextApiRequest } from 'next';
 
-setupMemoryServerOverride();
 useMockDateNow();
+setupMemoryServerOverride({
+  schema: getSchemaConfig(),
+  data: getDummyData()
+});
 
 describe('::isClientRateLimited', () => {
   it('returns true if ip or header (case-insensitive) are rate limited', async () => {

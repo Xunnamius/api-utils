@@ -2,9 +2,13 @@ import { getEnv } from '@-xun/env';
 import { getDb } from '@-xun/mongo-schema';
 import { getClientIp } from 'request-ip';
 
+import { globalDebugLogger } from 'universe+api-strategy:constant.ts';
+
 import type { HttpStatusCode, UnixEpochMs } from '@-xun/types';
 import type { WithId, WithoutId } from 'mongodb';
 import type { NextApiRequestLike, NextApiResponseLike } from 'multiverse+shared';
+
+const debug = globalDebugLogger.extend('log');
 
 /**
  * The shape of an entry in the well-known "request log" collection.
