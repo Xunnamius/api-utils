@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-import { isNextApiResponseLike } from 'multiverse+shared';
+import { isNextApiResponseLike } from 'multiverse+shared:next-like.ts';
 
 import { ErrorMessage } from 'universe+respond:error.ts';
 
 import type { HttpStatusCode } from '@-xun/types';
 import type { JsonObject } from 'type-fest';
-import type { NextApiResponseLike } from 'multiverse+shared';
+import type { NextApiResponseLike } from 'multiverse+shared:next-like.ts';
 
 type ModernGenericParameters = [responseInit: ResponseInit, json?: JsonObject];
 
