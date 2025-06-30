@@ -15,7 +15,7 @@ const debug = createDebugLogger({ namespace: 'symbiote:config:release' });
 module.exports = deepMergeConfig(
   moduleExport(assertEnvironment({ projectRoot: __dirname })),
   {
-    // Any custom configs here will be deep merged with moduleExport's result
+    // Any custom configs here will be deep merged w/ moduleExport's result
   }
 );
 
