@@ -8,7 +8,6 @@ import addRawBody, {
 } from '@-xun/adhesive/add-raw-body';
 
 import type { Options, WithRawBody } from '@-xun/adhesive/add-raw-body';
-import type { NextApiRequest } from 'next';
 
 describe('::<default export>', () => {
   it('throws if bodyParser is not disabled', async () => {

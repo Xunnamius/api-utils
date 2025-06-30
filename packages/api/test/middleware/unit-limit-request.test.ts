@@ -1,4 +1,4 @@
-import { asMockedFunction } from '@-xun/jest-types';
+import { asMocked } from 'testverse:util.ts';
 import limitRequest from '@-xun/adhesive/limit-request';
 import { withMiddleware } from '@-xun/api-glue';
 import { isClientRateLimited } from '@-xun/limit';
@@ -8,7 +8,7 @@ import { mockEnvFactory, noopHandler, wrapHandler } from 'testverse/setup';
 jest.mock('@-xun/limit');
 
 const withMockedEnv = mockEnvFactory({ NODE_ENV: 'test' });
-const mockisclientRateLimited = asMockedFunction(isClientRateLimited);
+const mockisclientRateLimited = asMocked(isClientRateLimited);
 
 beforeEach(() => {
   mockisclientRateLimited.mockReturnValue(

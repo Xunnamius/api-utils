@@ -10,7 +10,6 @@ import {
 
 import type { JsonError } from '@-xun/types';
 import type { MiddlewareContext } from '@-xun/api-glue';
-import type { NextApiRequest, NextApiResponse } from 'next';
 import type { Promisable } from 'type-fest';
 
 const debug = createDebugLogger('next-adhesive:handle-error');

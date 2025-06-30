@@ -4,7 +4,6 @@ import { toss } from 'toss-expression';
 
 import type { NoInfer } from '@-xun/types';
 import type { ExtendedDebugger } from 'rejoinder';
-import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 
 const debug = createDebugLogger('next-api-glue:runtime');
 

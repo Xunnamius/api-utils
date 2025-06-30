@@ -1,4 +1,4 @@
-import { asMockedFunction } from '@-xun/jest-types';
+import { asMocked } from 'testverse:util.ts';
 import logRequest from '@-xun/adhesive/log-request';
 import { withMiddleware } from '@-xun/api-glue';
 import { addToRequestLog } from '@-xun/log';
@@ -8,7 +8,7 @@ import { toss } from 'toss-expression';
 
 jest.mock('@-xun/log');
 
-const mockAddToRequestLog = asMockedFunction(addToRequestLog);
+const mockAddToRequestLog = asMocked(addToRequestLog);
 
 beforeEach(() => {
   mockAddToRequestLog.mockReturnValue(Promise.resolve());

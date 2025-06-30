@@ -4,7 +4,6 @@ import { toss } from 'toss-expression';
 import { sendHttpBadContentType, sendHttpBadRequest } from '@-xun/respond';
 
 import type { ValidHttpMethod } from '@-xun/types';
-import type { NextApiRequest, NextApiResponse } from 'next';
 import type { MiddlewareContext } from '@-xun/api-glue';
 
 const debug = createDebugLogger('next-adhesive:check-content-type');

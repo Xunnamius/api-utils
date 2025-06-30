@@ -3,7 +3,6 @@ import { sendHttpBadMethod } from '@-xun/respond';
 import { createDebugLogger } from 'rejoinder';
 
 import type { ValidHttpMethod } from '@-xun/types';
-import type { NextApiRequest, NextApiResponse } from 'next';
 import type { MiddlewareContext } from '@-xun/api-glue';
 
 const debug = createDebugLogger('next-adhesive:check-method');

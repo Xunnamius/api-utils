@@ -3,7 +3,6 @@ import { createDebugLogger } from 'rejoinder';
 
 import type { Options as CheckMethodOptions } from '@-xun/adhesive/check-method';
 import type { MiddlewareContext } from '@-xun/api-glue';
-import type { NextApiRequest, NextApiResponse } from 'next';
 
 const debug = createDebugLogger('next-adhesive:use-cors');
 

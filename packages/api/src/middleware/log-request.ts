@@ -4,7 +4,6 @@ import { performance as perf } from 'node:perf_hooks';
 import { addToRequestLog } from '@-xun/log';
 import { createDebugLogger } from 'rejoinder';
 
-import type { NextApiRequest, NextApiResponse } from 'next';
 import type { MiddlewareContext } from '@-xun/api-glue';
 
 const debug = createDebugLogger('next-adhesive:log-request');

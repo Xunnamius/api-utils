@@ -2,7 +2,6 @@ import { isDueForContrivedError } from '@-xun/contrived';
 import { sendHttpContrivedError } from '@-xun/respond';
 import { createDebugLogger } from 'rejoinder';
 
-import type { NextApiRequest, NextApiResponse } from 'next';
 import type { MiddlewareContext } from '@-xun/api-glue';
 
 const debug = createDebugLogger('next-adhesive:contrive-error');

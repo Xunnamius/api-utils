@@ -5,7 +5,6 @@ import { toss } from 'toss-expression';
 import { DummyError } from 'universe/error';
 
 import type { Middleware, MiddlewareContext } from '@-xun/api-glue';
-import type { NextApiRequest, NextApiResponse, NextConfig } from 'next';
 
 const MAX_CONTENT_LENGTH_BYTES = 100_000;
 const MAX_CONTENT_LENGTH_BYTES_PLUS_1 = 100_001;
@@ -43,7 +42,7 @@ describe('::withMiddleware', () => {
     const pagesHandler = withMiddleware(noopHandler, {
       descriptor: '/fake',
       use: []
-    }) as ReturnType<typeof withMiddleware> & { config: NextConfig };
+    });
 
     pagesHandler.config = {
       api: {

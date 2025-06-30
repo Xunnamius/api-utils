@@ -1,4 +1,4 @@
-import { asMockedFunction } from '@-xun/jest-types';
+import { asMocked } from 'testverse:util.ts';
 import contriveError, { type Options } from '@-xun/adhesive/contrive-error';
 import { withMiddleware } from '@-xun/api-glue';
 import { isDueForContrivedError } from '@-xun/contrived';
@@ -7,7 +7,7 @@ import { noopHandler, wrapHandler } from 'testverse/setup';
 
 jest.mock('@-xun/contrived');
 
-const mockIsDueForContrivedError = asMockedFunction(isDueForContrivedError);
+const mockIsDueForContrivedError = asMocked(isDueForContrivedError);
 
 beforeEach(() => {
   mockIsDueForContrivedError.mockReturnValue(Promise.resolve(false));

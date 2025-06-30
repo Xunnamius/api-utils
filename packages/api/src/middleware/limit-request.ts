@@ -4,8 +4,6 @@ import { createDebugLogger } from 'rejoinder';
 
 import { sendHttpRateLimited, sendHttpUnauthorized } from '@-xun/respond';
 
-import type { NextApiRequest, NextApiResponse } from 'next';
-
 const debug = createDebugLogger('next-adhesive:limit-request');
 
 export type Options = {

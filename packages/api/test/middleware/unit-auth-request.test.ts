@@ -1,4 +1,4 @@
-import { asMockedFunction } from '@-xun/jest-types';
+import { asMocked } from 'testverse:util.ts';
 import authRequest, { type Options } from '@-xun/adhesive/auth-request';
 import { withMiddleware } from '@-xun/api-glue';
 import { authenticateHeader, authorizeHeader } from '@-xun/auth';
@@ -7,8 +7,8 @@ import { noopHandler, wrapHandler } from 'testverse/setup';
 
 jest.mock('@-xun/auth');
 
-const mockAuthenticateHeader = asMockedFunction(authenticateHeader);
-const mockAuthorizeHeader = asMockedFunction(authorizeHeader);
+const mockAuthenticateHeader = asMocked(authenticateHeader);
+const mockAuthorizeHeader = asMocked(authorizeHeader);
 
 beforeEach(() => {
   mockAuthenticateHeader.mockReturnValue(Promise.resolve({ authenticated: false }));
