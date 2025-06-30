@@ -4,6 +4,8 @@ import { getEnv } from '@-xun/env';
 import { itemToObjectId } from '@-xun/mongo-item';
 import { MongoServerError, ObjectId } from 'mongodb';
 
+import { isNextApiRequestLike } from 'multiverse+shared:next-like.ts';
+
 import {
   getAuthDb,
   publicAuthEntryProjection,
@@ -15,9 +17,9 @@ import {
 import { getValidators } from 'universe+api-strategy:auth/types.ts';
 import { globalDebugLogger } from 'universe+api-strategy:constant.ts';
 import { ErrorMessage } from 'universe+api-strategy:error.ts';
-import { isNextApiRequestLike } from 'universe+shared:next-like.ts';
 
 import type { LiteralUnknownUnion } from '@-xun/types';
+import type { NextApiRequestLike } from 'multiverse+shared:next-like.ts';
 
 import type {
   InternalAuthEntry,
@@ -27,8 +29,6 @@ import type {
   TokenAttributes,
   TokenAttributesFilter
 } from 'universe+api-strategy:auth/types.ts';
-
-import type { NextApiRequestLike } from 'universe+shared:next-like.ts';
 
 /**
  * Used as the MongoDb query resultset limit. The API will never return more

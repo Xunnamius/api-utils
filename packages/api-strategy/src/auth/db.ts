@@ -1,5 +1,6 @@
 import { getDb } from '@-xun/mongo-schema';
 
+import type { Collection } from 'mongodb';
 import type { Exact } from 'type-fest';
 
 import type {
@@ -23,8 +24,8 @@ export const publicAuthEntryProjection = {
  * Return the well-known "auth" collection after calling {@link getDb} on the
  * `'root'` database.
  */
-export async function getAuthDb() {
-  return (await getDb({ name: 'root' })).collection<InternalAuthEntry>('auth');
+export async function getAuthDb(): Promise<Collection<InternalAuthEntry>> {
+  return (await getDb({ name: 'root' })).collection('auth');
 }
 
 /**

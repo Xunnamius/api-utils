@@ -8,10 +8,8 @@ import {
   updateTokensAttributes
 } from 'universe+api-strategy:auth.ts';
 
-import {
-  getCommonDummyData,
-  getCommonSchemaConfig
-} from 'universe+api-strategy:mongo.ts';
+import { getCommonDummyData } from 'universe+api-strategy:mongo/dummy.ts';
+import { getCommonSchemaConfig } from 'universe+api-strategy:mongo/index.ts';
 
 import { useMockDateNow } from 'testverse:util.ts';
 

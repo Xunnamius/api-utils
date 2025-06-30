@@ -1,6 +1,6 @@
 {
   "name": "@-xun/api-strategy",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Strategies for solving several problems common to @-xun/api and similar packages",
   "keywords": [],
   "homepage": "https://github.com/Xunnamius/api-utils/tree/main/packages/api-strategy#readme",
@@ -33,8 +33,12 @@
       "default": "./dist/packages/api-strategy/src/log.js"
     },
     "./mongo": {
-      "types": "./dist/packages/api-strategy/src/mongo.d.ts",
-      "default": "./dist/packages/api-strategy/src/mongo.js"
+      "types": "./dist/packages/api-strategy/src/mongo/index.d.ts",
+      "default": "./dist/packages/api-strategy/src/mongo/index.js"
+    },
+    "./mongo/dummy": {
+      "types": "./dist/packages/api-strategy/src/mongo/dummy.d.ts",
+      "default": "./dist/packages/api-strategy/src/mongo/dummy.js"
     },
     "./package": "./package.json",
     "./package.json": "./package.json"
@@ -54,7 +58,10 @@
         "dist/packages/api-strategy/src/log.d.ts"
       ],
       "mongo": [
-        "dist/packages/api-strategy/src/mongo.d.ts"
+        "dist/packages/api-strategy/src/mongo/index.d.ts"
+      ],
+      "mongo/dummy": [
+        "dist/packages/api-strategy/src/mongo/dummy.d.ts"
       ],
       "package": [
         "package.json"
@@ -97,17 +104,26 @@
     "@-xun/js": "^2.0.0",
     "@-xun/mongo-item": "^1.0.0",
     "@-xun/mongo-schema": "^1.1.2",
+    "@-xun/mongo-test": "^1.1.2",
     "@-xun/types": "^1.1.0",
     "arktype": "^2.1.20",
     "core-js": "^3.43.0",
+    "mongodb": ">=6",
     "rejoinder": "^2.0.1",
     "request-ip": "^3.3.0"
   },
   "devDependencies": {
-    "@-xun/fs": "^2.0.0"
+    "@-xun/fs": "^2.0.0",
+    "type-fest": "^4.41.0"
   },
   "peerDependencies": {
+    "@-xun/jest": ">=2",
     "mongodb": ">=6"
+  },
+  "peerDependenciesMeta": {
+    "@-xun/jest": {
+      "optional": true
+    }
   },
   "engines": {
     "node": "^20.18.0 || >=22.12.0"

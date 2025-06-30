@@ -2,12 +2,8 @@ import { getDb } from '@-xun/mongo-schema';
 import { setupMemoryServerOverride } from '@-xun/mongo-test';
 
 import { isDueForContrivedError } from 'universe+api-strategy:contrived.ts';
-
-import {
-  dummyRootData,
-  getCommonDummyData,
-  getCommonSchemaConfig
-} from 'universe+api-strategy:mongo.ts';
+import { dummyRootData, getCommonDummyData } from 'universe+api-strategy:mongo/dummy.ts';
+import { getCommonSchemaConfig } from 'universe+api-strategy:mongo/index.ts';
 
 import { mockEnvFactory, useMockDateNow } from 'testverse:util.ts';
 

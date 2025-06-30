@@ -1,7 +1,5 @@
-import {
-  getCommonDummyData,
-  getCommonSchemaConfig
-} from 'universe+api-strategy:mongo.ts';
+import { getCommonDummyData } from 'universe+api-strategy:mongo/dummy.ts';
+import { getCommonSchemaConfig } from 'universe+api-strategy:mongo/index.ts';
 
 describe('::getCommonSchemaConfig', () => {
   it('returns an object with dummy root schema and additional dummy schema', async () => {

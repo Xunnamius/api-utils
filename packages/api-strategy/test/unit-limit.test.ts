@@ -9,15 +9,12 @@ import {
   removeRateLimit
 } from 'universe+api-strategy:limit.ts';
 
-import {
-  dummyRootData,
-  getCommonDummyData,
-  getCommonSchemaConfig
-} from 'universe+api-strategy:mongo.ts';
+import { dummyRootData, getCommonDummyData } from 'universe+api-strategy:mongo/dummy.ts';
+import { getCommonSchemaConfig } from 'universe+api-strategy:mongo/index.ts';
 
 import { useMockDateNow } from 'testverse:util.ts';
 
-import type { NextApiRequest } from 'next';
+import type { NextApiRequestLike } from 'multiverse+shared:next-like.ts';
 import type { InternalLimitedLogEntry } from 'universe+api-strategy:limit.ts';
 
 useMockDateNow();
@@ -34,7 +31,7 @@ describe('::isClientRateLimited', () => {
       headers: { 'x-forwarded-for': '1.2.3.4' },
       method: 'POST',
       url: '/api/route/path1'
-    } as unknown as NextApiRequest);
+    } as unknown as NextApiRequestLike);
 
     const req2 = await isClientRateLimited({
       headers: {
@@ -44,7 +41,7 @@ describe('::isClientRateLimited', () => {
       },
       method: 'GET',
       url: '/api/route/path2'
-    } as unknown as NextApiRequest);
+    } as unknown as NextApiRequestLike);
 
     const req3 = await isClientRateLimited({
       headers: {
@@ -53,7 +50,7 @@ describe('::isClientRateLimited', () => {
       },
       method: 'POST',
       url: '/api/route/path1'
-    } as unknown as NextApiRequest);
+    } as unknown as NextApiRequestLike);
 
     const req4 = await isClientRateLimited({
       headers: {
@@ -61,7 +58,7 @@ describe('::isClientRateLimited', () => {
       },
       method: 'POST',
       url: '/api/route/path1'
-    } as unknown as NextApiRequest);
+    } as unknown as NextApiRequestLike);
 
     const req5 = await isClientRateLimited({
       headers: {
@@ -70,7 +67,7 @@ describe('::isClientRateLimited', () => {
       },
       method: 'POST',
       url: '/api/route/path1'
-    } as unknown as NextApiRequest);
+    } as unknown as NextApiRequestLike);
 
     const req6 = await isClientRateLimited({
       headers: {
@@ -79,7 +76,7 @@ describe('::isClientRateLimited', () => {
       },
       method: 'POST',
       url: '/api/route/path1'
-    } as unknown as NextApiRequest);
+    } as unknown as NextApiRequestLike);
 
     expect(req1.isLimited).toBeTrue();
     expect(req2.isLimited).toBeTrue();
@@ -104,7 +101,7 @@ describe('::isClientRateLimited', () => {
       headers: { 'x-forwarded-for': '1.2.3.5' },
       method: 'POST',
       url: '/api/route/path1'
-    } as unknown as NextApiRequest;
+    } as unknown as NextApiRequestLike;
 
     const req2 = {
       headers: {
@@ -113,7 +110,7 @@ describe('::isClientRateLimited', () => {
       },
       method: 'GET',
       url: '/api/route/path2'
-    } as unknown as NextApiRequest;
+    } as unknown as NextApiRequestLike;
 
     await expect(isClientRateLimited(req1)).resolves.toStrictEqual({
       isLimited: false,
@@ -132,7 +129,7 @@ describe('::isClientRateLimited', () => {
       headers: { 'x-forwarded-for': '1.2.3.4' },
       method: 'POST',
       url: '/api/route/path1'
-    } as unknown as NextApiRequest;
+    } as unknown as NextApiRequestLike;
 
     await expect(isClientRateLimited(req)).resolves.toStrictEqual({
       isLimited: true,

@@ -1,21 +1,31 @@
 import { getEnv } from '@-xun/env';
 
-import { getArktype } from 'universe+shared:arktype.ts';
+import { getArktype } from 'multiverse+shared:arktype.ts';
 
+import type { Out, Type } from 'arktype';
 import type { ObjectId, WithId } from 'mongodb';
 
-let typesScope = undefined as undefined | Awaited<ReturnType<typeof getValidators>>;
+let typesScope = undefined as undefined | Validators;
+
+/**
+ * @see {@link getValidators}
+ */
+export type Validators = {
+  toToken: Type<(In: string) => Out<string>>;
+  AuthorizationHeader: Type<string>;
+  NewAuthEntry: Type<NewAuthEntry>;
+  Token: Type<Token>;
+  TokenAttributes: Type<TokenAttributes>;
+  TokenAttributesFilter: Type<TokenAttributesFilter>;
+};
 
 /**
  * Instantiate and return runtime versions of various types. Useful for
  * validation and transforms.
  */
 export async function getValidators() {
-  // eslint-disable-next-line @typescript-eslint/non-nullable-type-assertion-style
-  const p = typesScope as typeof types;
-
   if (typesScope) {
-    return p;
+    return typesScope;
   }
 
   const { type, scope } = await getArktype();
@@ -49,19 +59,7 @@ export async function getValidators() {
     // eslint-disable-next-line @typescript-eslint/no-misused-spread
     ...types_,
     toToken: types_.AuthorizationHeader.pipe((h) => h.split(' ').at(-1)!)
-  };
-
-  // ? Sanity check
-  undefined as unknown as typeof types.Token.infer satisfies Token;
-
-  // ? Sanity check
-  undefined as unknown as typeof types.TokenAttributes.infer satisfies TokenAttributes;
-
-  // ? Sanity check
-  undefined as unknown as typeof types.NewAuthEntry.infer satisfies NewAuthEntry;
-
-  // ? Sanity check
-  undefined as unknown as typeof types.TokenAttributesFilter.infer satisfies TokenAttributesFilter;
+  } as unknown as Validators;
 
   typesScope = types;
   return types;

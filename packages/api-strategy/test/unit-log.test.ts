@@ -3,11 +3,8 @@ import { setupMemoryServerOverride } from '@-xun/mongo-test';
 
 import { BANNED_BEARER_TOKEN } from 'universe+api-strategy:auth.ts';
 import { addToRequestLog } from 'universe+api-strategy:log.ts';
-
-import {
-  getCommonDummyData,
-  getCommonSchemaConfig
-} from 'universe+api-strategy:mongo.ts';
+import { getCommonDummyData } from 'universe+api-strategy:mongo/dummy.ts';
+import { getCommonSchemaConfig } from 'universe+api-strategy:mongo/index.ts';
 
 import { mockDateNowMs, useMockDateNow, withMockedOutput } from 'testverse:util.ts';
 
