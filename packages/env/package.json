@@ -69,8 +69,8 @@
     "type-fest": "^4.41.0"
   },
   "devDependencies": {
-    "@types/bytes": "^3.1.5",
-    "@-xun/fs": "^2.0.0"
+    "@-xun/fs": "^2.0.0",
+    "@types/bytes": "^3.1.5"
   },
   "engines": {
     "node": "^20.18.0 || >=22.12.0"
