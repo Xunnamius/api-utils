@@ -1,20 +1,29 @@
-import { dummyRootData, useMockDateNow } from 'multiverse/mongo-common';
-import { getDb } from 'multiverse/mongo-schema';
-import { BANNED_BEARER_TOKEN } from 'multiverse/next-auth';
-import {
-  isClientRateLimited,
-  getAllRateLimits,
-  removeRateLimit
-} from 'multiverse/next-limit';
-import { setupMemoryServerOverride } from 'multiverse/mongo-test';
+import { getDb } from '@-xun/mongo-schema';
+import { setupMemoryServerOverride } from '@-xun/mongo-test';
 
-import type { InternalLimitedLogEntry } from 'multiverse/next-limit';
+import { BANNED_BEARER_TOKEN } from 'universe+api-strategy:auth.ts';
+
+import {
+  getAllRateLimits,
+  isClientRateLimited,
+  removeRateLimit
+} from 'universe+api-strategy:limit.ts';
+
+import {
+  dummyRootData,
+  getCommonDummyData,
+  getCommonSchemaConfig
+} from 'universe+api-strategy:mongo.ts';
+
+import { useMockDateNow } from 'testverse:util.ts';
+
 import type { NextApiRequest } from 'next';
+import type { InternalLimitedLogEntry } from 'universe+api-strategy:limit.ts';
 
 useMockDateNow();
 setupMemoryServerOverride({
-  schema: getSchemaConfig(),
-  data: getDummyData()
+  schema: getCommonSchemaConfig(),
+  data: getCommonDummyData()
 });
 
 describe('::isClientRateLimited', () => {
@@ -149,36 +158,36 @@ describe('::removeRateLimit', () => {
 
     await expect(
       db.countDocuments({
-        ip: dummyRootData['limited-log'][0].ip,
+        ip: dummyRootData['limited-log'][0]!.ip,
         until: { $gt: Date.now() }
       })
     ).resolves.toBe(1);
 
     await expect(
-      removeRateLimit({ target: { ip: dummyRootData['limited-log'][0].ip } })
+      removeRateLimit({ target: { ip: dummyRootData['limited-log'][0]!.ip } })
     ).resolves.toBe(1);
 
     await expect(
       db.countDocuments({
-        ip: dummyRootData['limited-log'][0].ip,
+        ip: dummyRootData['limited-log'][0]!.ip,
         until: { $gt: Date.now() }
       })
     ).resolves.toBe(0);
 
     await expect(
       db.countDocuments({
-        header: dummyRootData['limited-log'][2].header,
+        header: dummyRootData['limited-log'][2]!.header,
         until: { $gt: Date.now() }
       })
     ).resolves.toBe(1);
 
     await expect(
-      removeRateLimit({ target: { header: dummyRootData['limited-log'][2].header } })
+      removeRateLimit({ target: { header: dummyRootData['limited-log'][2]!.header } })
     ).resolves.toBe(1);
 
     await expect(
       db.countDocuments({
-        header: dummyRootData['limited-log'][2].header,
+        header: dummyRootData['limited-log'][2]!.header,
         until: { $gt: Date.now() }
       })
     ).resolves.toBe(0);
@@ -192,8 +201,8 @@ describe('::removeRateLimit', () => {
     await expect(
       db.countDocuments({
         $or: [
-          { ip: dummyRootData['limited-log'][1].ip },
-          { header: dummyRootData['limited-log'][2].header }
+          { ip: dummyRootData['limited-log'][1]!.ip },
+          { header: dummyRootData['limited-log'][2]!.header }
         ],
         until: { $gt: Date.now() }
       })
@@ -202,8 +211,8 @@ describe('::removeRateLimit', () => {
     await expect(
       removeRateLimit({
         target: {
-          ip: dummyRootData['limited-log'][1].ip,
-          header: dummyRootData['limited-log'][2].header
+          ip: dummyRootData['limited-log'][1]!.ip,
+          header: dummyRootData['limited-log'][2]!.header
         }
       })
     ).resolves.toBe(2);
@@ -211,8 +220,8 @@ describe('::removeRateLimit', () => {
     await expect(
       db.countDocuments({
         $or: [
-          { ip: dummyRootData['limited-log'][1].ip },
-          { header: dummyRootData['limited-log'][2].header }
+          { ip: dummyRootData['limited-log'][1]!.ip },
+          { header: dummyRootData['limited-log'][2]!.header }
         ],
         until: { $gt: Date.now() }
       })
@@ -225,15 +234,15 @@ describe('::removeRateLimit', () => {
     const db = (await getDb({ name: 'root' })).collection('limited-log');
 
     await db.updateOne(
-      { ip: dummyRootData['limited-log'][1].ip },
+      { ip: dummyRootData['limited-log'][1]!.ip },
       { $set: { until: Date.now() } }
     );
 
     await expect(
       removeRateLimit({
         target: {
-          ip: dummyRootData['limited-log'][1].ip,
-          header: dummyRootData['limited-log'][2].header
+          ip: dummyRootData['limited-log'][1]!.ip,
+          header: dummyRootData['limited-log'][2]!.header
         }
       })
     ).resolves.toBe(1);
@@ -245,12 +254,12 @@ describe('::removeRateLimit', () => {
     const db = (await getDb({ name: 'root' })).collection('limited-log');
 
     await db.updateOne(
-      { ip: dummyRootData['limited-log'][1].ip },
+      { ip: dummyRootData['limited-log'][1]!.ip },
       { $set: { until: Date.now() } }
     );
 
     await expect(
-      removeRateLimit({ target: { ip: dummyRootData['limited-log'][1].ip } })
+      removeRateLimit({ target: { ip: dummyRootData['limited-log'][1]!.ip } })
     ).resolves.toBe(0);
   });
 
@@ -271,6 +280,7 @@ describe('::removeRateLimit', () => {
         message: 'must provide either an ip or a header'
       }),
 
+      // @ts-expect-error: testing
       expect(removeRateLimit({ target: {} })).rejects.toMatchObject({
         message: 'must provide either an ip or a header'
       }),

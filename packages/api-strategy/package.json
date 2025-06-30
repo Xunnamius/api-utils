@@ -16,23 +16,51 @@
   "sideEffects": false,
   "type": "commonjs",
   "exports": {
+    "./auth": {
+      "types": "./dist/packages/api-strategy/src/auth.d.ts",
+      "default": "./dist/packages/api-strategy/src/auth.js"
+    },
+    "./contrived": {
+      "types": "./dist/packages/api-strategy/src/contrived.d.ts",
+      "default": "./dist/packages/api-strategy/src/contrived.js"
+    },
+    "./limit": {
+      "types": "./dist/packages/api-strategy/src/limit.d.ts",
+      "default": "./dist/packages/api-strategy/src/limit.js"
+    },
+    "./log": {
+      "types": "./dist/packages/api-strategy/src/log.d.ts",
+      "default": "./dist/packages/api-strategy/src/log.js"
+    },
+    "./mongo": {
+      "types": "./dist/packages/api-strategy/src/mongo.d.ts",
+      "default": "./dist/packages/api-strategy/src/mongo.js"
+    },
     "./package": "./package.json",
-    "./package.json": "./package.json",
-    "./*": {
-      "types": "./dist/packages/api-strategy/src/*.d.ts",
-      "default": "./dist/packages/api-strategy/src/*.js"
-    }
+    "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
+      "auth": [
+        "dist/packages/api-strategy/src/auth.d.ts"
+      ],
+      "contrived": [
+        "dist/packages/api-strategy/src/contrived.d.ts"
+      ],
+      "limit": [
+        "dist/packages/api-strategy/src/limit.d.ts"
+      ],
+      "log": [
+        "dist/packages/api-strategy/src/log.d.ts"
+      ],
+      "mongo": [
+        "dist/packages/api-strategy/src/mongo.d.ts"
+      ],
       "package": [
         "package.json"
       ],
       "package.json": [
         "package.json"
-      ],
-      "*": [
-        "dist/packages/api-strategy/src/*.d.ts"
       ]
     }
   },
@@ -66,8 +94,11 @@
   },
   "dependencies": {
     "@-xun/env": "^1.0.0",
+    "@-xun/js": "^2.0.0",
+    "@-xun/mongo-item": "^1.0.0",
     "@-xun/mongo-schema": "^1.1.2",
     "@-xun/types": "^1.1.0",
+    "arktype": "^2.1.20",
     "core-js": "^3.43.0",
     "rejoinder": "^2.0.1",
     "request-ip": "^3.3.0"

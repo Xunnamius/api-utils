@@ -1,19 +1,29 @@
-import { getDb, getSchemaConfig } from '@-xun/mongo-schema';
-import { getDummyData, setupMemoryServerOverride } from '@-xun/mongo-test';
+import { getDb } from '@-xun/mongo-schema';
+import { setupMemoryServerOverride } from '@-xun/mongo-test';
 
 import { BANNED_BEARER_TOKEN } from 'universe+api-strategy:auth.ts';
 import { addToRequestLog } from 'universe+api-strategy:log.ts';
 
+import {
+  getCommonDummyData,
+  getCommonSchemaConfig
+} from 'universe+api-strategy:mongo.ts';
+
 import { mockDateNowMs, useMockDateNow, withMockedOutput } from 'testverse:util.ts';
 
 import type { HttpStatusCode } from '@-xun/types';
-import type { NextApiRequestLike, NextApiResponseLike } from 'multiverse+shared';
+
+import type {
+  NextApiRequestLike,
+  NextApiResponseLike
+} from 'multiverse+shared:next-like.ts';
+
 import type { InternalRequestLogEntry } from 'universe+api-strategy:log.ts';
 
 useMockDateNow();
 setupMemoryServerOverride({
-  schema: getSchemaConfig(),
-  data: getDummyData()
+  schema: getCommonSchemaConfig(),
+  data: getCommonDummyData()
 });
 
 const mockPerfNow = 1234;

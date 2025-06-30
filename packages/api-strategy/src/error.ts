@@ -3,40 +3,31 @@
  */
 /* istanbul ignore next */
 export const ErrorMessage = {
-  SendHttpErrorResponse() {
-    return 'request failed for an unspecified reason';
+  AuthHeaderTooLong() {
+    return 'auth header is too long';
   },
-  SendHttpBadRequest() {
-    return 'request was malformed or otherwise bad';
+  TokenCollision() {
+    return 'token collision';
   },
-  SendHttpUnauthenticated() {
-    return 'request sender is not authenticated';
+  AliasedDatabaseNotAliasable(
+    actual: string,
+    alias: string,
+    actualDatabaseNames: string[]
+  ) {
+    return `aliased database "${actual}" (referred to by alias "${alias}") does not exist in database schema or is not aliasable. Existing aliasable databases: ${actualDatabaseNames.join(
+      ', '
+    )}`;
   },
-  SendHttpUnauthorized() {
-    return 'request sender is not authorized to access this resource';
+  InvalidDatabaseAlias(actual: string, alias: string) {
+    return `database alias "${alias}" (referring to actual database "${actual}") is invalid: an actual database with that name already exists in the database schema. You must choose a different alias`;
   },
-  SendHttpNotFound() {
-    return 'requested resource was not found';
+  InvalidEmptyIp() {
+    return 'ip must be a non-empty string';
   },
-  SendHttpBadMethod() {
-    return 'request method is not allowed';
+  InvalidEmptyHeader() {
+    return 'header must be a non-empty string';
   },
-  SendHttpTooLarge() {
-    return 'request body is too large';
-  },
-  SendHttpBadContentType() {
-    return 'request payload is in an unsupported format';
-  },
-  SendHttpRateLimited() {
-    return 'request sender is rate limited';
-  },
-  SendHttpUnspecifiedError() {
-    return '🤯 something unexpected happened on our end 🤯';
-  },
-  SendNotImplemented() {
-    return 'this endpoint has not yet been implemented';
-  },
-  SendHttpContrivedError() {
-    return '(note: do not report this contrived error)';
+  NeedsEitherIpOrHeader() {
+    return 'must provide either an ip or a header';
   }
 };

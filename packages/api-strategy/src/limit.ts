@@ -2,13 +2,11 @@ import { getEnv } from '@-xun/env';
 import { getDb } from '@-xun/mongo-schema';
 import { getClientIp } from 'request-ip';
 
-import { globalDebugLogger } from 'universe+api-strategy:constant.ts';
+import { ErrorMessage } from 'universe+api-strategy:error.ts';
 
 import type { UnixEpochMs } from '@-xun/types';
 import type { WithId, WithoutId } from 'mongodb';
-import type { NextApiRequestLike } from 'multiverse+shared';
-
-const debug = globalDebugLogger.extend('limit');
+import type { NextApiRequestLike } from 'multiverse+shared:next-like.ts';
 
 /**
  * The shape of an entry in the well-known "limited log" collection.
@@ -66,21 +64,38 @@ export async function isClientRateLimited(req: NextApiRequestLike) {
  *
  * @returns The number of rate limits removed.
  */
+export async function removeRateLimit(options: {
+  target: { ip: string | undefined; header?: string } | undefined;
+}): Promise<number>;
+export async function removeRateLimit(options: {
+  target: { ip?: string; header: string | undefined } | undefined;
+}): Promise<number>;
 export async function removeRateLimit({
   target
 }: {
-  target: { ip?: string; header?: string } | undefined;
+  target:
+    | { ip: string | undefined; header?: string }
+    | { ip?: string; header: string | undefined }
+    | undefined;
+}): Promise<number>;
+export async function removeRateLimit({
+  target
+}: {
+  target:
+    | { ip: string | undefined; header?: string }
+    | { ip?: string; header: string | undefined }
+    | undefined;
 }) {
   if (target) {
     const { ip, header } = target;
 
     if (ip !== undefined || header !== undefined) {
       if (ip !== undefined && (typeof ip !== 'string' || !ip)) {
-        throw new Error('ip must be a non-empty string');
+        throw new Error(ErrorMessage.InvalidEmptyIp());
       }
 
       if (header !== undefined && (typeof header !== 'string' || !header)) {
-        throw new Error('header must be a non-empty string');
+        throw new Error(ErrorMessage.InvalidEmptyHeader());
       }
 
       const now = Date.now();
@@ -98,7 +113,7 @@ export async function removeRateLimit({
     }
   }
 
-  throw new Error('must provide either an ip or a header');
+  throw new Error(ErrorMessage.NeedsEitherIpOrHeader());
 }
 
 /**
