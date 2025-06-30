@@ -19,6 +19,10 @@
       "types": "./dist/packages/respond/src/index.d.ts",
       "default": "./dist/packages/respond/src/index.js"
     },
+    "./error": {
+      "types": "./dist/packages/respond/src/error.d.ts",
+      "default": "./dist/packages/respond/src/error.js"
+    },
     "./package": "./package.json",
     "./package.json": "./package.json"
   },
@@ -26,6 +30,9 @@
     "*": {
       "index": [
         "dist/packages/respond/src/index.d.ts"
+      ],
+      "error": [
+        "dist/packages/respond/src/error.d.ts"
       ],
       "package": [
         "package.json"

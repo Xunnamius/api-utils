@@ -40,6 +40,10 @@
       "types": "./dist/packages/api-strategy/src/mongo/dummy.d.ts",
       "default": "./dist/packages/api-strategy/src/mongo/dummy.js"
     },
+    "./error": {
+      "types": "./dist/packages/api-strategy/src/error.d.ts",
+      "default": "./dist/packages/api-strategy/src/error.js"
+    },
     "./package": "./package.json",
     "./package.json": "./package.json"
   },
@@ -62,6 +66,9 @@
       ],
       "mongo/dummy": [
         "dist/packages/api-strategy/src/mongo/dummy.d.ts"
+      ],
+      "error": [
+        "dist/packages/api-strategy/src/error.d.ts"
       ],
       "package": [
         "package.json"

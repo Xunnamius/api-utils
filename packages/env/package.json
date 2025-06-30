@@ -20,6 +20,10 @@
       "types": "./dist/packages/env/src/index.d.ts",
       "default": "./dist/packages/env/src/index.js"
     },
+    "./error": {
+      "types": "./dist/packages/env/src/error.d.ts",
+      "default": "./dist/packages/env/src/error.js"
+    },
     "./package": "./package.json",
     "./package.json": "./package.json"
   },
@@ -27,6 +31,9 @@
     "*": {
       "index": [
         "dist/packages/env/src/index.d.ts"
+      ],
+      "error": [
+        "dist/packages/env/src/error.d.ts"
       ],
       "package": [
         "package.json"

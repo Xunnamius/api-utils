@@ -19,9 +19,10 @@
       "types": "./dist/packages/next-api/src/middleware.d.ts",
       "default": "./dist/packages/next-api/src/middleware.js"
     },
-    "./middleware/*": {
-      "types": "./dist/packages/next-api/src/middleware/*.d.ts",
-      "default": "./dist/packages/next-api/src/middleware/*.js"
+    "./middleware/*": {},
+    "./error": {
+      "types": "./dist/packages/api/src/error.d.ts",
+      "default": "./dist/packages/api/src/error.js"
     },
     "./package": "./package.json",
     "./package.json": "./package.json"
@@ -31,8 +32,9 @@
       "middleware": [
         "dist/packages/next-api/src/middleware.d.ts"
       ],
-      "middleware/*": [
-        "dist/packages/next-api/src/middleware/*.d.ts"
+      "middleware/*": [],
+      "error": [
+        "dist/packages/api/src/error.d.ts"
       ],
       "package": [
         "package.json"
