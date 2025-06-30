@@ -1,18 +1,11 @@
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
+import { isNextApiResponseLike } from 'multiverse+shared';
+
 import { ErrorMessage } from 'universe+respond:error.ts';
 
-import type { ServerResponse } from 'node:http';
 import type { HttpStatusCode } from '@-xun/types';
 import type { JsonObject } from 'type-fest';
-
-type NextApiResponseLike = ServerResponse & {
-  status: (statusCode: number) => NextApiResponseLike;
-  /**
-   * Send data `any` data in response
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  send: (body: any) => void;
-};
+import type { NextApiResponseLike } from 'multiverse+shared';
 
 type ModernGenericParameters = [responseInit: ResponseInit, json?: JsonObject];
 
@@ -416,8 +409,4 @@ export function sendHttpContrivedError(
     const [json, responseInit] = args as ModernSpecificParameters;
     return sendHttpErrorResponse({ status: 555, ...responseInit }, { ...json, error });
   }
-}
-
-export function isNextApiResponseLike(o: unknown): o is NextApiResponseLike {
-  return !!o && typeof o === 'object' && 'send' in o;
 }

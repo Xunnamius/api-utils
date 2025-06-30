@@ -1,15 +1,41 @@
-import { ErrorMessage, ValidationError } from 'universe/error';
-import type { JsonValue } from 'type-fest';
+import type { IncomingMessage, ServerResponse } from 'node:http';
 
-// TODO: should this be deleted?
+/**
+ * An object that is probably a `NextApiRequest`.
+ */
+export type NextApiRequestLike = IncomingMessage & {
+  /**
+   * Object of `cookies` from header
+   */
+  cookies: Partial<{
+    [key: string]: string;
+  }>;
+};
 
-export function validateAndParseJson<T extends JsonValue>(
-  input: string | null | undefined,
-  property?: string
-): T {
-  try {
-    return JSON.parse(input || '');
-  } catch {
-    throw new ValidationError(ErrorMessage.InvalidJSON(property));
-  }
+/**
+ * An object that is probably a `NextApiResponse`.
+ */
+export type NextApiResponseLike = ServerResponse & {
+  status: (statusCode: number) => NextApiResponseLike;
+  /**
+   * Send data `any` data in response
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  send: (body: any) => void;
+};
+
+/**
+ * Returns `true` if `o` is similar enough to a {@link NextApiRequestLike}
+ * without having to import the entire `next` package.
+ */
+export function isNextApiRequestLike(o: unknown): o is NextApiRequestLike {
+  return !!o && typeof o === 'object' && 'cookies' in o;
+}
+
+/**
+ * Returns `true` if `o` is similar enough to a {@link NextApiResponseLike}
+ * without having to import the entire `next` package.
+ */
+export function isNextApiResponseLike(o: unknown): o is NextApiResponseLike {
+  return !!o && typeof o === 'object' && 'send' in o;
 }

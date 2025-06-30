@@ -1,12 +1,12 @@
 <!-- symbiote-template-region-start 1 -->
 
 <p align="center" width="100%">
-  <img width="300" src="https://raw.githubusercontent.com/Xunnamius/react-utils/refs/heads/main/logo.png">
+  <img width="300" src="https://raw.githubusercontent.com/Xunnamius/api-utils/refs/heads/main/logo.png">
 </p>
 
 <p align="center" width="100%">
 <!-- symbiote-template-region-end -->
-Nibbling around the edges of Next.js and React for modest (opinionated) DX gains
+Monorepo for the api-utils project
 <!-- symbiote-template-region-start 2 -->
 </p>
 
@@ -23,12 +23,11 @@ Nibbling around the edges of Next.js and React for modest (opinionated) DX gains
 
 <br />
 
-# react-utils
+# api-utils (api-utils-monorepo)
 
 <!-- symbiote-template-region-end -->
 
-Packages that improve on Next.js, React, and related API tooling in tiny,
-opinionated ways.
+Monorepo for the api-utils project
 
 <!-- symbiote-template-region-start 3 -->
 
@@ -53,11 +52,13 @@ opinionated ways.
 
 <!-- symbiote-template-region-end -->
 
-- [@-xun/next-api][1] — Powerful locally-runnable middleware for Next.js API
-  routes.
-- [@-xun/respond][2] — Simple JSON response objects for various HTTP response
+- [@-xun/api][1] — Powerful locally-runnable middleware for Next.js API routes.
+- [@-xun/api-strategy][3] — Strategies for solving several problems common to
+  @-xun/api and similar packages.
+- [@-xun/env][2] — Unified environment resolution and validation for any JS
+  runtime.
+- [@-xun/respond][5] — Simple JSON response objects for various HTTP response
   codes.
-- [@-xun/env][3] — Unified environment resolution and validation for Next.js.
 - [shared][4] — Common unpublished multiversal imports (beware the dual package
   hazard!).
 
@@ -100,7 +101,7 @@ key][x-repo-all-contributors-emojis]):
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://xunn.io/"><img src="https://avatars.githubusercontent.com/u/656017?v=4?s=100" width="100px;" alt="Bernard"/><br /><sub><b>Bernard</b></sub></a><br /><a href="#infra-Xunnamius" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="https://github.com/Xunnamius/react-utils/commits?author=Xunnamius" title="Code">💻</a> <a href="https://github.com/Xunnamius/react-utils/commits?author=Xunnamius" title="Documentation">📖</a> <a href="#maintenance-Xunnamius" title="Maintenance">🚧</a> <a href="https://github.com/Xunnamius/react-utils/commits?author=Xunnamius" title="Tests">⚠️</a> <a href="https://github.com/Xunnamius/react-utils/pulls?q=is%3Apr+reviewed-by%3AXunnamius" title="Reviewed Pull Requests">👀</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://xunn.io/"><img src="https://avatars.githubusercontent.com/u/656017?v=4?s=100" width="100px;" alt="Bernard"/><br /><sub><b>Bernard</b></sub></a><br /><a href="#infra-Xunnamius" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="https://github.com/Xunnamius/api-utils/commits?author=Xunnamius" title="Code">💻</a> <a href="https://github.com/Xunnamius/api-utils/commits?author=Xunnamius" title="Documentation">📖</a> <a href="#maintenance-Xunnamius" title="Maintenance">🚧</a> <a href="https://github.com/Xunnamius/api-utils/commits?author=Xunnamius" title="Tests">⚠️</a> <a href="https://github.com/Xunnamius/api-utils/pulls?q=is%3Apr+reviewed-by%3AXunnamius" title="Reviewed Pull Requests">👀</a></td>
     </tr>
   </tbody>
   <tfoot>
@@ -127,14 +128,13 @@ specification. Contributions of any kind welcome!
 [x-badge-blm-image]: https://xunn.at/badge-blm 'Join the movement!'
 [x-badge-blm-link]: https://xunn.at/donate-blm
 [x-badge-lastcommit-image]:
-  https://img.shields.io/github/last-commit/Xunnamius/react-utils?style=flat-square
+  https://img.shields.io/github/last-commit/Xunnamius/api-utils?style=flat-square
   'Latest commit timestamp'
 [x-badge-license-image]:
-  https://img.shields.io/github/license/Xunnamius/react-utils?style=flat-square
+  https://img.shields.io/github/license/Xunnamius/api-utils?style=flat-square
   "This package's source license"
-[x-badge-license-link]:
-  https://github.com/Xunnamius/react-utils/blob/main/LICENSE
-[x-badge-repo-link]: https://github.com/Xunnamius/react-utils
+[x-badge-license-link]: https://github.com/Xunnamius/api-utils/blob/main/LICENSE
+[x-badge-repo-link]: https://github.com/Xunnamius/api-utils
 [x-badge-semanticrelease-image]:
   https://xunn.at/badge-semantic-release
   'This repo practices continuous integration and deployment!'
@@ -143,12 +143,13 @@ specification. Contributions of any kind welcome!
 [x-repo-all-contributors]: https://github.com/all-contributors/all-contributors
 [x-repo-all-contributors-emojis]: https://allcontributors.org/docs/en/emoji-key
 [x-repo-choose-new-issue]:
-  https://github.com/Xunnamius/react-utils/issues/new/choose
+  https://github.com/Xunnamius/api-utils/issues/new/choose
 [x-repo-contributing]: /CONTRIBUTING.md
-[x-repo-pr-compare]: https://github.com/Xunnamius/react-utils/compare
+[x-repo-pr-compare]: https://github.com/Xunnamius/api-utils/compare
 [x-repo-sponsor]: https://github.com/sponsors/Xunnamius
 [x-repo-support]: /.github/SUPPORT.md
-[1]: ./packages/next-api
-[2]: ./packages/respond
-[3]: ./packages/env
+[1]: ./packages/api
+[2]: ./packages/env
+[3]: ./packages/api-strategy
 [4]: ./packages/shared
+[5]: ./packages/respond

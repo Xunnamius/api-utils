@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "description": "Unified environment resolution and validation for any JS runtime",
   "keywords": [],
-  "homepage": "https://github.com/Xunnamius/react-utils/tree/main/packages/env#readme",
+  "homepage": "https://github.com/Xunnamius/api-utils/tree/main/packages/env#readme",
   "bugs": {
-    "url": "https://github.com/Xunnamius/react-utils/issues"
+    "url": "https://github.com/Xunnamius/api-utils/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Xunnamius/react-utils.git"
+    "url": "git+https://github.com/Xunnamius/api-utils.git"
   },
   "license": "MIT",
   "author": "Xunnamius",
@@ -42,7 +42,7 @@
   "scripts": {
     "build": "npm run build:dist --",
     "build:changelog": "symbiote build changelog --env NODE_NO_WARNINGS=1",
-    "build:dist": "symbiote build distributables --env NODE_NO_WARNINGS=1 --not-multiversal",
+    "build:dist": "symbiote build distributables --env NODE_NO_WARNINGS=1 --multiversal",
     "build:docs": "symbiote build docs --env NODE_NO_WARNINGS=1",
     "clean": "symbiote clean --env NODE_NO_WARNINGS=1",
     "format": "symbiote format --env NODE_NO_WARNINGS=1 --hush",
@@ -69,7 +69,8 @@
     "type-fest": "^4.41.0"
   },
   "devDependencies": {
-    "@types/bytes": "^3.1.5"
+    "@types/bytes": "^3.1.5",
+    "@-xun/fs": "^2.0.0"
   },
   "engines": {
     "node": "^20.18.0 || >=22.12.0"

@@ -46,14 +46,13 @@ you for contribution 🎉, your efforts are greatly appreciated! 🙌🏿
 - Issues that go for an extended period without activity are subject to closure.
 
 [badge-issue-percentage]:
-  https://isitmaintained.com/badge/open/Xunnamius/react-utils.svg
+  https://isitmaintained.com/badge/open/Xunnamius/api-utils.svg
   'Open issues as a percentage of all issues'
 [badge-issue-resolution]:
-  https://isitmaintained.com/badge/resolution/Xunnamius/react-utils.svg
+  https://isitmaintained.com/badge/resolution/Xunnamius/api-utils.svg
   'Average time to resolve an issue'
-[choose-new-issue]: https://github.com/Xunnamius/react-utils/issues/new/choose
+[choose-new-issue]: https://github.com/Xunnamius/api-utils/issues/new/choose
 [github-blog]:
   https://github.com/blog/2119-add-reactions-to-pull-requests-issues-and-comments
-[link-issue-resolution]:
-  https://isitmaintained.com/project/Xunnamius/react-utils
-[open-issues]: https://github.com/Xunnamius/react-utils/issues?q=
+[link-issue-resolution]: https://isitmaintained.com/project/Xunnamius/api-utils
+[open-issues]: https://github.com/Xunnamius/api-utils/issues?q=

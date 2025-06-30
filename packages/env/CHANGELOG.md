@@ -38,11 +38,11 @@ this project adheres to [Semantic Versioning][2].
 
 [1]: https://conventionalcommits.org
 [2]: https://semver.org
-[3]: https://github.com/Xunnamius/react-utils/compare/@-xun/env@1.0.2...@-xun/env@1.1.0
-[4]: https://github.com/Xunnamius/react-utils/commit/0b7c09badb430143839c51ee6ae32dc6d1082533
-[5]: https://github.com/Xunnamius/react-utils/compare/f9f7834aa8021aeded7a800976d133f275cd694e...@-xun/env@1.0.0
-[6]: https://github.com/Xunnamius/react-utils/commit/f9f7834aa8021aeded7a800976d133f275cd694e
-[7]: https://github.com/Xunnamius/react-utils/compare/@-xun/env@1.0.1...@-xun/env@1.0.2
-[8]: https://github.com/Xunnamius/react-utils/commit/305afe5a58edc3c45680a092186eeea712a1a4c8
-[9]: https://github.com/Xunnamius/react-utils/compare/@-xun/env@1.0.0...@-xun/env@1.0.1
-[10]: https://github.com/Xunnamius/react-utils/commit/b1b45cf09cd5af6593920ea281ef27f4c3efd32f
+[3]: https://github.com/Xunnamius/api-utils/compare/@-xun/env@1.0.2...@-xun/env@1.1.0
+[4]: https://github.com/Xunnamius/api-utils/commit/0b7c09badb430143839c51ee6ae32dc6d1082533
+[5]: https://github.com/Xunnamius/api-utils/compare/f9f7834aa8021aeded7a800976d133f275cd694e...@-xun/env@1.0.0
+[6]: https://github.com/Xunnamius/api-utils/commit/f9f7834aa8021aeded7a800976d133f275cd694e
+[7]: https://github.com/Xunnamius/api-utils/compare/@-xun/env@1.0.1...@-xun/env@1.0.2
+[8]: https://github.com/Xunnamius/api-utils/commit/305afe5a58edc3c45680a092186eeea712a1a4c8
+[9]: https://github.com/Xunnamius/api-utils/compare/@-xun/env@1.0.0...@-xun/env@1.0.1
+[10]: https://github.com/Xunnamius/api-utils/commit/b1b45cf09cd5af6593920ea281ef27f4c3efd32f

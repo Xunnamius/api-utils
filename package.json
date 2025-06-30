@@ -1,20 +1,19 @@
 {
-  "name": "react-utils-monorepo",
+  "name": "api-utils-monorepo",
   "version": "0.0.0-monorepo",
   "private": true,
-  "description": "Monorepo for the react-utils project",
+  "description": "Monorepo for the api-utils project",
   "keywords": [],
-  "homepage": "https://github.com/Xunnamius/react-utils#readme",
+  "homepage": "https://github.com/Xunnamius/api-utils#readme",
   "bugs": {
-    "url": "https://github.com/Xunnamius/react-utils/issues"
+    "url": "https://github.com/Xunnamius/api-utils/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Xunnamius/react-utils.git"
+    "url": "git+https://github.com/Xunnamius/api-utils.git"
   },
   "license": "MIT",
   "author": "Xunnamius",
-  "sideEffects": false,
   "type": "commonjs",
   "workspaces": [
     "!packages/*.ignore*",
