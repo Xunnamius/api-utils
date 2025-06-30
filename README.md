@@ -52,7 +52,8 @@ Monorepo for the api-utils project
 
 <!-- symbiote-template-region-end -->
 
-- [@-xun/api][1] — Powerful locally-runnable middleware for Next.js API routes.
+- [@-xun/api][1] — Simple locally-runnable middleware for API endpoints
+  regardless of runtime.
 - [@-xun/api-strategy][3] — Strategies for solving several problems common to
   @-xun/api and similar packages.
 - [@-xun/env][2] — Unified environment resolution and validation for any JS

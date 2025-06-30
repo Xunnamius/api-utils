@@ -6,7 +6,7 @@
 
 <p align="center" width="100%">
 <!-- symbiote-template-region-end -->
-Powerful locally-runnable middleware for Next.js API routes
+Bare bones opinionated middleware for API endpoints regardless of runtime
 <!-- symbiote-template-region-start 2 -->
 </p>
 
@@ -31,7 +31,7 @@ Powerful locally-runnable middleware for Next.js API routes
 
 <!-- symbiote-template-region-end -->
 
-Powerful locally-runnable middleware for Next.js API routes.
+Very simple locally-runnable middleware for API endpoints regardless of runtime.
 
 <!-- symbiote-template-region-start 3 -->
 

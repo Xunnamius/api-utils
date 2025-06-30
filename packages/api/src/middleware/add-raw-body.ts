@@ -5,9 +5,9 @@ import { parse } from 'content-type';
 import getRawBody from 'raw-body';
 import { createDebugLogger } from 'rejoinder';
 
-import { sendHttpTooLarge } from 'universe+next-api:respond.ts';
+import { sendHttpTooLarge } from 'universe+api:respond.ts';
 
-import type { MiddlewareContext } from 'universe+next-api';
+import type { MiddlewareContext } from 'universe+api';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { RawBodyError } from 'raw-body';
 

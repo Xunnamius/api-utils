@@ -1,7 +1,7 @@
 {
   "name": "@-xun/api",
   "version": "1.0.0",
-  "description": "Powerful locally-runnable middleware for Next.js API routes",
+  "description": "Simple locally-runnable middleware for API endpoints regardless of runtime",
   "keywords": [],
   "homepage": "https://github.com/Xunnamius/api-utils/tree/main/packages/api#readme",
   "bugs": {
