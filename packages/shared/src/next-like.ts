@@ -29,7 +29,14 @@ export type NextApiResponseLike = ServerResponse & {
  * without having to import the entire `next` package.
  */
 export function isNextApiRequestLike(o: unknown): o is NextApiRequestLike {
-  return !!o && typeof o === 'object' && 'cookies' in o;
+  return (
+    !!o &&
+    typeof o === 'object' &&
+    'headers' in o &&
+    !!o.headers &&
+    typeof o.headers === 'object' &&
+    !('get' in o.headers)
+  );
 }
 
 /**
