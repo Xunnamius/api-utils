@@ -1,11 +1,10 @@
-import { createDebugLogger } from 'rejoinder';
 import { sendNotImplemented } from '@-xun/respond';
+import { createDebugLogger } from 'rejoinder';
 import { toss } from 'toss-expression';
 
-import type { NoInfer } from '@-xun/types';
 import type { ExtendedDebugger } from 'rejoinder';
 
-const debug = createDebugLogger('next-api-glue:runtime');
+const debug = createDebugLogger('api-glue:runtime');
 
 /**
  * The shape of a custom middleware function.
