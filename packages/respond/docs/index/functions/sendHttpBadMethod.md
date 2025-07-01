@@ -10,7 +10,7 @@
 
 > **sendHttpBadMethod**(...`args`): `Response`
 
-Defined in: [index.ts:256](https://github.com/Xunnamius/api-utils/blob/7043346440f4234ebd4f9ce5c0c70a3a86a21c41/packages/respond/src/index.ts#L256)
+Defined in: [index.ts:256](https://github.com/Xunnamius/api-utils/blob/de39eacf7b1e97617a2035eff33c6efaf5ffb215/packages/respond/src/index.ts#L256)
 
 Sends an HTTP 405 "bad method" response with optional JSON data.
 
@@ -28,7 +28,7 @@ Sends an HTTP 405 "bad method" response with optional JSON data.
 
 > **sendHttpBadMethod**(...`args`): `void`
 
-Defined in: [index.ts:257](https://github.com/Xunnamius/api-utils/blob/7043346440f4234ebd4f9ce5c0c70a3a86a21c41/packages/respond/src/index.ts#L257)
+Defined in: [index.ts:257](https://github.com/Xunnamius/api-utils/blob/de39eacf7b1e97617a2035eff33c6efaf5ffb215/packages/respond/src/index.ts#L257)
 
 Sends an HTTP 405 "bad method" response with optional JSON data.
 
@@ -46,7 +46,7 @@ Sends an HTTP 405 "bad method" response with optional JSON data.
 
 > **sendHttpBadMethod**(...`args`): `void` \| `Response`
 
-Defined in: [index.ts:258](https://github.com/Xunnamius/api-utils/blob/7043346440f4234ebd4f9ce5c0c70a3a86a21c41/packages/respond/src/index.ts#L258)
+Defined in: [index.ts:258](https://github.com/Xunnamius/api-utils/blob/de39eacf7b1e97617a2035eff33c6efaf5ffb215/packages/respond/src/index.ts#L258)
 
 Sends an HTTP 405 "bad method" response with optional JSON data.
 

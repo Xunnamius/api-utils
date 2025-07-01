@@ -6,7 +6,7 @@
 
 # Interface: JsonError
 
-Defined in: [index.ts:39](https://github.com/Xunnamius/api-utils/blob/7043346440f4234ebd4f9ce5c0c70a3a86a21c41/packages/respond/src/index.ts#L39)
+Defined in: [index.ts:39](https://github.com/Xunnamius/api-utils/blob/de39eacf7b1e97617a2035eff33c6efaf5ffb215/packages/respond/src/index.ts#L39)
 
 Generic failure JSON result object. May contain any number of additional
 jsonifiable key-value pairs.
@@ -25,7 +25,7 @@ jsonifiable key-value pairs.
 
 > **error**: `string`
 
-Defined in: [index.ts:40](https://github.com/Xunnamius/api-utils/blob/7043346440f4234ebd4f9ce5c0c70a3a86a21c41/packages/respond/src/index.ts#L40)
+Defined in: [index.ts:40](https://github.com/Xunnamius/api-utils/blob/de39eacf7b1e97617a2035eff33c6efaf5ffb215/packages/respond/src/index.ts#L40)
 
 ***
 
@@ -33,4 +33,4 @@ Defined in: [index.ts:40](https://github.com/Xunnamius/api-utils/blob/7043346440
 
 > **success**: `false`
 
-Defined in: [index.ts:41](https://github.com/Xunnamius/api-utils/blob/7043346440f4234ebd4f9ce5c0c70a3a86a21c41/packages/respond/src/index.ts#L41)
+Defined in: [index.ts:41](https://github.com/Xunnamius/api-utils/blob/de39eacf7b1e97617a2035eff33c6efaf5ffb215/packages/respond/src/index.ts#L41)

@@ -10,7 +10,7 @@
 
 > **sendGenericHttpResponse**(...`args`): `Response`
 
-Defined in: [index.ts:49](https://github.com/Xunnamius/api-utils/blob/7043346440f4234ebd4f9ce5c0c70a3a86a21c41/packages/respond/src/index.ts#L49)
+Defined in: [index.ts:49](https://github.com/Xunnamius/api-utils/blob/de39eacf7b1e97617a2035eff33c6efaf5ffb215/packages/respond/src/index.ts#L49)
 
 Sends a generic HTTP response with the given `statusCode` and optional JSON
 body (defaults to `{}`). This is the "base" function called by all other
@@ -30,7 +30,7 @@ response functions.
 
 > **sendGenericHttpResponse**(...`args`): `void`
 
-Defined in: [index.ts:50](https://github.com/Xunnamius/api-utils/blob/7043346440f4234ebd4f9ce5c0c70a3a86a21c41/packages/respond/src/index.ts#L50)
+Defined in: [index.ts:50](https://github.com/Xunnamius/api-utils/blob/de39eacf7b1e97617a2035eff33c6efaf5ffb215/packages/respond/src/index.ts#L50)
 
 Sends a generic HTTP response with the given `statusCode` and optional JSON
 body (defaults to `{}`). This is the "base" function called by all other
@@ -50,7 +50,7 @@ response functions.
 
 > **sendGenericHttpResponse**(...`args`): `void` \| `Response`
 
-Defined in: [index.ts:51](https://github.com/Xunnamius/api-utils/blob/7043346440f4234ebd4f9ce5c0c70a3a86a21c41/packages/respond/src/index.ts#L51)
+Defined in: [index.ts:51](https://github.com/Xunnamius/api-utils/blob/de39eacf7b1e97617a2035eff33c6efaf5ffb215/packages/respond/src/index.ts#L51)
 
 Sends a generic HTTP response with the given `statusCode` and optional JSON
 body (defaults to `{}`). This is the "base" function called by all other

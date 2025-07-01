@@ -6,7 +6,7 @@
 
 # Interface: JsonSuccess
 
-Defined in: [index.ts:31](https://github.com/Xunnamius/api-utils/blob/7043346440f4234ebd4f9ce5c0c70a3a86a21c41/packages/respond/src/index.ts#L31)
+Defined in: [index.ts:31](https://github.com/Xunnamius/api-utils/blob/de39eacf7b1e97617a2035eff33c6efaf5ffb215/packages/respond/src/index.ts#L31)
 
 Generic success JSON result object. May contain any number of additional
 jsonifiable key-value pairs.
@@ -25,4 +25,4 @@ jsonifiable key-value pairs.
 
 > **success**: `true`
 
-Defined in: [index.ts:32](https://github.com/Xunnamius/api-utils/blob/7043346440f4234ebd4f9ce5c0c70a3a86a21c41/packages/respond/src/index.ts#L32)
+Defined in: [index.ts:32](https://github.com/Xunnamius/api-utils/blob/de39eacf7b1e97617a2035eff33c6efaf5ffb215/packages/respond/src/index.ts#L32)

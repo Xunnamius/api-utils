@@ -10,7 +10,7 @@
 
 > **sendHttpNotFound**(...`args`): `Response`
 
-Defined in: [index.ts:233](https://github.com/Xunnamius/api-utils/blob/7043346440f4234ebd4f9ce5c0c70a3a86a21c41/packages/respond/src/index.ts#L233)
+Defined in: [index.ts:233](https://github.com/Xunnamius/api-utils/blob/de39eacf7b1e97617a2035eff33c6efaf5ffb215/packages/respond/src/index.ts#L233)
 
 Sends an HTTP 404 "not found" response with optional JSON data.
 
@@ -28,7 +28,7 @@ Sends an HTTP 404 "not found" response with optional JSON data.
 
 > **sendHttpNotFound**(...`args`): `void`
 
-Defined in: [index.ts:234](https://github.com/Xunnamius/api-utils/blob/7043346440f4234ebd4f9ce5c0c70a3a86a21c41/packages/respond/src/index.ts#L234)
+Defined in: [index.ts:234](https://github.com/Xunnamius/api-utils/blob/de39eacf7b1e97617a2035eff33c6efaf5ffb215/packages/respond/src/index.ts#L234)
 
 Sends an HTTP 404 "not found" response with optional JSON data.
 
@@ -46,7 +46,7 @@ Sends an HTTP 404 "not found" response with optional JSON data.
 
 > **sendHttpNotFound**(...`args`): `void` \| `Response`
 
-Defined in: [index.ts:235](https://github.com/Xunnamius/api-utils/blob/7043346440f4234ebd4f9ce5c0c70a3a86a21c41/packages/respond/src/index.ts#L235)
+Defined in: [index.ts:235](https://github.com/Xunnamius/api-utils/blob/de39eacf7b1e97617a2035eff33c6efaf5ffb215/packages/respond/src/index.ts#L235)
 
 Sends an HTTP 404 "not found" response with optional JSON data.
 
