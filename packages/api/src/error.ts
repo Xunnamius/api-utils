@@ -3,13 +3,10 @@
  */
 /* istanbul ignore next */
 export const ErrorMessage = {
-  InvalidSecret(secretType?: string) {
-    return `invalid ${secretType ?? 'secret'}`;
+  RuntimeNextCalledUnexpectedly() {
+    return 'runtime.next was called unexpectedly';
   },
-  InvalidItem(item: unknown) {
-    return `invalid ${String(item)}`;
-  },
-  SchemeNotImplemented(scheme: string) {
-    return `auth string handler for scheme "${scheme}" is not implemented`;
+  RuntimeDoneCalledUnexpectedly() {
+    return 'runtime.done was called unexpectedly';
   }
 };

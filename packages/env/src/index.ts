@@ -1,13 +1,11 @@
 import { validHttpMethods } from '@-xun/types';
 import { parse as parseAsBytes } from 'bytes';
-import { createDebugLogger } from 'rejoinder';
 
+import { globalDebugLogger as debug } from 'universe+env:constant.ts';
 import { ErrorMessage } from 'universe+env:error.ts';
 
 import type { ValidHttpMethod } from '@-xun/types';
 import type { Primitive } from 'type-fest';
-
-const debug = createDebugLogger({ namespace: 'env' });
 
 /**
  * This method takes an environment variable value (string), removes illegal
