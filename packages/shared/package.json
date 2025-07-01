@@ -11,6 +11,9 @@
   "author": "Xunnamius",
   "sideEffects": false,
   "type": "commonjs",
+  "devDependencies": {
+    "next-test-api-route-handler": "^4.0.16"
+  },
   "engines": {
     "node": "^20.18.0 || >=22.12.0"
   }
