@@ -3,8 +3,8 @@
  */
 /* istanbul ignore next */
 export const ErrorMessage = {
-  AuthHeaderTooLong() {
-    return 'auth header is too long';
+  AuthAttemptFailed() {
+    return 'auth attempt failed: access forbidden';
   },
   TokenCollision() {
     return 'token collision';

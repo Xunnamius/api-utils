@@ -46,6 +46,10 @@ export function toPublicAuthEntry(entry: InternalAuthEntry): PublicAuthEntry {
 /**
  * Transforms `filter`, the token attributes filter, into a MongoDb update
  * filter with equivalent meaning.
+ *
+ * Note that an `undefined` value for a boolean-accepting property will check
+ * for non-existence only, while a `false` value will check for both falseness
+ * (expected) but also non-existence too.
  */
 export function tokenAttributesFilterToMongoFilter(filter: TokenAttributesFilter) {
   return {
@@ -55,7 +59,7 @@ export function tokenAttributesFilterToMongoFilter(filter: TokenAttributesFilter
       ? { 'attributes.owner': { $in: [filter.owner].flat() } }
       : {}),
     ...(filter.isGlobalAdmin !== undefined
-      ? { 'attributes.isGlobalAdmin': filter.isGlobalAdmin }
+      ? { 'attributes.isGlobalAdmin': filter.isGlobalAdmin || { $in: [null, false] } }
       : {}),
     deleted: false
   };

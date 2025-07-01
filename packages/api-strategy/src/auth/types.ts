@@ -133,12 +133,14 @@ export type TokenAttributes = {
 export type TokenAttributesFilter = Partial<{
   /**
    * As a string, this represents the target _owner_ of the target token. As an
-   * array, this represents the target _owners_ of the target tokens, any of
-   * which could be returned.
+   * array, this represents the _acceptable owners_ of the target token(s).
    */
   owner: string | string[];
   /**
    * The target global administrator status of the target token(s).
+   *
+   * Note that filtering for `false` here will also match entries with
+   * attributes where this property is missing.
    */
   isGlobalAdmin: boolean;
 }>;

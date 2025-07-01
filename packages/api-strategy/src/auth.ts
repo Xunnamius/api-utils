@@ -55,11 +55,12 @@ export type GetAuthedClientTokenOptions = Partial<{
    */
   filter?: TokenAttributesFilter;
   /**
-   * If `true`, this function will throw if no matching token can be found.
+   * If set to `'reject'`, this function will throw (reject its promise) if no
+   * matching token can be found.
    *
-   * @default false
+   * @default 'return-undefined'
    */
-  throw?: boolean;
+  errorBehavior?: 'return-undefined' | 'reject';
 }>;
 
 /**
@@ -95,10 +96,6 @@ export async function getAuthedClientToken(
   let header: string | undefined;
 
   if (typeof client === 'string') {
-    if (client.length > getEnv().AUTH_HEADER_MAX_LENGTH) {
-      throw new Error(ErrorMessage.AuthHeaderTooLong());
-    }
-
     header = client;
   } else if (isNextApiRequestLike(client)) {
     header = client.headers.authorization;
@@ -129,10 +126,15 @@ export async function getAuthedClientToken(
     } catch (error) {
       debug.error('auth failure: %O', error);
 
-      if (options?.throw) {
-        throw error;
+      if (options?.errorBehavior === 'reject') {
+        throw new Error(ErrorMessage.AuthAttemptFailed());
       }
     }
+  }
+
+  if (options?.errorBehavior === 'reject') {
+    debug.error('auth failure: %O', 'missing Authorization header');
+    throw new Error(ErrorMessage.AuthAttemptFailed());
   }
 
   return undefined;
@@ -213,7 +215,7 @@ export async function getTokens(
   if ('auth_ids' in options) {
     const entries = await db
       .find<PublicAuthEntry>(
-        { _id: itemToObjectId(options.auth_ids), deleted: false },
+        { _id: { $in: itemToObjectId(options.auth_ids) }, deleted: false },
         { projection: publicAuthEntryProjection, limit: MAX_RESULTS_PER_PAGE }
       )
       .toArray();
@@ -289,7 +291,7 @@ export async function updateTokensAttributes(
     const { modifiedCount } = await (
       await getAuthDb()
     ).updateMany(
-      { _id: itemToObjectId(options.auth_ids), deleted: false },
+      { _id: { $in: itemToObjectId(options.auth_ids) }, deleted: false },
       tokenAttributesUpdateToMongoUpdate(attributes)
     );
 
@@ -349,7 +351,10 @@ export async function deleteTokens(
   if ('auth_ids' in options) {
     const { modifiedCount } = await (
       await getAuthDb()
-    ).updateMany({ _id: itemToObjectId(options.auth_ids) }, { $set: { deleted: true } });
+    ).updateMany(
+      { _id: { $in: itemToObjectId(options.auth_ids) } },
+      { $set: { deleted: true } }
+    );
 
     return modifiedCount;
   }
