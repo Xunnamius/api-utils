@@ -16,10 +16,13 @@
   "type": "commonjs",
   "exports": {
     "./middleware": {
-      "types": "./dist/packages/next-api/src/middleware.d.ts",
-      "default": "./dist/packages/next-api/src/middleware.js"
+      "types": "./dist/packages/api/src/middleware.d.ts",
+      "default": "./dist/packages/api/src/middleware.js"
     },
-    "./middleware/*": {},
+    "./middleware/*": {
+      "types": "./dist/packages/api/src/middleware/*.d.ts",
+      "default": "./dist/packages/api/src/middleware/*.js"
+    },
     "./error": {
       "types": "./dist/packages/api/src/error.d.ts",
       "default": "./dist/packages/api/src/error.js"
@@ -30,10 +33,11 @@
   "typesVersions": {
     "*": {
       "middleware": [
-        "dist/packages/next-api/src/middleware.d.ts"
+        "dist/packages/api/src/middleware.d.ts"
       ],
       "middleware/*": [],
       "error": [
+        "dist/packages/api/src/middleware/*.d.ts",
         "dist/packages/api/src/error.d.ts"
       ],
       "package": [
