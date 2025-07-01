@@ -194,7 +194,7 @@ describe('::addToRequestLog', () => {
       });
 
       expect(warnSpy).toHaveBeenCalledWith(
-        expect.stringContaining(`API endpoint at ${req1.url}`)
+        expect.stringContaining(`API endpoint at ${String(req1.url)}`)
       );
 
       await expect(
