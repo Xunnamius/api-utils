@@ -8,6 +8,6 @@
 
 > `const` **dummyRootData**: [`DummyRootData`](../type-aliases/DummyRootData.md)
 
-Defined in: [mongo/dummy.ts:39](https://github.com/Xunnamius/api-utils/blob/ac17224c10995432e1a7a0ea8baa75521f83afd6/packages/api-strategy/src/mongo/dummy.ts#L39)
+Defined in: [mongo/dummy.ts:39](https://github.com/Xunnamius/api-utils/blob/8d6e1a099d5192943800c743fb55cb84fe76c862/packages/api-strategy/src/mongo/dummy.ts#L39)
 
 Test data for the well-known `root` database.

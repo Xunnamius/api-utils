@@ -8,7 +8,7 @@
 
 > **Validators** = `object`
 
-Defined in: [auth/types.ts:13](https://github.com/Xunnamius/api-utils/blob/ac17224c10995432e1a7a0ea8baa75521f83afd6/packages/api-strategy/src/auth/types.ts#L13)
+Defined in: [auth/types.ts:13](https://github.com/Xunnamius/api-utils/blob/8d6e1a099d5192943800c743fb55cb84fe76c862/packages/api-strategy/src/auth/types.ts#L13)
 
 ## See
 
@@ -20,7 +20,7 @@ Defined in: [auth/types.ts:13](https://github.com/Xunnamius/api-utils/blob/ac172
 
 > **AuthorizationHeader**: `Type`\<`string`\>
 
-Defined in: [auth/types.ts:15](https://github.com/Xunnamius/api-utils/blob/ac17224c10995432e1a7a0ea8baa75521f83afd6/packages/api-strategy/src/auth/types.ts#L15)
+Defined in: [auth/types.ts:15](https://github.com/Xunnamius/api-utils/blob/8d6e1a099d5192943800c743fb55cb84fe76c862/packages/api-strategy/src/auth/types.ts#L15)
 
 ***
 
@@ -28,7 +28,7 @@ Defined in: [auth/types.ts:15](https://github.com/Xunnamius/api-utils/blob/ac172
 
 > **NewAuthEntry**: `Type`\<[`NewAuthEntry`](NewAuthEntry.md)\>
 
-Defined in: [auth/types.ts:16](https://github.com/Xunnamius/api-utils/blob/ac17224c10995432e1a7a0ea8baa75521f83afd6/packages/api-strategy/src/auth/types.ts#L16)
+Defined in: [auth/types.ts:16](https://github.com/Xunnamius/api-utils/blob/8d6e1a099d5192943800c743fb55cb84fe76c862/packages/api-strategy/src/auth/types.ts#L16)
 
 ***
 
@@ -36,7 +36,7 @@ Defined in: [auth/types.ts:16](https://github.com/Xunnamius/api-utils/blob/ac172
 
 > **Token**: `Type`\<[`Token`](Token.md)\>
 
-Defined in: [auth/types.ts:17](https://github.com/Xunnamius/api-utils/blob/ac17224c10995432e1a7a0ea8baa75521f83afd6/packages/api-strategy/src/auth/types.ts#L17)
+Defined in: [auth/types.ts:17](https://github.com/Xunnamius/api-utils/blob/8d6e1a099d5192943800c743fb55cb84fe76c862/packages/api-strategy/src/auth/types.ts#L17)
 
 ***
 
@@ -44,7 +44,7 @@ Defined in: [auth/types.ts:17](https://github.com/Xunnamius/api-utils/blob/ac172
 
 > **TokenAttributes**: `Type`\<[`TokenAttributes`](TokenAttributes.md)\>
 
-Defined in: [auth/types.ts:18](https://github.com/Xunnamius/api-utils/blob/ac17224c10995432e1a7a0ea8baa75521f83afd6/packages/api-strategy/src/auth/types.ts#L18)
+Defined in: [auth/types.ts:18](https://github.com/Xunnamius/api-utils/blob/8d6e1a099d5192943800c743fb55cb84fe76c862/packages/api-strategy/src/auth/types.ts#L18)
 
 ***
 
@@ -52,7 +52,7 @@ Defined in: [auth/types.ts:18](https://github.com/Xunnamius/api-utils/blob/ac172
 
 > **TokenAttributesFilter**: `Type`\<[`TokenAttributesFilter`](TokenAttributesFilter.md)\>
 
-Defined in: [auth/types.ts:19](https://github.com/Xunnamius/api-utils/blob/ac17224c10995432e1a7a0ea8baa75521f83afd6/packages/api-strategy/src/auth/types.ts#L19)
+Defined in: [auth/types.ts:19](https://github.com/Xunnamius/api-utils/blob/8d6e1a099d5192943800c743fb55cb84fe76c862/packages/api-strategy/src/auth/types.ts#L19)
 
 ***
 
@@ -60,4 +60,4 @@ Defined in: [auth/types.ts:19](https://github.com/Xunnamius/api-utils/blob/ac172
 
 > **toToken**: `Type`\<(`In`) => `Out`\<`string`\>\>
 
-Defined in: [auth/types.ts:14](https://github.com/Xunnamius/api-utils/blob/ac17224c10995432e1a7a0ea8baa75521f83afd6/packages/api-strategy/src/auth/types.ts#L14)
+Defined in: [auth/types.ts:14](https://github.com/Xunnamius/api-utils/blob/8d6e1a099d5192943800c743fb55cb84fe76c862/packages/api-strategy/src/auth/types.ts#L14)
