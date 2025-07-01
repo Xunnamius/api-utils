@@ -149,12 +149,18 @@ export type TokenAttributesFilter = Partial<{
  * The public base shape derived from an entry in the well-known "auth"
  * collection.
  */
-export type PublicAuthEntry = Pick<InternalAuthEntry, 'attributes'> & {
+export type PublicAuthEntry = Pick<InternalAuthEntry, 'attributes' | 'token'> & {
   /**
    * A string representation of the ObjectId associated with this entry.
    */
   auth_id: string;
 };
+
+/**
+ * A version of {@link } that excludes `token`, making it "safe" to reveal this
+ * data structure publicly (e.g. in logs and other output).
+ */
+export type SafePublicAuthEntry = Omit<PublicAuthEntry, 'token'>;
 
 /**
  * An array of items that can be coerced into {@link ObjectId} instances, or are

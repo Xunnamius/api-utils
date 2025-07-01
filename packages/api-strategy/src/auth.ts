@@ -1,14 +1,14 @@
 import { randomUUID as generateUUID } from 'node:crypto';
 
-import { getEnv } from '@-xun/env';
 import { itemToObjectId } from '@-xun/mongo-item';
 import { MongoServerError, ObjectId } from 'mongodb';
 
-import { isNextApiRequestLike } from 'multiverse+shared:next-like.ts';
+import { getAuthorizationHeaderFromRequestLike } from 'multiverse+shared:next-like.ts';
 
 import {
   getAuthDb,
   publicAuthEntryProjection,
+  safePublicAuthEntryProjection,
   tokenAttributesFilterToMongoFilter,
   tokenAttributesUpdateToMongoUpdate,
   toPublicAuthEntry
@@ -26,6 +26,7 @@ import type {
   MaybeAuthId,
   NewAuthEntry,
   PublicAuthEntry,
+  SafePublicAuthEntry,
   TokenAttributes,
   TokenAttributesFilter
 } from 'universe+api-strategy:auth/types.ts';
@@ -80,30 +81,20 @@ export type GetAuthedClientTokenOptions = Partial<{
 export async function getAuthedClientToken(
   req: NextApiRequestLike,
   options?: GetAuthedClientTokenOptions
-): Promise<PublicAuthEntry | undefined>;
+): Promise<SafePublicAuthEntry | undefined>;
 export async function getAuthedClientToken(
   request: Request,
   options?: GetAuthedClientTokenOptions
-): Promise<PublicAuthEntry | undefined>;
+): Promise<SafePublicAuthEntry | undefined>;
 export async function getAuthedClientToken(
   authorizationHeader: string,
   options?: GetAuthedClientTokenOptions
-): Promise<PublicAuthEntry | undefined>;
+): Promise<SafePublicAuthEntry | undefined>;
 export async function getAuthedClientToken(
   client: NextApiRequestLike | Request | string,
   options?: GetAuthedClientTokenOptions
-): Promise<PublicAuthEntry | undefined> {
-  let header: string | undefined;
-
-  if (typeof client === 'string') {
-    header = client;
-  } else if (isNextApiRequestLike(client)) {
-    header = client.headers.authorization;
-  } else {
-    header = client.headers.get('authorization') || undefined;
-  }
-
-  header ||= undefined;
+): Promise<SafePublicAuthEntry | undefined> {
+  const header = getAuthorizationHeaderFromRequestLike(client);
 
   if (header) {
     try {
@@ -115,9 +106,9 @@ export async function getAuthedClientToken(
 
       const entry = await (
         await getAuthDb()
-      ).findOne<PublicAuthEntry>(
+      ).findOne<SafePublicAuthEntry>(
         { token: toToken.from(header), ...filter },
-        { projection: publicAuthEntryProjection }
+        { projection: safePublicAuthEntryProjection }
       );
 
       if (entry) {
@@ -133,7 +124,7 @@ export async function getAuthedClientToken(
   }
 
   if (options?.errorBehavior === 'reject') {
-    debug.error('auth failure: %O', 'missing Authorization header');
+    debug.error('auth failure: %O', 'missing authorization header');
     throw new Error(ErrorMessage.AuthAttemptFailed());
   }
 
@@ -193,6 +184,8 @@ export async function getTokens(options: {
 /**
  * Returns entries matching the given `filter` in the well-known "auth" MongoDB
  * collection.
+ *
+ * Throws on invalid input.
  */
 export async function getTokens(options: {
   /**
@@ -259,6 +252,8 @@ export async function updateTokensAttributes(options: {
 /**
  * Updates entries matching the given `filter` in the well-known "auth" MongoDB
  * collection.
+ *
+ * Throws on invalid input.
  *
  * **WARNING: `update` is used to _patch_, not replace, the existing attributes
  * objects.**
@@ -327,6 +322,8 @@ export async function deleteTokens(options: {
 /**
  * Deletes entries matching the given `filter` in the well-known "auth" MongoDB
  * collection.
+ *
+ * Throws on invalid input.
  *
  * Deleted entries remain in the system but in a deactivated state. They cannot
  * be reactivated or otherwise interacted with once deactivated.

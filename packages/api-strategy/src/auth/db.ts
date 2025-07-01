@@ -6,19 +6,30 @@ import type { Exact } from 'type-fest';
 import type {
   InternalAuthEntry,
   PublicAuthEntry,
+  SafePublicAuthEntry,
   TokenAttributes,
   TokenAttributesFilter
 } from 'universe+api-strategy:auth/types.ts';
 
 /**
  * A MongoDB cursor projection that transforms an internal auth entry (or
- * "token") into a public auth entry.
+ * "token") into an unsafe public auth entry.
+ *
+ * **WARNING: the "public" auth entry contains sensitive information and is only
+ * meant to be returned by privileged processes and endpoints!**
  */
 export const publicAuthEntryProjection = {
   _id: false,
   auth_id: { $toString: '$_id' },
-  attributes: true
+  attributes: true,
+  token: true
 };
+
+/**
+ * A MongoDB cursor projection that transforms an internal auth entry (or
+ * "token") into a safe public auth entry with no sensitive information.
+ */
+export const { token: _, ...safePublicAuthEntryProjection } = publicAuthEntryProjection;
 
 /**
  * Return the well-known "auth" collection after calling {@link getDb} on the
@@ -30,9 +41,23 @@ export async function getAuthDb(): Promise<Collection<InternalAuthEntry>> {
 
 /**
  * Transform an internal entry from the well-known "auth" MongoDB collection
- * into one that is safe for consumption.
+ * into one that is safe for consumption by privileged units.
  */
 export function toPublicAuthEntry(entry: InternalAuthEntry): PublicAuthEntry {
+  const {
+    _id,
+    deleted: _,
+    ...publicEntry
+  } = { ...entry, auth_id: entry._id.toString() };
+
+  return publicEntry satisfies Exact<PublicAuthEntry, typeof publicEntry>;
+}
+
+/**
+ * Transform an internal entry from the well-known "auth" MongoDB collection
+ * into one that is safe for consumption by non-privileged units.
+ */
+export function toSafePublicAuthEntry(entry: InternalAuthEntry): SafePublicAuthEntry {
   const {
     _id,
     deleted: _,
@@ -40,7 +65,7 @@ export function toPublicAuthEntry(entry: InternalAuthEntry): PublicAuthEntry {
     ...publicEntry
   } = { ...entry, auth_id: entry._id.toString() };
 
-  return publicEntry satisfies Exact<PublicAuthEntry, typeof publicEntry>;
+  return publicEntry satisfies Exact<SafePublicAuthEntry, typeof publicEntry>;
 }
 
 /**
