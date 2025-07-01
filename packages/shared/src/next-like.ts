@@ -48,7 +48,9 @@ export function isNextApiResponseLike(o: unknown): o is NextApiResponseLike {
 }
 
 /**
- * Accepts a string or something resembling a {@link Request} and returns either its authorization header or `undefined`.
+ * Accepts an authorization header string or something resembling a
+ * {@link Request} and returns either an authorization header string or
+ * `undefined`.
  */
 export function getAuthorizationHeaderFromRequestLike(
   client: string | NextApiRequestLike | Request
