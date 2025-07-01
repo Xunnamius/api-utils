@@ -46,3 +46,24 @@ export function isNextApiRequestLike(o: unknown): o is NextApiRequestLike {
 export function isNextApiResponseLike(o: unknown): o is NextApiResponseLike {
   return !!o && typeof o === 'object' && 'send' in o;
 }
+
+/**
+ * Accepts a string or something resembling a {@link Request} and returns either its authorization header or `undefined`.
+ */
+export function getAuthorizationHeaderFromRequestLike(
+  client: string | NextApiRequestLike | Request
+) {
+  let header: string | undefined;
+
+  if (typeof client === 'string') {
+    header = client;
+  } else if (isNextApiRequestLike(client)) {
+    header = client.headers.authorization;
+  } else {
+    header = client.headers.get('authorization') || undefined;
+  }
+
+  header ||= undefined;
+
+  return header;
+}
