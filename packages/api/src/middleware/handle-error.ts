@@ -194,6 +194,13 @@ export default async function middleware(
 
   const url = String(reqOrRequest.url);
 
+  // ? Handle validation errors from ArkType (imported dynamically for config)
+  const {
+    ArkError,
+    ParseError: ArkParseError,
+    TraversalError: ArkTraversalError
+  } = await import('arktype');
+
   if (handleAs instanceof SanityError) {
     // eslint-disable-next-line no-console
     console.error(`sanity check failed on request: ${url}\n`, error);
@@ -204,7 +211,12 @@ export default async function middleware(
     // eslint-disable-next-line no-console
     console.error(`server-side validation exception on request: ${url}\n`, error);
     return respondWith(sendHttpUnspecifiedError, errorJson);
-  } else if (handleAs instanceof ClientValidationError) {
+  } else if (
+    handleAs instanceof ClientValidationError ||
+    handleAs instanceof ArkError ||
+    handleAs instanceof ArkParseError ||
+    handleAs instanceof ArkTraversalError
+  ) {
     return respondWith(sendHttpBadRequest, errorJson);
   } else if (handleAs instanceof AuthError) {
     return respondWith(sendHttpUnauthorized, errorJson);

@@ -73,18 +73,10 @@ export default async function middleware(
   const { requiresAuth } = context.options;
 
   if (context.options.requiresAuth) {
-    const client = await getAuthedClientToken(reqOrRequest, {
+    await getAuthedClientToken(reqOrRequest, {
+      errorBehavior: 'reject',
       filter: typeof requiresAuth === 'object' ? requiresAuth.filter : undefined
     });
-
-    if (!client) {
-      if (isInLegacyMode) {
-        const res = resOrContext as NextApiResponseLike;
-        sendHttpUnauthenticated(res);
-      } else {
-        return sendHttpUnauthenticated();
-      }
-    }
   } else {
     debug('skipped authentication and authorization checks');
   }

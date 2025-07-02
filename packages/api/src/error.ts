@@ -6,11 +6,11 @@ export const ErrorMessage = {
   SanityCheckFailed() {
     return 'sanity check failed: please report exactly what you did just now!';
   },
-  RuntimeNextCalledUnexpectedly() {
-    return 'runtime.next was called unexpectedly';
+  ReachedEndOfRuntime() {
+    return 'end of runtime reached but legacy response was not sent';
   },
-  RuntimeDoneCalledUnexpectedly() {
-    return 'runtime.done was called unexpectedly';
+  RuntimeDoneCalledTooEarly() {
+    return 'runtime.done was called too early';
   },
   InvalidOptionInMiddlewareConfig(option: string) {
     return `a valid "${option}" option is missing from middleware configuration`;

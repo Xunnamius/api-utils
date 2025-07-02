@@ -1,4 +1,5 @@
-import { sendNotImplemented } from '@-xun/respond';
+/* eslint-disable no-await-in-loop */
+import { sendHttpUnspecifiedError, sendNotImplemented } from '@-xun/respond';
 import { toss } from 'toss-expression';
 
 import { globalDebugLogger as debug } from 'universe+api:constant.ts';
@@ -133,25 +134,55 @@ export function withMiddleware<
 
     debug('-- begin (%O mode) --', isInLegacyMode ? 'LEGACY' : 'MODERN');
 
+    const doMiddlewareAfterHandled = [] as AnyMiddleware<Options, Heap>[];
+    const doMiddlewareAfterSent = [] as AnyMiddleware<Options, Heap>[];
+    let $response_ = new Response();
+
     const middlewareContext: MiddlewareContext<
       Options,
       Heap,
       AnyMiddleware<Options, Heap>
-    > = {
+    > & { runtime: { response: Response } } = {
       runtime: {
         endpoint: {
           descriptor
         },
-        next: () => toss(new Error(ErrorMessage.RuntimeNextCalledUnexpectedly())),
-        done: () => toss(new Error(ErrorMessage.RuntimeDoneCalledUnexpectedly())),
+        done: () => toss(new Error(ErrorMessage.RuntimeDoneCalledTooEarly())),
         error: undefined,
         doAfterHandled(middleware) {
-          // XXX: TODO: see comments for implementation details
+          doMiddlewareAfterHandled.push(middleware as AnyMiddleware<Options, Heap>);
         },
         doAfterSent(middleware) {
-          // XXX: TODO: see comments for implementation details
+          doMiddlewareAfterSent.push(middleware as AnyMiddleware<Options, Heap>);
         },
-        response: new Response()
+        get response() {
+          return $response_;
+        },
+        // ? Setting a new response must augment, not replace, the old one!
+        set response(value: Response) {
+          const draftBody = value.bodyUsed ? undefined : value.body;
+          const currentBody = $response_.bodyUsed ? undefined : $response_.body;
+          const body = draftBody === undefined ? currentBody : draftBody;
+
+          if (body === undefined) {
+            debug.warn(
+              'draft response body set to null: neither current nor updated Response has a usable body'
+            );
+          }
+
+          const draftResponse = new Response(body || null, {
+            status: value.status || $response_.status,
+            statusText: value.statusText || $response_.statusText
+          });
+
+          $response_.headers
+            .entries()
+            .toArray()
+            .concat(value.headers.entries().toArray())
+            .forEach(([key, value]) => draftResponse.headers.set(key, value));
+
+          $response_ = draftResponse;
+        }
       },
       heap: {} as Heap,
       options: {
@@ -165,17 +196,16 @@ export function withMiddleware<
       >['options']
     };
 
-    let maybeResponse = undefined as Response | undefined;
+    const writableContextRuntime = middlewareContext.runtime as Writable<
+      typeof middlewareContext.runtime
+    >;
 
     try {
       let primaryChainWasAborted = false;
 
       try {
         debug('selecting first middleware in primary middleware chain');
-        [primaryChainWasAborted, maybeResponse] = await startPullingChain(
-          use[Symbol.iterator](),
-          debug
-        );
+        primaryChainWasAborted = await startPullingChain(use[Symbol.iterator](), debug);
       } catch (error) {
         debug('error in primary middleware chain');
         throw error;
@@ -187,7 +217,7 @@ export function withMiddleware<
         } else {
           debug('executing handler');
 
-          maybeResponse = await Reflect.apply(handler, null, [
+          writableContextRuntime.response = await Reflect.apply(handler, null, [
             reqOrRequest,
             isInLegacyMode ? resOrUndefined : middlewareContext.heap,
             middlewareContext.heap
@@ -197,6 +227,7 @@ export function withMiddleware<
         }
       } else {
         debug('no handler function available');
+        writableContextRuntime.response = sendNotImplemented();
       }
 
       if (isInLegacyMode) {
@@ -206,32 +237,19 @@ export function withMiddleware<
           debug('response was not sent: sending "not implemented" error');
           sendNotImplemented(res);
         }
-
-        debug('-- done --');
-        return undefined;
-      } else {
-        maybeResponse ??= sendNotImplemented();
-
-        debug('-- done --');
-        return maybeResponse;
       }
+
+      debug('-- primary use chain done --');
     } catch (error) {
       try {
         debug.error('attempting to handle error: %O', error);
 
-        const writableRuntime = middlewareContext.runtime as Writable<
-          typeof middlewareContext.runtime
-        >;
-
-        writableRuntime.error = error;
+        writableContextRuntime.error = error;
 
         if (useOnError) {
           try {
             debug.error('selecting first middleware in error handling middleware chain');
-            [, maybeResponse] = await startPullingChain(
-              useOnError[Symbol.iterator](),
-              debug.error
-            );
+            await startPullingChain(useOnError[Symbol.iterator](), debug.error);
           } catch (subError) {
             // ? Error in error handler was unhandled
             debug.error('error in error handling middleware chain: %O', subError);
@@ -247,34 +265,128 @@ export function withMiddleware<
         if (isInLegacyMode) {
           const res = resOrUndefined as NextApiResponseLike;
 
-          // ? Error was unhandled, kick it up to the caller (usually Next itself)
+          // ? Unhandled error, kick it up to the caller
           if (!res.writableEnded && !res.headersSent) {
-            debug.error('throwing unhandled error');
+            debug.error('throwing unhandled error (res not sent)');
             throw error;
           }
-
-          return undefined;
         } else {
-          if (!maybeResponse) {
-            debug.error('throwing unhandled error');
+          // ? Unhandled error, kick it up to the caller
+          if (middlewareContext.runtime.response.status < 400) {
+            debug.error('throwing unhandled error (response status < 400)');
             throw error;
           }
-
-          return maybeResponse;
         }
       } finally {
-        debug('-- done (with errors) --');
+        debug('-- useOnError chain done --');
+      }
+    }
+
+    await runMiddlewareAfterHandled();
+    const promisedMiddlewareAfterSent = runMiddlewareAfterSent();
+
+    if (options?.awaitMiddlewareAfterSent) {
+      await promisedMiddlewareAfterSent;
+    }
+
+    if (isInLegacyMode) {
+      const res = resOrUndefined as NextApiResponseLike;
+
+      if (res.writableEnded && !res.headersSent) {
+        sendHttpUnspecifiedError(res);
+        throw new Error(ErrorMessage.ReachedEndOfRuntime());
+      }
+    }
+
+    return middlewareContext.runtime.response;
+
+    async function runMiddlewareAfterHandled() {
+      for (const middleware of doMiddlewareAfterHandled) {
+        if (isInLegacyMode) {
+          const typedMiddleware = middleware as LegacyMiddleware<
+            Options,
+            NextApiRequestLike,
+            NextApiResponseLike,
+            Heap
+          >;
+
+          const [req, res] = [
+            reqOrRequest as NextApiRequestLike,
+            resOrUndefined as NextApiResponseLike
+          ];
+
+          await typedMiddleware(
+            req,
+            res,
+            middlewareContext as MiddlewareContext<Options, Heap, typeof typedMiddleware>
+          );
+        } else {
+          const request = reqOrRequest as Request;
+          const typedMiddleware = middleware as ModernMiddleware<
+            Options,
+            Request,
+            Response,
+            Heap
+          >;
+
+          writableContextRuntime.response =
+            (await typedMiddleware(
+              request,
+              middlewareContext as MiddlewareContext<
+                Options,
+                Heap,
+                typeof typedMiddleware
+              >
+            )) || writableContextRuntime.response;
+        }
+      }
+    }
+
+    async function runMiddlewareAfterSent() {
+      for (const middleware of doMiddlewareAfterSent) {
+        if (isInLegacyMode) {
+          const typedMiddleware = middleware as LegacyMiddleware<
+            Options,
+            NextApiRequestLike,
+            NextApiResponseLike,
+            Heap
+          >;
+
+          const [req, res] = [
+            reqOrRequest as NextApiRequestLike,
+            resOrUndefined as NextApiResponseLike
+          ];
+
+          await typedMiddleware(
+            req,
+            res,
+            middlewareContext as MiddlewareContext<Options, Heap, typeof typedMiddleware>
+          );
+        } else {
+          const request = reqOrRequest as Request;
+          const typedMiddleware = middleware as ModernMiddleware<
+            Options,
+            Request,
+            Response,
+            Heap
+          >;
+
+          writableContextRuntime.response =
+            (await typedMiddleware(
+              request,
+              middlewareContext as MiddlewareContext<
+                Options,
+                Heap,
+                typeof typedMiddleware
+              >
+            )) || writableContextRuntime.response;
+        }
       }
     }
 
     /**
-     * Async middleware chain iteration. Returns `[true, Response | undefined]`
-     * if execution was aborted or `[false, Response | undefined]` otherwise.
-     *
-     * When working with a legacy `handler`, this function returns `[boolean,
-     * undefined]`. On the other hand, when working with a modern `handler`,
-     * `[true, Response]` is returned when execution was aborted (or
-     * short-circuited); otherwise, `[false, undefined]` is returned.
+     * Async middleware chain iteration. Returns `true` if execution was aborted
+     * or `false` otherwise.
      */
     async function startPullingChain(
       chain: IterableIterator<
@@ -284,88 +396,59 @@ export function withMiddleware<
           >
       >,
       localDebug: ExtendedDebugger | UnextendableInternalLogger
-    ): Promise<[primaryChainWasAborted: boolean, maybeResponse: Response | undefined]> {
+    ): Promise<boolean> {
       let executionWasAborted = false as boolean;
       let executionCompleted = false as boolean;
       let ranAtLeastOneMiddleware = false as boolean;
 
       try {
-        if (middlewareContext.options.callDoneOnEnd) {
-          if (isInLegacyMode) {
-            const res = resOrUndefined as NextApiResponseLike;
+        if (isInLegacyMode && middlewareContext.options.callDoneOnEnd) {
+          const res = resOrUndefined as NextApiResponseLike;
 
-            localDebug(
-              'chain will automatically call runtime.done after first call to res.end'
-            );
+          localDebug(
+            'chain will automatically call runtime.done after first call to res.end'
+          );
 
-            // eslint-disable-next-line @typescript-eslint/unbound-method
-            const sendActual = res.end;
-            res.end = ((...args: Parameters<typeof res.end>) => {
-              const sent = res.writableEnded || res.headersSent;
-              sendActual(...args);
+          // eslint-disable-next-line @typescript-eslint/unbound-method
+          const sendActual = res.end;
+          res.end = ((...args: Parameters<typeof res.end>) => {
+            const sent = res.writableEnded || res.headersSent;
+            sendActual(...args);
 
-              if (!sent) {
-                if (!executionWasAborted && !executionCompleted) {
-                  localDebug('calling runtime.done after first call to res.end');
-                  middlewareContext.runtime.done();
-                } else {
-                  localDebug(
-                    'NOTICE: skipped calling runtime.done since chain already finished executing'
-                  );
-                }
+            if (!sent) {
+              if (!executionWasAborted && !executionCompleted) {
+                localDebug('calling runtime.done after first call to res.end');
+                middlewareContext.runtime.done();
+              } else {
+                localDebug(
+                  'NOTICE: skipped calling runtime.done since chain already finished executing'
+                );
               }
-            }) as typeof res.end;
-          } else {
-            localDebug(
-              'chain will automatically call runtime.done the first time a middleware/handler returns a Response'
-            );
-
-            // * This is handled for real below
-          }
+            }
+          }) as typeof res.end;
         } else {
           localDebug('chain will NOT automatically call runtime.done');
         }
 
-        const maybeLocalResponse = await pullChain();
+        await pullChain();
 
         localDebug('stopped middleware execution chain');
         localDebug(
           `at least one middleware executed: ${ranAtLeastOneMiddleware ? 'yes' : 'no'}`
         );
 
-        return [executionWasAborted, isInLegacyMode ? undefined : maybeLocalResponse];
+        return executionWasAborted;
       } catch (error) {
         executionWasAborted = true;
         debug.warn('execution chain aborted due to error');
         throw error;
       }
 
-      async function pullChain(): Promise<Response | undefined> {
+      async function pullChain(): Promise<void> {
         const { value: currentMiddleware, done } = chain.next();
         const writableRuntime = middlewareContext.runtime as Writable<
           typeof middlewareContext.runtime
         >;
-
-        let chainWasPulled = false as boolean;
-        let middlewareReturnValue = undefined as Response | undefined;
-
-        writableRuntime.next = async () => {
-          if (!executionCompleted) {
-            if (executionWasAborted) {
-              debug.warn(
-                'runtime.next: chain was aborted; calling runtime.next() at this point is a noop'
-              );
-            } else {
-              chainWasPulled = true;
-              localDebug('runtime.next: manually selecting next middleware in chain');
-              middlewareReturnValue = await pullChain();
-            }
-          } else {
-            debug.warn(
-              'runtime.next: chain already finished executing; calling runtime.next() at this point is a noop'
-            );
-          }
-        };
 
         writableRuntime.done = () => {
           if (!executionCompleted) {
@@ -419,7 +502,7 @@ export function withMiddleware<
                 Heap
               >;
 
-              middlewareReturnValue =
+              writableContextRuntime.response =
                 (await typedCurrentMiddleware(
                   request,
                   middlewareContext as MiddlewareContext<
@@ -427,7 +510,7 @@ export function withMiddleware<
                     Heap,
                     typeof typedCurrentMiddleware
                   >
-                )) || undefined;
+                )) || writableContextRuntime.response;
             }
 
             ranAtLeastOneMiddleware = true;
@@ -437,12 +520,12 @@ export function withMiddleware<
 
           if (executionWasAborted) {
             localDebug('execution chain aborted manually');
-          } else if (!chainWasPulled) {
+          } else {
             localDebug('selecting next middleware in chain');
-            middlewareReturnValue = await pullChain();
+            await pullChain();
           }
 
-          if (!isInLegacyMode && middlewareReturnValue) {
+          if (!isInLegacyMode) {
             if (!executionWasAborted && !executionCompleted) {
               localDebug(
                 'calling runtime.done after pullChain completed since a Response was returned'
@@ -466,8 +549,6 @@ export function withMiddleware<
 
           executionCompleted = true;
         }
-
-        return middlewareReturnValue;
       }
     }
   };
