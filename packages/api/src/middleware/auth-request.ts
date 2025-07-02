@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-type-parameters */
 import { getAuthedClientToken } from '@-xun/api-strategy/auth';
-import { sendHttpUnauthenticated } from '@-xun/respond';
 
 import { globalDebugLogger } from 'universe+api:constant.ts';
 
