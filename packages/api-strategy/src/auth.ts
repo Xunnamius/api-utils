@@ -16,7 +16,7 @@ import {
 
 import { getValidators } from 'universe+api-strategy:auth/types.ts';
 import { globalDebugLogger } from 'universe+api-strategy:constant.ts';
-import { ErrorMessage } from 'universe+api-strategy:error.ts';
+import { AuthError, ErrorMessage } from 'universe+api-strategy:error.ts';
 
 import type { LiteralUnknownUnion } from '@-xun/types';
 import type { NextApiRequestLike } from 'multiverse+shared:next-like.ts';
@@ -122,14 +122,14 @@ export async function getAuthedClientToken(
       debug.error('auth failure: %O', error);
 
       if (options?.errorBehavior === 'reject') {
-        throw new Error(ErrorMessage.AuthAttemptFailed());
+        throw new AuthError(ErrorMessage.AuthAttemptFailed());
       }
     }
   }
 
   if (options?.errorBehavior === 'reject') {
     debug.error('auth failure: %O', 'missing authorization header');
-    throw new Error(ErrorMessage.AuthAttemptFailed());
+    throw new AuthError(ErrorMessage.AuthAttemptFailed());
   }
 
   return undefined;

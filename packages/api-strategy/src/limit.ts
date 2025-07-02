@@ -7,7 +7,7 @@ import {
   isNextApiRequestLike
 } from 'multiverse+shared:next-like.ts';
 
-import { ErrorMessage } from 'universe+api-strategy:error.ts';
+import { ClientValidationError, ErrorMessage } from 'universe+api-strategy:error.ts';
 
 import type { UnixEpochMs } from '@-xun/types';
 import type { WithId, WithoutId } from 'mongodb';
@@ -119,13 +119,15 @@ export async function removeRateLimit({
   if (target) {
     const { ip, header } = target;
 
+    // TODO: replace with ArkType?
+
     if (ip !== undefined || header !== undefined) {
       if (ip !== undefined && (typeof ip !== 'string' || !ip)) {
-        throw new Error(ErrorMessage.InvalidEmptyIp());
+        throw new ClientValidationError(ErrorMessage.InvalidEmptyIp());
       }
 
       if (header !== undefined && (typeof header !== 'string' || !header)) {
-        throw new Error(ErrorMessage.InvalidEmptyHeader());
+        throw new ClientValidationError(ErrorMessage.InvalidEmptyHeader());
       }
 
       const now = Date.now();
@@ -143,7 +145,7 @@ export async function removeRateLimit({
     }
   }
 
-  throw new Error(ErrorMessage.NeedsEitherIpOrHeader());
+  throw new ClientValidationError(ErrorMessage.NeedsEitherIpOrHeader());
 }
 
 /**

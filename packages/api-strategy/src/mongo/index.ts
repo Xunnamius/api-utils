@@ -1,4 +1,4 @@
-import { ErrorMessage } from 'universe+api-strategy:error.ts';
+import { ErrorMessage, ServerValidationError } from 'universe+api-strategy:error.ts';
 
 import type { DbSchema } from '@-xun/mongo-schema';
 
@@ -45,13 +45,13 @@ export function getCommonSchemaConfig(additionalSchemaConfig?: DbSchema): DbSche
 
   Object.entries(schema.aliases).forEach(([alias, actual]) => {
     if (!actualDatabaseNames.includes(actual)) {
-      throw new Error(
+      throw new ServerValidationError(
         ErrorMessage.AliasedDatabaseNotAliasable(actual, alias, actualDatabaseNames)
       );
     }
 
     if (actualDatabaseNames.includes(alias)) {
-      throw new Error(ErrorMessage.InvalidDatabaseAlias(actual, alias));
+      throw new ServerValidationError(ErrorMessage.InvalidDatabaseAlias(actual, alias));
     }
   });
 
