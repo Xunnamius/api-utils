@@ -306,7 +306,7 @@ export function withMiddleware<
       }
     }
 
-    return middlewareContext.runtime.response;
+    return isInLegacyMode ? undefined : middlewareContext.runtime.response;
 
     async function runMiddlewareAfterHandled() {
       for (const middleware of doMiddlewareAfterHandled) {
