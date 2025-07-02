@@ -1,27 +1,50 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { IncomingMessage, ServerResponse } from 'node:http';
 
 /**
  * An object that is probably a `NextApiRequest`.
  */
-export type NextApiRequestLike = IncomingMessage & {
-  /**
-   * Object of `cookies` from header
-   */
+export interface NextApiRequestLike extends IncomingMessage {
+  query: Partial<{
+    [key: string]: string | string[];
+  }>;
   cookies: Partial<{
     [key: string]: string;
   }>;
-};
+  body: any;
+  env: {
+    [key: string]: string | undefined;
+  };
+  draftMode?: boolean;
+  preview?: boolean;
+  previewData?: string | false | object | undefined;
+}
 
 /**
  * An object that is probably a `NextApiResponse`.
  */
 export type NextApiResponseLike = ServerResponse & {
-  status: (statusCode: number) => NextApiResponseLike;
-  /**
-   * Send data `any` data in response
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   send: (body: any) => void;
+  json: (body: any) => void;
+  status: (statusCode: number) => NextApiResponseLike;
+  redirect(url: string): NextApiResponseLike;
+  redirect(status: number, url: string): NextApiResponseLike;
+  setDraftMode: (options: { enable: boolean }) => NextApiResponseLike;
+  setPreviewData: (
+    data: object | string,
+    options?: {
+      maxAge?: number;
+      path?: string;
+    }
+  ) => NextApiResponseLike;
+  clearPreviewData: (options?: { path?: string }) => NextApiResponseLike;
+  revalidate: (
+    urlPath: string,
+    // eslint-disable-next-line unicorn/prevent-abbreviations
+    opts?: {
+      unstable_onlyGenerated?: boolean;
+    }
+  ) => Promise<void>;
 };
 
 /**
