@@ -93,6 +93,10 @@ export async function getAuthedClientToken(
 export async function getAuthedClientToken(
   client: NextApiRequestLike | Request | string,
   options?: GetAuthedClientTokenOptions
+): Promise<SafePublicAuthEntry | undefined>;
+export async function getAuthedClientToken(
+  client: NextApiRequestLike | Request | string,
+  options?: GetAuthedClientTokenOptions
 ): Promise<SafePublicAuthEntry | undefined> {
   const header = getAuthorizationHeaderFromRequestLike(client);
 

@@ -2,6 +2,8 @@ import { getEnv } from '@-xun/env';
 import { getDb } from '@-xun/mongo-schema';
 import { getClientIp } from 'request-ip';
 
+import { getAuthorizationHeaderFromRequestLike } from 'multiverse+shared:next-like.ts';
+
 import type { HttpStatusCode, UnixEpochMs } from '@-xun/types';
 import type { WithId, WithoutId } from 'mongodb';
 
@@ -31,6 +33,15 @@ export type NewRequestLogEntry = WithoutId<InternalRequestLogEntry>;
 
 /**
  * This function adds a request metadata entry to the database.
+ */
+export async function addToRequestLog(options: {
+  request: Request;
+  response: Response;
+  endpoint: string | null | undefined;
+  durationMs: number;
+}): Promise<void>;
+/**
+ * This function adds a request metadata entry to the database.
  *
  * Note that this async function **does not have to be awaited**. It's fire and
  * forget!
@@ -42,38 +53,60 @@ export type NewRequestLogEntry = WithoutId<InternalRequestLogEntry>;
  * doSomeOtherStuff();
  * ```
  */
-export async function addToRequestLog({
-  req,
-  res,
-  endpoint,
-  durationMs
-}: {
+export async function addToRequestLog(options: {
   req: NextApiRequestLike;
   res: NextApiResponseLike;
   endpoint: string | null | undefined;
   durationMs: number;
-}): Promise<void> {
+}): Promise<void>;
+export async function addToRequestLog(
+  options: (
+    | {
+        req: NextApiRequestLike;
+        res: NextApiResponseLike;
+      }
+    | { request: Request; response: Response }
+  ) & {
+    endpoint: string | null | undefined;
+    durationMs: number;
+  }
+): Promise<void> {
+  const { endpoint, durationMs } = options;
+  const isInLegacyMode = !('request' in options);
+  const reqOrRequest = isInLegacyMode ? options.req : options.request;
+
+  const url = reqOrRequest.url?.toString() || null;
+
   if (!endpoint) {
     // eslint-disable-next-line no-console
-    console.warn(
-      `${
-        req.url ? `API endpoint at ${req.url}` : 'an API endpoint'
-      } is missing its descriptor metadata`
-    );
+    console.warn('API endpoint at url "%O" is missing its descriptor metadata', url);
   }
+
+  // TODO: turns out getting the IP is non-trivial. This need to be revisited!
+  const ip = getClientIp(
+    isInLegacyMode
+      ? options.req
+      : { headers: Object.fromEntries(options.request.headers.entries()) }
+  );
+
+  const authHeader =
+    getAuthorizationHeaderFromRequestLike(reqOrRequest)
+      ?.slice(0, getEnv().AUTH_HEADER_MAX_LENGTH)
+      .toLowerCase() || null;
+
+  const method = reqOrRequest.method?.toUpperCase() || null;
 
   await (await getDb({ name: 'root' }))
     .collection<NewRequestLogEntry>('request-log')
     .insertOne({
-      ip: getClientIp(req),
-      header:
-        req.headers.authorization
-          ?.slice(0, getEnv().AUTH_HEADER_MAX_LENGTH)
-          .toLowerCase() || null,
-      method: req.method?.toUpperCase() || null,
-      route: req.url || null,
+      ip,
+      header: authHeader,
+      method,
+      route: url,
       endpoint: endpoint || null,
-      resStatusCode: res.statusCode as HttpStatusCode,
+      resStatusCode: (isInLegacyMode
+        ? options.res.statusCode
+        : options.response.status) as HttpStatusCode,
       createdAt: Date.now(),
       durationMs
     });

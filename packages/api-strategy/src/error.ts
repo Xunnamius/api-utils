@@ -3,6 +3,7 @@
  */
 /* istanbul ignore next */
 export const ErrorMessage = {
+  GuruMeditation: () => 'an impossible scenario occurred',
   AuthAttemptFailed() {
     return 'auth attempt failed: access forbidden';
   },
@@ -31,3 +32,11 @@ export const ErrorMessage = {
     return 'must provide either an ip or a header';
   }
 };
+
+export class ApiError extends Error {}
+export class SanityError extends ApiError {}
+export class ClientValidationError extends ApiError {}
+export class ServerValidationError extends ApiError {}
+export class AuthError extends ApiError {}
+export class NotFoundError extends ApiError {}
+export class NotImplementedError extends ApiError {}

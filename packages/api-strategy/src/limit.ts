@@ -2,6 +2,11 @@ import { getEnv } from '@-xun/env';
 import { getDb } from '@-xun/mongo-schema';
 import { getClientIp } from 'request-ip';
 
+import {
+  getAuthorizationHeaderFromRequestLike,
+  isNextApiRequestLike
+} from 'multiverse+shared:next-like.ts';
+
 import { ErrorMessage } from 'universe+api-strategy:error.ts';
 
 import type { UnixEpochMs } from '@-xun/types';
@@ -30,13 +35,38 @@ export type InternalLimitedLogEntry = WithId<
 export type NewLimitedLogEntry = WithoutId<InternalLimitedLogEntry>;
 
 /**
+ * @see {@link isClientRateLimited}
+ */
+export type IsClientRateLimitedReturnType = {
+  isLimited: boolean;
+  retryAfter: number;
+};
+
+/**
  * Returns an object with two keys: `isLimited` and `retryAfter`. If `isLimited`
  * is true, then the request should be rejected. The client should be instructed
  * to retry their request after `retryAfter` milliseconds have passed.
  */
-export async function isClientRateLimited(req: NextApiRequestLike) {
-  const ip = getClientIp(req);
-  const header = req.headers.authorization
+export async function isClientRateLimited(
+  request: Request
+): Promise<IsClientRateLimitedReturnType>;
+export async function isClientRateLimited(
+  req: NextApiRequestLike
+): Promise<IsClientRateLimitedReturnType>;
+export async function isClientRateLimited(
+  reqOrRequest: Request | NextApiRequestLike
+): Promise<IsClientRateLimitedReturnType>;
+export async function isClientRateLimited(reqOrRequest: Request | NextApiRequestLike) {
+  const isInLegacyMode = !!isNextApiRequestLike(reqOrRequest);
+
+  // TODO: turns out getting the IP is non-trivial. This need to be revisited!
+  const ip = getClientIp(
+    isInLegacyMode
+      ? reqOrRequest
+      : { headers: Object.fromEntries(reqOrRequest.headers.entries()) }
+  );
+
+  const authHeader = getAuthorizationHeaderFromRequestLike(reqOrRequest)
     ?.slice(0, getEnv().AUTH_HEADER_MAX_LENGTH)
     .toLowerCase();
 
@@ -45,7 +75,7 @@ export async function isClientRateLimited(req: NextApiRequestLike) {
   )
     .collection<InternalLimitedLogEntry>('limited-log')
     .find({
-      $or: [...(ip ? [{ ip }] : []), ...(header ? [{ header }] : [])],
+      $or: [...(ip ? [{ ip }] : []), ...(authHeader ? [{ header: authHeader }] : [])],
       until: { $gt: Date.now() } // ? Skip the recently unbanned
     })
     .sort({ until: -1 })
