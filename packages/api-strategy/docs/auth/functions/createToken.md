@@ -8,7 +8,7 @@
 
 > **createToken**(`__namedParameters`): `Promise`\<[`PublicAuthEntry`](../types/type-aliases/PublicAuthEntry.md)\>
 
-Defined in: [auth.ts:140](https://github.com/Xunnamius/api-utils/blob/8d6e1a099d5192943800c743fb55cb84fe76c862/packages/api-strategy/src/auth.ts#L140)
+Defined in: [packages/api-strategy/src/auth.ts:144](https://github.com/Xunnamius/api-utils/blob/2999e4472bea4c5a8ecd8f7c7fbf77e6b4bc26db/packages/api-strategy/src/auth.ts#L144)
 
 Generates a new bearer token and auth entry in the well-known "auth" MongoDB
 collection.

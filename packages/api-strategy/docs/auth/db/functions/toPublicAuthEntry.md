@@ -8,7 +8,7 @@
 
 > **toPublicAuthEntry**(`entry`): [`PublicAuthEntry`](../../types/type-aliases/PublicAuthEntry.md)
 
-Defined in: [auth/db.ts:46](https://github.com/Xunnamius/api-utils/blob/8d6e1a099d5192943800c743fb55cb84fe76c862/packages/api-strategy/src/auth/db.ts#L46)
+Defined in: [packages/api-strategy/src/auth/db.ts:46](https://github.com/Xunnamius/api-utils/blob/2999e4472bea4c5a8ecd8f7c7fbf77e6b4bc26db/packages/api-strategy/src/auth/db.ts#L46)
 
 Transform an internal entry from the well-known "auth" MongoDB collection
 into one that is safe for consumption by privileged units.

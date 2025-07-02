@@ -10,7 +10,7 @@
 
 > **sendHttpUnauthorized**(...`args`): `Response`
 
-Defined in: [index.ts:210](https://github.com/Xunnamius/api-utils/blob/de39eacf7b1e97617a2035eff33c6efaf5ffb215/packages/respond/src/index.ts#L210)
+Defined in: [index.ts:210](https://github.com/Xunnamius/api-utils/blob/2999e4472bea4c5a8ecd8f7c7fbf77e6b4bc26db/packages/respond/src/index.ts#L210)
 
 Sends an HTTP 403 "forbidden" ("unauthorized") response with optional JSON
 data.
@@ -29,7 +29,7 @@ data.
 
 > **sendHttpUnauthorized**(...`args`): `void`
 
-Defined in: [index.ts:211](https://github.com/Xunnamius/api-utils/blob/de39eacf7b1e97617a2035eff33c6efaf5ffb215/packages/respond/src/index.ts#L211)
+Defined in: [index.ts:211](https://github.com/Xunnamius/api-utils/blob/2999e4472bea4c5a8ecd8f7c7fbf77e6b4bc26db/packages/respond/src/index.ts#L211)
 
 Sends an HTTP 403 "forbidden" ("unauthorized") response with optional JSON
 data.
@@ -48,7 +48,7 @@ data.
 
 > **sendHttpUnauthorized**(...`args`): `void` \| `Response`
 
-Defined in: [index.ts:212](https://github.com/Xunnamius/api-utils/blob/de39eacf7b1e97617a2035eff33c6efaf5ffb215/packages/respond/src/index.ts#L212)
+Defined in: [index.ts:212](https://github.com/Xunnamius/api-utils/blob/2999e4472bea4c5a8ecd8f7c7fbf77e6b4bc26db/packages/respond/src/index.ts#L212)
 
 Sends an HTTP 403 "forbidden" ("unauthorized") response with optional JSON
 data.

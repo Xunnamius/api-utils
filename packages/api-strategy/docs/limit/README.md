@@ -9,6 +9,7 @@
 ## Type Aliases
 
 - [InternalLimitedLogEntry](type-aliases/InternalLimitedLogEntry.md)
+- [IsClientRateLimitedReturnType](type-aliases/IsClientRateLimitedReturnType.md)
 - [NewLimitedLogEntry](type-aliases/NewLimitedLogEntry.md)
 
 ## Functions
