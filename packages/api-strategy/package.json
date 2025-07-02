@@ -121,6 +121,7 @@
   },
   "devDependencies": {
     "@-xun/fs": "^2.0.0",
+    "@types/request-ip": "^0.0.41",
     "next-test-api-route-handler": "^4.0.16",
     "type-fest": "^4.41.0"
   },
