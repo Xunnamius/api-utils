@@ -1,7 +1,9 @@
-import useCors, { type Options } from '@-xun/adhesive/use-cors';
-import { withMiddleware } from '@-xun/api-glue';
+import useCors from '@-xun/adhesive/use-cors';
 import { testApiHandler } from 'next-test-api-route-handler';
+
 import { isolatedImport, noopHandler, wrapHandler } from 'testverse/setup';
+
+import type { Options } from '@-xun/adhesive/use-cors';
 
 afterEach(() => {
   jest.dontMock('cors');
@@ -55,7 +57,7 @@ it('handles cors package errors gracefully', async () => {
     (): typeof import('cors') =>
       () =>
       (_req: unknown, _res: unknown, callback: (error: Error) => void) => {
-        return callback(new Error('fake error'));
+        return void callback(new Error('fake error'));
       }
   );
 

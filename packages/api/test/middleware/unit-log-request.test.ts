@@ -1,10 +1,10 @@
-import { asMocked } from 'testverse:util.ts';
 import logRequest from '@-xun/adhesive/log-request';
-import { withMiddleware } from '@-xun/api-glue';
 import { addToRequestLog } from '@-xun/log';
 import { testApiHandler } from 'next-test-api-route-handler';
-import { noopHandler, wrapHandler } from 'testverse/setup';
 import { toss } from 'toss-expression';
+
+import { noopHandler, wrapHandler } from 'testverse/setup';
+import { asMocked } from 'testverse:util.ts';
 
 jest.mock('@-xun/log');
 

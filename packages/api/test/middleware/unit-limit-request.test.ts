@@ -1,9 +1,9 @@
-import { asMocked } from 'testverse:util.ts';
 import limitRequest from '@-xun/adhesive/limit-request';
-import { withMiddleware } from '@-xun/api-glue';
 import { isClientRateLimited } from '@-xun/limit';
 import { testApiHandler } from 'next-test-api-route-handler';
+
 import { mockEnvFactory, noopHandler, wrapHandler } from 'testverse/setup';
+import { asMocked } from 'testverse:util.ts';
 
 jest.mock('@-xun/limit');
 

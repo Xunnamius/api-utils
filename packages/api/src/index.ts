@@ -9,6 +9,14 @@ import type { UnextendableInternalLogger } from 'rejoinder/internal';
 import type { UnwrapTagged, Writable } from 'type-fest';
 
 import type {
+  NextApiRequestLike,
+  NextApiResponseLike
+} from 'multiverse+shared:next-like.ts';
+
+import type {
+  AnyMiddleware,
+  GenericLegacyMiddleware,
+  GenericModernMiddleware,
   LegacyApiHandler,
   LegacyMiddleware,
   MiddlewareContext,
@@ -22,10 +30,16 @@ import type {
   WithMiddlewareSignatureModern
 } from 'universe+api:types.ts';
 
-import type {
+export {
+  getAuthorizationHeaderFromRequestLike,
+  isNextApiRequestLike,
+  isNextApiResponseLike
+} from 'multiverse+shared:next-like.ts';
+
+export type {
   NextApiRequestLike,
   NextApiResponseLike
-} from 'universe+shared:next-like.ts';
+} from 'multiverse+shared:next-like.ts';
 
 export type {
   GenericLegacyApiHandler,
@@ -35,10 +49,12 @@ export type {
   LegacyApiHandler,
   LegacyBasicApiHandler,
   LegacyMiddleware,
+  LegacyMiddlewareContext,
   MiddlewareContext,
   ModernApiHandler,
   ModernBasicApiHandler,
-  ModernMiddleware
+  ModernMiddleware,
+  ModernMiddlewareContext
 } from 'universe+api:types.ts';
 
 /**
@@ -117,21 +133,36 @@ export function withMiddleware<
 
     debug('-- begin (%O mode) --', isInLegacyMode ? 'LEGACY' : 'MODERN');
 
-    const middlewareContext: MiddlewareContext<Options, Heap> = {
+    const middlewareContext: MiddlewareContext<
+      Options,
+      Heap,
+      AnyMiddleware<Options, Heap>
+    > = {
       runtime: {
         endpoint: {
           descriptor
         },
         next: () => toss(new Error(ErrorMessage.RuntimeNextCalledUnexpectedly())),
         done: () => toss(new Error(ErrorMessage.RuntimeDoneCalledUnexpectedly())),
-        error: undefined
+        error: undefined,
+        doAfterHandled(middleware) {
+          // XXX: TODO: see comments for implementation details
+        },
+        doAfterSent(middleware) {
+          // XXX: TODO: see comments for implementation details
+        },
+        response: new Response()
       },
       heap: {} as Heap,
       options: {
         callDoneOnEnd: true,
         legacyMode: isInLegacyMode,
         ...options
-      } as MiddlewareContext<Options, Heap>['options']
+      } as MiddlewareContext<
+        Options,
+        Heap,
+        GenericLegacyMiddleware & GenericModernMiddleware
+      >['options']
     };
 
     let maybeResponse = undefined as Response | undefined;
@@ -370,7 +401,15 @@ export function withMiddleware<
                 resOrUndefined as NextApiResponseLike
               ];
 
-              await typedCurrentMiddleware(req, res, middlewareContext);
+              await typedCurrentMiddleware(
+                req,
+                res,
+                middlewareContext as MiddlewareContext<
+                  Options,
+                  Heap,
+                  typeof typedCurrentMiddleware
+                >
+              );
             } else {
               const request = reqOrRequest as Request;
               const typedCurrentMiddleware = currentMiddleware as ModernMiddleware<
@@ -381,7 +420,14 @@ export function withMiddleware<
               >;
 
               middlewareReturnValue =
-                (await typedCurrentMiddleware(request, middlewareContext)) || undefined;
+                (await typedCurrentMiddleware(
+                  request,
+                  middlewareContext as MiddlewareContext<
+                    Options,
+                    Heap,
+                    typeof typedCurrentMiddleware
+                  >
+                )) || undefined;
             }
 
             ranAtLeastOneMiddleware = true;

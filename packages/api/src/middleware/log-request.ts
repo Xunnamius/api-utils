@@ -1,44 +1,90 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-type-parameters */
+
 import { randomUUID } from 'node:crypto';
 import { performance as perf } from 'node:perf_hooks';
 
-import { addToRequestLog } from '@-xun/log';
-import { createDebugLogger } from 'rejoinder';
+import { addToRequestLog } from '@-xun/api-strategy/log';
 
-import type { MiddlewareContext } from '@-xun/api-glue';
+import { globalDebugLogger } from 'universe+api:constant.ts';
 
-const debug = createDebugLogger('next-adhesive:log-request');
+import type { EmptyObject } from 'type-fest';
 
-export type Options = {
-  // No options
-};
+import type {
+  LegacyMiddlewareContext,
+  MiddlewareContext,
+  ModernMiddlewareContext,
+  NextApiRequestLike,
+  NextApiResponseLike
+} from 'universe+api';
+
+import type { AnyMiddleware } from 'universe+api:types.ts';
+
+const debug = globalDebugLogger.extend('log-request');
+
+export type Options = EmptyObject;
+
+export type Context = EmptyObject;
 
 /**
  * Logs the response to each request after it is sent (i.e. `res.end()`).
  */
-export default async function (
-  req: NextApiRequest,
-  res: NextApiResponse,
-  context: MiddlewareContext<Options>
-) {
-  debug('entered middleware runtime');
+export default async function middleware<
+  RequestType extends Request,
+  ResponseType extends Response
+>(
+  request: RequestType,
+  context: ModernMiddlewareContext<Options, Context>
+): Promise<ResponseType | undefined>;
+export default async function middleware<
+  RequestType extends NextApiRequestLike,
+  ResponseType extends NextApiResponseLike
+>(
+  req: RequestType,
+  res: ResponseType,
+  context: LegacyMiddlewareContext<Options, Context>
+): Promise<void>;
+export default async function middleware(
+  reqOrRequest: NextApiRequestLike | Request,
+  resOrContext: NextApiResponseLike | ModernMiddlewareContext<Options, Context>,
+  maybeContext?: LegacyMiddlewareContext<Options, Context>
+): Promise<Response | undefined | void> {
+  const isInLegacyMode = !!maybeContext;
+  debug('entered middleware runtime (mode: %O)', isInLegacyMode ? 'LEGACY' : 'MODERN');
+
+  const context = (isInLegacyMode ? resOrContext : maybeContext) as MiddlewareContext<
+    Options,
+    Context,
+    AnyMiddleware<Options, Context>
+  >;
+
+  debug('began tracking performance data');
 
   const perfUUID = randomUUID();
+  // TODO: might need to use more generic libs if we're on CF Workers
   perf.mark(perfUUID);
 
-  const send = res.end;
-  res.end = ((...args: Parameters<typeof res.end>) => {
-    const sent = res.writableEnded;
-    send(...args);
+  if (isInLegacyMode) {
+    maybeContext.runtime.doAfterSent(async (req, res) => {
+      debug('logging req, res, and performance data');
 
-    if (!sent) {
-      debug('logging request after initial call to res.end');
-      // ! Note that this async function is NOT awaited!!!
-      void addToRequestLog({
+      await addToRequestLog({
         req,
         res,
         endpoint: context.runtime.endpoint.descriptor,
         durationMs: Math.floor(perf.measure(randomUUID(), perfUUID).duration)
       });
-    }
-  }) as typeof res.end;
+    });
+  } else {
+    const context = resOrContext as ModernMiddlewareContext<Options, Context>;
+    context.runtime.doAfterSent(async (request, { runtime: { response } }) => {
+      debug('logging request, response, and performance data');
+
+      await addToRequestLog({
+        request,
+        response,
+        endpoint: context.runtime.endpoint.descriptor,
+        durationMs: Math.floor(perf.measure(randomUUID(), perfUUID).duration)
+      });
+    });
+  }
 }

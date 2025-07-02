@@ -1,9 +1,11 @@
-import { asMocked } from 'testverse:util.ts';
-import authRequest, { type Options } from '@-xun/adhesive/auth-request';
-import { withMiddleware } from '@-xun/api-glue';
+import authRequest from '@-xun/adhesive/auth-request';
 import { authenticateHeader, authorizeHeader } from '@-xun/auth';
 import { testApiHandler } from 'next-test-api-route-handler';
+
 import { noopHandler, wrapHandler } from 'testverse/setup';
+import { asMocked } from 'testverse:util.ts';
+
+import type { Options } from '@-xun/adhesive/auth-request';
 
 jest.mock('@-xun/auth');
 

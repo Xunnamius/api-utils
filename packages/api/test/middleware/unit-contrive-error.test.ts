@@ -1,9 +1,11 @@
-import { asMocked } from 'testverse:util.ts';
-import contriveError, { type Options } from '@-xun/adhesive/contrive-error';
-import { withMiddleware } from '@-xun/api-glue';
+import contriveError from '@-xun/adhesive/contrive-error';
 import { isDueForContrivedError } from '@-xun/contrived';
 import { testApiHandler } from 'next-test-api-route-handler';
+
 import { noopHandler, wrapHandler } from 'testverse/setup';
+import { asMocked } from 'testverse:util.ts';
+
+import type { Options } from '@-xun/adhesive/contrive-error';
 
 jest.mock('@-xun/contrived');
 

@@ -1,12 +1,25 @@
-import { createDebugLogger } from 'rejoinder';
+/* eslint-disable @typescript-eslint/no-unnecessary-type-parameters */
+import { sendHttpBadContentType, sendHttpBadRequest } from '@-xun/respond';
 import { toss } from 'toss-expression';
 
-import { sendHttpBadContentType, sendHttpBadRequest } from '@-xun/respond';
+import { globalDebugLogger } from 'universe+api:constant.ts';
+import { ErrorMessage } from 'universe+api:error.ts';
 
 import type { ValidHttpMethod } from '@-xun/types';
-import type { MiddlewareContext } from '@-xun/api-glue';
+import type { EmptyObject } from 'type-fest';
 
-const debug = createDebugLogger('next-adhesive:check-content-type');
+import type {
+  LegacyMiddlewareContext,
+  MiddlewareContext,
+  ModernMiddlewareContext,
+  NextApiRequestLike,
+  NextApiResponseLike
+} from 'universe+api';
+
+import type { AnyMiddleware } from 'universe+api:types.ts';
+
+const debug = globalDebugLogger.extend('check-content-type');
+const payloadMethods = ['PUT', 'POST', 'PATCH'];
 
 /**
  * The shape of a simple configuration object.
@@ -49,83 +62,94 @@ export type Options = {
   allowedContentTypes?: AllowedContentTypesConfig | AllowedContentTypesPerMethodConfig;
 };
 
+export type Context = EmptyObject;
+
 /**
  * Rejects requests that are not using an allowed content type. This middleware
  * should usually come _after_ check-method.
  */
-export default async function (
-  req: NextApiRequest,
-  res: NextApiResponse,
-  context: MiddlewareContext<Options>
-) {
-  debug('entered middleware runtime');
-  const { allowedContentTypes: rawAllowedContentTypes } = context.options;
-  const contentType = req.headers['content-type']?.toLowerCase();
-  const method = req.method?.toUpperCase();
+export default async function middleware<
+  RequestType extends Request,
+  ResponseType extends Response
+>(
+  request: RequestType,
+  context: ModernMiddlewareContext<Options, Context>
+): Promise<ResponseType | undefined>;
+export default async function middleware<
+  RequestType extends NextApiRequestLike,
+  ResponseType extends NextApiResponseLike
+>(
+  req: RequestType,
+  res: ResponseType,
+  context: LegacyMiddlewareContext<Options, Context>
+): Promise<void>;
+export default async function middleware(
+  reqOrRequest: NextApiRequestLike | Request,
+  resOrContext: NextApiResponseLike | ModernMiddlewareContext<Options, Context>,
+  maybeContext?: LegacyMiddlewareContext<Options, Context>
+): Promise<Response | undefined | void> {
+  const isInLegacyMode = !!maybeContext;
+  debug('entered middleware runtime (mode: %O)', isInLegacyMode ? 'LEGACY' : 'MODERN');
 
-  const configToLowercase = (
-    c: AllowedContentTypesConfig
-  ): AllowedContentTypesConfig => {
-    return typeof c === 'string'
-      ? (c.toLowerCase() as typeof c)
-      : Array.isArray(c)
-        ? c.map((s) => s.toLowerCase())
-        : toss(
-            new InvalidAppConfigurationError(
-              'allowedContentTypes must adhere to type constraints'
-            )
-          );
+  const context = (isInLegacyMode ? resOrContext : maybeContext) as MiddlewareContext<
+    Options,
+    Context,
+    AnyMiddleware<Options, Context>
+  >;
+
+  const { allowedContentTypes: rawAllowedContentTypes } = context.options;
+
+  const method = reqOrRequest.method?.toUpperCase();
+  const contentType = isInLegacyMode
+    ? (reqOrRequest as NextApiRequestLike).headers['content-type']
+    : (reqOrRequest as Request).headers.get('content-type');
+
+  const configToLowercase = function (
+    allowedContentTypesConfig: AllowedContentTypesConfig
+  ): AllowedContentTypesConfig {
+    return typeof allowedContentTypesConfig === 'string'
+      ? (allowedContentTypesConfig.toLowerCase() as typeof allowedContentTypesConfig)
+      : Array.isArray(allowedContentTypesConfig)
+        ? allowedContentTypesConfig.map((s) => s.toLowerCase())
+        : toss(new Error(ErrorMessage.InvalidAllowedContentTypes()));
   };
 
   // ? Ensure everything is lowercased before we begin
-  const allowed = (() => {
-    if (rawAllowedContentTypes) {
-      if (
-        Array.isArray(rawAllowedContentTypes) ||
-        typeof rawAllowedContentTypes === 'string'
-      ) {
-        return configToLowercase(rawAllowedContentTypes);
-      } else {
-        for (const [subMethod, config] of Object.entries(rawAllowedContentTypes)) {
-          if (config) {
-            rawAllowedContentTypes[subMethod as ValidHttpMethod] =
-              configToLowercase(config);
-          }
-        }
-
-        return rawAllowedContentTypes;
-      }
-    }
-  })();
-
-  const sendError = () => {
-    const error = `unrecognized or disallowed Content-Type header for method ${method}: ${
-      contentType ? `"${contentType}"` : '(none)'
-    }`;
-
-    debug(`content-type check failed: ${error}`);
-    sendHttpBadContentType(res, { error });
-  };
+  const allowed = parseRawAllowedContentTypes();
 
   if (!method) {
     debug('content-type check failed: method is undefined');
-    sendHttpBadRequest(res, { error: 'undefined method' });
+
+    if (isInLegacyMode) {
+      const res = resOrContext as NextApiResponseLike;
+      sendHttpBadRequest(res, { error: ErrorMessage.MethodIsUndefined() });
+    } else {
+      return sendHttpBadRequest({ error: ErrorMessage.MethodIsUndefined() });
+    }
   } else {
-    const isPayloadMethod = ['PUT', 'POST', 'PATCH'].includes(method);
+    const isPayloadMethod = payloadMethods.includes(method);
 
     if (!allowed) {
       if (isPayloadMethod || contentType) {
         debug(
           'content-type check failed: this request cannot be handled with the current configuration'
         );
-        sendHttpBadContentType(res, {
-          error: 'the server is not configured to handle this type of request'
-        });
+
+        if (isInLegacyMode) {
+          const res = resOrContext as NextApiResponseLike;
+          sendHttpBadContentType(res, {
+            error: ErrorMessage.CannotHandleContentType()
+          });
+        } else {
+          return sendHttpBadContentType({
+            error: ErrorMessage.CannotHandleContentType()
+          });
+        }
       }
     } else {
       if (allowed === 'none') {
         if (contentType) {
-          return sendError();
+          return sendOrReturnContentTypeErrorResponse();
         }
       } else if (allowed !== 'any') {
         if (Array.isArray(allowed)) {
@@ -133,10 +157,10 @@ export default async function (
             const allowsNone = allowed.includes('none');
             if (!contentType) {
               if (!allowsNone) {
-                return sendError();
+                return sendOrReturnContentTypeErrorResponse();
               }
             } else if (contentType === 'none' || !allowed.includes(contentType)) {
-              return sendError();
+              return sendOrReturnContentTypeErrorResponse();
             }
           }
         } else {
@@ -145,28 +169,58 @@ export default async function (
 
             if (allowedSubset === 'none') {
               if (contentType) {
-                return sendError();
+                return sendOrReturnContentTypeErrorResponse();
               }
             } else if (allowedSubset && allowedSubset !== 'any') {
               const allowsNone = allowedSubset.includes('none');
               if (!contentType) {
                 if (!allowsNone) {
-                  return sendError();
+                  return sendOrReturnContentTypeErrorResponse();
                 }
               } else if (
                 contentType === 'none' ||
                 !allowedSubset.includes(contentType)
               ) {
-                return sendError();
+                return sendOrReturnContentTypeErrorResponse();
               }
             }
           } else if (isPayloadMethod || contentType) {
-            return sendError();
+            return sendOrReturnContentTypeErrorResponse();
           }
         }
       }
 
-      debug(`content-type check succeeded: type "${contentType}" is allowed`);
+      debug('content-type check succeeded: type %O is allowed', contentType);
+    }
+  }
+
+  function parseRawAllowedContentTypes() {
+    if (rawAllowedContentTypes) {
+      if (
+        Array.isArray(rawAllowedContentTypes) ||
+        typeof rawAllowedContentTypes === 'string'
+      ) {
+        return configToLowercase(rawAllowedContentTypes);
+      } else {
+        for (const [subMethod, config] of Object.entries(rawAllowedContentTypes)) {
+          rawAllowedContentTypes[subMethod as ValidHttpMethod] =
+            configToLowercase(config);
+        }
+
+        return rawAllowedContentTypes;
+      }
+    }
+  }
+
+  function sendOrReturnContentTypeErrorResponse() {
+    const error = ErrorMessage.BadContentType(contentType, method);
+    debug(`content-type check failed: ${error}`);
+
+    if (isInLegacyMode) {
+      const res = resOrContext as NextApiResponseLike;
+      sendHttpBadContentType(res, { error });
+    } else {
+      return sendHttpBadContentType({ error });
     }
   }
 }

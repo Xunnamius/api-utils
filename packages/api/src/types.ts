@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import type { Promisable, Tagged, UnwrapTagged } from 'type-fest';
 
 import type {
   NextApiRequestLike,
   NextApiResponseLike
-} from 'universe+shared:next-like.ts';
+} from 'multiverse+shared:next-like.ts';
 
 /**
  * Used to help structurally differentiate {@link ModernMiddleware} from
@@ -22,8 +21,8 @@ export type WithLegacyTag<T> = Tagged<T, 'legacy'>;
 /**
  * The shape of a modern fetch request handler.
  *
- * Note that this type of handler is not necessarily consumable by third
- * parties (see {@link ModernBasicApiHandler}).
+ * Note that this type of handler is not necessarily consumable by third parties
+ * (see {@link ModernBasicApiHandler}).
  */
 export type ModernApiHandler<
   RequestType extends Request,
@@ -62,27 +61,29 @@ export type ModernMiddleware<
 > = WithModernTag<
   (
     request: RequestType,
-    context: MiddlewareContext<Options, Heap>
+    context: MiddlewareContext<
+      Options,
+      Heap,
+      ModernMiddleware<Options, RequestType, ResponseType, Heap>
+    >
   ) => Promisable<ResponseType | undefined | void>
 >;
 
 /**
- * A generic tag-less version of {@link ModernMiddleware}.
+ * A generic version of {@link ModernMiddleware}.
  */
-export type GenericModernMiddleware = UnwrapTagged<
-  ModernMiddleware<
-    Record<string, unknown>,
-    Request,
-    Response,
-    Record<PropertyKey, unknown>
-  >
+export type GenericModernMiddleware = ModernMiddleware<
+  Record<string, unknown>,
+  Request,
+  Response,
+  Record<PropertyKey, unknown>
 >;
 
 /**
  * The shape of a legacy fetch request handler.
  *
- * Note that this type of handler is not necessarily consumable by third
- * parties (see {@link LegacyBasicApiHandler}).
+ * Note that this type of handler is not necessarily consumable by third parties
+ * (see {@link LegacyBasicApiHandler}).
  */
 export type LegacyApiHandler<
   RequestType extends NextApiRequestLike,
@@ -122,32 +123,49 @@ export type LegacyMiddleware<
   (
     req: RequestType,
     res: ResponseType,
-    context: MiddlewareContext<Options, Heap>
+    context: MiddlewareContext<
+      Options,
+      Heap,
+      LegacyMiddleware<Options, RequestType, ResponseType, Heap>
+    >
   ) => Promisable<unknown>
 >;
 
 /**
- * A generic tag-less version of {@link LegacyMiddleware}.
+ * A generic version of {@link LegacyMiddleware}.
  */
-export type GenericLegacyMiddleware = UnwrapTagged<
-  LegacyMiddleware<
-    Record<string, unknown>,
-    NextApiRequestLike,
-    NextApiResponseLike,
-    Record<PropertyKey, unknown>
-  >
+export type GenericLegacyMiddleware = LegacyMiddleware<
+  Record<string, unknown>,
+  NextApiRequestLike,
+  NextApiResponseLike,
+  Record<PropertyKey, unknown>
 >;
+
+/**
+ * The union of {@link ModernMiddleware} and {@link LegacyMiddleware} that allow
+ * any request/response shape.
+ */
+export type AnyMiddleware<
+  Options extends Record<string, unknown>,
+  Heap extends Record<PropertyKey, unknown>
+> =
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  | ModernMiddleware<Options, any, any, Heap>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  | LegacyMiddleware<Options, any, any, Heap>;
 
 /**
  * The shape of a middleware context object, potentially customized with
  * additional middleware-specific options.
  *
- * Middleware should default to the most restrictive configuration possible if
- * its respective options are missing.
+ * Middleware functions should be order-agnostic. That is: the system should not
+ * crash simply because the order of middleware functions (before or after the
+ * handler executes respectively) changes.
  */
 export type MiddlewareContext<
   Options extends Record<string, unknown>,
-  Heap extends Record<PropertyKey, unknown>
+  Heap extends Record<PropertyKey, unknown>,
+  Middleware extends AnyMiddleware<Options, Heap>
 > = {
   /**
    * Contains middleware use chain control functions and various metadata.
@@ -161,7 +179,7 @@ export type MiddlewareContext<
        * A parameterized path string in the form of a URI path corresponding to
        * the current endpoint. For example: `/my-endpoint/:some_id`.
        *
-       * Use for logging purposes only.
+       * Used for logging purposes only.
        */
       descriptor?: string;
     };
@@ -181,10 +199,57 @@ export type MiddlewareContext<
      */
     readonly done: () => void;
     /**
-     * For middleware run via `useOnError`, the `error` property will contain
-     * the thrown error object.
+     * For middleware run via `useOnError` (and `postHandlerTasks`), the `error`
+     * property will contain the thrown error object.
      */
     readonly error: unknown;
+    /**
+     * Appends `middleware` to list of special internal middlewares that are
+     * added and removed only by other middleware; they are not end-user facing.
+     *
+     * Middleware with tasks that need to execute after the handler completes
+     * successfully _but before the response is sent_ (e.g. cors) should add
+     * those tasks via this function.
+     *
+     * Tasks are always executed in order after the `use` middleware chain, the
+     * handler, and/or the `useOnError` chain (when applicable) all execute
+     * successfully.
+     *
+     * **Unlike with `doAfterSent`, these internal middleware will ALWAYS delay
+     * the server from responding to a request.**
+     *
+     * Note that errors thrown by middleware added by this function are ignored.
+     */
+    readonly doAfterHandled: (middleware: UnwrapTagged<Middleware>) => void;
+    /**
+     * Appends `middleware` to list of special internal middlewares that are
+     * added and removed only by other middleware; they are not end-user facing.
+     *
+     * Middleware with tasks that need to execute after the handler completes
+     * successfully _and after the response is sent_ (e.g. logging) should add
+     * those tasks via this function.
+     *
+     * Tasks are always executed in order after the `use` middleware chain, the
+     * handler, and/or the `useOnError` chain (when applicable) all execute
+     * successfully.
+     *
+     * **Unlike with `doAfterHandled`, these internal middleware will NEVER
+     * delay the server from responding to a request.**
+     *
+     * Note that errors thrown by middleware added by this function are ignored.
+     */
+    readonly doAfterSent: (middleware: UnwrapTagged<Middleware>) => void;
+    /**
+     * For modern non-legacy middleware, this property contains the latest
+     * {@link Response} instance returned by some earlier middleware or handler.
+     *
+     * Once all middleware and handlers finish running, `response` is passed to
+     * the server for final processing.
+     *
+     * Note that mutating `response` in middleware added via `doAfterSent` will
+     * have no effect.
+     */
+    readonly response: Middleware extends WithModernTag<unknown> ? Response : undefined;
   };
   /**
    * A context object meant to be written to and read by any middleware.
@@ -220,19 +285,75 @@ export type MiddlewareContext<
 };
 
 /**
- * {@link withMiddleware}
+ * Meant for use when typing middleware function parameters.
+ *
+ * @see {@link MiddlewareContext}
+ */
+export type ModernMiddlewareContext<
+  Options extends Record<string, unknown>,
+  Heap extends Record<PropertyKey, unknown>,
+  RequestType extends Request = Request,
+  ResponseType extends Response = Response
+> = MiddlewareContext<
+  Options,
+  Heap,
+  ModernMiddleware<Options, RequestType, ResponseType, Heap>
+>;
+
+/**
+ * Meant for use when typing middleware function parameters.
+ *
+ * @see {@link MiddlewareContext}
+ */
+export type LegacyMiddlewareContext<
+  Options extends Record<string, unknown>,
+  Heap extends Record<PropertyKey, unknown>,
+  RequestType extends NextApiRequestLike = NextApiRequestLike,
+  ResponseType extends NextApiResponseLike = NextApiResponseLike
+> = MiddlewareContext<
+  Options,
+  Heap,
+  LegacyMiddleware<Options, RequestType, ResponseType, Heap>
+>;
+
+/**
+ * @see `withMiddleware`
  */
 export type WithMiddlewareOptions<
   Options extends Record<string, unknown>,
   Heap extends Record<PropertyKey, unknown>,
-  Middleware extends
-    | ModernMiddleware<Options, any, any, Heap>
-    | LegacyMiddleware<Options, any, any, Heap>
+  Middleware extends AnyMiddleware<Options, Heap>
 > = {
-  descriptor: MiddlewareContext<Options, Heap>['runtime']['endpoint']['descriptor'];
+  /**
+   * A parameterized path string in the form of a URI path corresponding to the
+   * current endpoint. For example: `/my-endpoint/:some_id`.
+   *
+   * Used for logging purposes only.
+   */
+  descriptor: MiddlewareContext<
+    Options,
+    Heap,
+    Middleware
+  >['runtime']['endpoint']['descriptor'];
+  /**
+   * An array of middleware functions that will be executed in order, each
+   * receiving a chance to mutate the request and short-circuit the "use chain"
+   * to deliver a response.
+   */
   use: UnwrapTagged<Middleware>[];
+  /**
+   * When a middleware or handler throws, this secondary array of middleware
+   * functions are executed in order similar to `use`.
+   *
+   * Unlike `use`, error-handling middleware have access to the
+   * `MiddlewareContext.runtime.error` property, which contains the uncaught
+   * error that interrupted the primary use chain.
+   */
   useOnError?: UnwrapTagged<Middleware>[];
-  options?: Partial<MiddlewareContext<Options, Heap>['options']>;
+  /**
+   * Various options made available to all middleware and handlers.
+   */
+  options?: Partial<MiddlewareContext<Options, Heap, Middleware>['options']>;
 } & (Middleware extends WithModernTag<unknown>
   ? { options?: { legacyMode?: false } }
   : Middleware extends WithLegacyTag<unknown>
@@ -240,7 +361,7 @@ export type WithMiddlewareOptions<
     : object);
 
 /**
- * {@link withMiddleware}
+ * @see `withMiddleware`
  */
 export type WithMiddlewareSignatureModern<
   Options extends Record<string, unknown>,
@@ -257,7 +378,7 @@ export type WithMiddlewareSignatureModern<
 ) => ModernBasicApiHandler<RequestType, ResponseType>;
 
 /**
- * {@link withMiddleware}
+ * @see `withMiddleware`
  */
 export type WithMiddlewareSignatureLegacy<
   Options extends Record<string, unknown>,
@@ -279,13 +400,23 @@ export type WithMiddlewareSignatureLegacy<
 export type FactoriedMiddlewareOptions<
   Options extends Record<string, unknown>,
   Heap extends Record<PropertyKey, unknown>,
-  Middleware extends
-    | ModernMiddleware<Options, any, any, Heap>
-    | LegacyMiddleware<Options, any, any, Heap>
+  Middleware extends AnyMiddleware<Options, Heap>
 > = Omit<WithMiddlewareOptions<Options, Heap, Middleware>, 'use' | 'useOnError'> & {
+  /**
+   * @see {@link WithMiddlewareOptions.use}
+   */
   prependUse?: UnwrapTagged<Middleware>[];
+  /**
+   * @see {@link WithMiddlewareOptions.use}
+   */
   appendUse?: UnwrapTagged<Middleware>[];
+  /**
+   * @see {@link WithMiddlewareOptions.useOnError}
+   */
   prependUseOnError?: UnwrapTagged<Middleware>[];
+  /**
+   * @see {@link WithMiddlewareOptions.useOnError}
+   */
   appendUseOnError?: UnwrapTagged<Middleware>[];
 };
 

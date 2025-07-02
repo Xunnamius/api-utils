@@ -1,108 +1,88 @@
-import {
-  authenticateHeader,
-  authorizeHeader,
-  type AuthenticationScheme,
-  type AuthorizationConstraint
-} from 'universe-auth';
+/* eslint-disable @typescript-eslint/no-unnecessary-type-parameters */
+import { getAuthedClientToken } from '@-xun/api-strategy/auth';
+import { sendHttpUnauthenticated } from '@-xun/respond';
 
-import { sendHttpUnauthenticated, sendHttpUnauthorized } from '@-xun/respond';
+import { globalDebugLogger } from 'universe+api:constant.ts';
 
-import { createDebugLogger } from 'rejoinder';
+import type { TokenAttributesFilter } from '@-xun/api-strategy/auth';
+import type { EmptyObject } from 'type-fest';
 
-import type { MiddlewareContext } from '@-xun/api-glue';
+import type {
+  LegacyMiddlewareContext,
+  MiddlewareContext,
+  ModernMiddlewareContext,
+  NextApiRequestLike,
+  NextApiResponseLike
+} from 'universe+api';
 
-const debug = createDebugLogger('next-adhesive:auth-request');
+import type { AnyMiddleware } from 'universe+api:types.ts';
+
+const debug = globalDebugLogger.extend('auth-request');
 
 export type Options = {
   /**
    * If not `false` or falsy, accessing this endpoint requires a valid (yet
    * unfortunately named) Authorization header.
    *
-   * If one or more schemes are provided, the request will be authenticated
-   * using one of said schemes. If no schemes are provided, the request will be
-   * authenticated using any available scheme.
-   *
-   * Additionally, if one or more constraints are provided, the request will be
-   * authorized conditioned upon said constraints. If no constraints are
-   * provided, all requests will be vacuously authorized.
+   * If a filter is provided, the request will be authorized conditioned upon
+   * said filter (see {@link getAuthedClientToken} and
+   * {@link TokenAttributesFilter}). If no filter is provided, all requests will
+   * be vacuously authorized.
    */
-  requiresAuth?:
+  requiresAuth:
     | boolean
     | {
-        allowedSchemes?: AuthenticationScheme | AuthenticationScheme[];
-        constraints?: AuthorizationConstraint | AuthorizationConstraint[];
+        filter?: TokenAttributesFilter;
       };
 };
 
+export type Context = EmptyObject;
+
 /**
- * Rejects unauthenticatable and unauthorizable requests (via Authorization
- * header).
+ * Rejects unauth-able requests (via Authorization header).
  */
-export default async function (
-  req: NextApiRequest,
-  res: NextApiResponse,
-  context: MiddlewareContext<Options>
-) {
-  debug('entered middleware runtime');
+export default async function middleware<
+  RequestType extends Request,
+  ResponseType extends Response
+>(
+  request: RequestType,
+  context: ModernMiddlewareContext<Options, Context>
+): Promise<ResponseType | undefined>;
+export default async function middleware<
+  RequestType extends NextApiRequestLike,
+  ResponseType extends NextApiResponseLike
+>(
+  req: RequestType,
+  res: ResponseType,
+  context: LegacyMiddlewareContext<Options, Context>
+): Promise<void>;
+export default async function middleware(
+  reqOrRequest: NextApiRequestLike | Request,
+  resOrContext: NextApiResponseLike | ModernMiddlewareContext<Options, Context>,
+  maybeContext?: LegacyMiddlewareContext<Options, Context>
+): Promise<Response | undefined | void> {
+  const isInLegacyMode = !!maybeContext;
+  debug('entered middleware runtime (mode: %O)', isInLegacyMode ? 'LEGACY' : 'MODERN');
 
-  const { authorization: header } = req.headers;
+  const context = (isInLegacyMode ? resOrContext : maybeContext) as MiddlewareContext<
+    Options,
+    Context,
+    AnyMiddleware<Options, Context>
+  >;
 
-  if (
-    typeof context.options.requiresAuth !== 'boolean' &&
-    (!context.options.requiresAuth || typeof context.options.requiresAuth !== 'object')
-  ) {
-    throw new InvalidAppConfigurationError(
-      'a valid "requiresAuth" option is missing from middleware configuration'
-    );
-  }
+  const { requiresAuth } = context.options;
 
   if (context.options.requiresAuth) {
-    const allowedSchemes =
-      context.options.requiresAuth !== true
-        ? context.options.requiresAuth?.allowedSchemes
-        : undefined;
-
-    const { authenticated, error: authenticationError } = await authenticateHeader({
-      header,
-      allowedSchemes
+    const client = await getAuthedClientToken(reqOrRequest, {
+      filter: typeof requiresAuth === 'object' ? requiresAuth.filter : undefined
     });
 
-    if (!authenticated || authenticationError) {
-      debug(
-        `authentication check failed: ${
-          authenticationError || 'bad Authorization header'
-        }`
-      );
-      sendHttpUnauthenticated(res);
-    } else {
-      debug('authentication check succeeded: client is authenticated');
-
-      const constraints =
-        context.options.requiresAuth !== true
-          ? context.options.requiresAuth?.constraints
-          : undefined;
-
-      if (constraints) {
-        debug(`authorization check required: ${constraints}`);
-
-        const { authorized, error: authorizationError } = await authorizeHeader({
-          header,
-          constraints
-        });
-
-        if (!authorized || authorizationError) {
-          debug(
-            `authorization check failed: ${
-              authorizationError || 'bad Authorization header'
-            }`
-          );
-
-          sendHttpUnauthorized(res);
-        }
-
-        debug('authorization check succeeded: client is authorized');
+    if (!client) {
+      if (isInLegacyMode) {
+        const res = resOrContext as NextApiResponseLike;
+        sendHttpUnauthenticated(res);
       } else {
-        debug('skipped authorization check');
+        return sendHttpUnauthenticated();
       }
     }
   } else {

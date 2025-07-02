@@ -1,9 +1,10 @@
-import { withMiddleware } from '@-xun/api-glue';
+import checkContentType from '@-xun/adhesive/check-content-type';
 import { testApiHandler } from 'next-test-api-route-handler';
 import randomizeCase from 'random-case';
+
 import { noopHandler, withMockedOutput, wrapHandler } from 'testverse/setup';
 
-import checkContentType, { type Options } from '@-xun/adhesive/check-content-type';
+import type { Options } from '@-xun/adhesive/check-content-type';
 
 it('sends 415 by default for POST, PUT, and PATCH requests with or without a Content-Type header', async () => {
   expect.hasAssertions();

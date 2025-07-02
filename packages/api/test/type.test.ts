@@ -4,22 +4,28 @@ import { describe, expect, it } from 'tstyche';
 
 import { middlewareFactory, withMiddleware } from 'universe+api';
 import authRequest from 'universe+api:middleware/auth-request.ts';
+import limitRequest from 'universe+api:middleware/enforce-limits.ts';
 import handleError from 'universe+api:middleware/handle-error.ts';
-import limitRequest from 'universe+api:middleware/limit-request.ts';
 
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { NextRequest, NextResponse } from 'next/server';
-import type { LegacyApiHandler, ModernApiHandler } from 'universe+api';
-import type { Options as AuthRequestOptions } from 'universe+api:middleware/auth-request.ts';
-import type { Options as HandleErrorOptions } from 'universe+api:middleware/handle-error.ts';
-import type { Options as LimitRequestOptions } from 'universe+api:middleware/limit-request.ts';
-import type { MiddlewareContext } from 'universe+api:types.ts';
-import type { JsonError } from 'universe+respond';
 
 import type {
   NextApiRequestLike,
   NextApiResponseLike
-} from 'universe+shared:next-like.ts';
+} from 'multiverse+shared:next-like.ts';
+
+import type { LegacyApiHandler, ModernApiHandler } from 'universe+api';
+import type { Options as AuthRequestOptions } from 'universe+api:middleware/auth-request.ts';
+import type { Options as LimitRequestOptions } from 'universe+api:middleware/enforce-limits.ts';
+import type { Options as HandleErrorOptions } from 'universe+api:middleware/handle-error.ts';
+
+import type {
+  LegacyMiddlewareContext,
+  ModernMiddlewareContext
+} from 'universe+api:types.ts';
+
+import type { JsonError } from 'universe+respond';
 
 type GenericLegacyApiHandler = LegacyApiHandler<
   NextApiRequestLike,
@@ -166,7 +172,7 @@ describe('::withMiddleware', () => {
             (request, ctx) => {
               expect(request).type.toBe<NextRequest>();
               expect(ctx).type.toBeAssignableTo<
-                MiddlewareContext<{ extra: boolean }, { thingy: boolean }>
+                ModernMiddlewareContext<{ extra: boolean }, { thingy: boolean }>
               >();
             }
           ]
@@ -196,7 +202,7 @@ describe('::withMiddleware', () => {
               expect(req).type.toBe<NextApiRequest>();
               expect(res).type.toBe<NextApiResponse>();
               expect(ctx).type.toBeAssignableTo<
-                MiddlewareContext<{ extra: boolean }, { thingy: boolean }>
+                LegacyMiddlewareContext<{ extra: boolean }, { thingy: boolean }>
               >();
             }
           ],
@@ -280,7 +286,7 @@ describe('::withMiddleware', () => {
       res: NextApiResponseLike,
       {
         options: { customOption }
-      }: MiddlewareContext<MyMiddlewareOptions, Record<string, unknown>>
+      }: LegacyMiddlewareContext<MyMiddlewareOptions, Record<string, unknown>>
     ) => {
       res.status(200).send(customOption);
     };
@@ -290,7 +296,7 @@ describe('::withMiddleware', () => {
       res: NextApiResponseLike,
       {
         options: { customOption }
-      }: MiddlewareContext<Partial<MyMiddlewareOptions>, Record<string, unknown>>
+      }: LegacyMiddlewareContext<Partial<MyMiddlewareOptions>, Record<string, unknown>>
     ) => {
       res.status(200).send(customOption);
     };
@@ -353,7 +359,7 @@ describe('::middlewareFactory', () => {
       res: NextApiResponseLike,
       {
         options: { customOption }
-      }: MiddlewareContext<myMiddlewareRequiredOptions, Record<string, unknown>>
+      }: LegacyMiddlewareContext<myMiddlewareRequiredOptions, Record<string, unknown>>
     ) => {
       res.status(200).send(customOption);
     };
@@ -363,7 +369,10 @@ describe('::middlewareFactory', () => {
       res: NextApiResponseLike,
       {
         options: { customOption }
-      }: MiddlewareContext<Partial<myMiddlewareRequiredOptions>, Record<string, unknown>>
+      }: LegacyMiddlewareContext<
+        Partial<myMiddlewareRequiredOptions>,
+        Record<string, unknown>
+      >
     ) => {
       res.status(200).send(customOption);
     };

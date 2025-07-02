@@ -1,8 +1,9 @@
-import checkMethod, { type Options } from '@-xun/adhesive/check-method';
-import { withMiddleware } from '@-xun/api-glue';
+import checkMethod from '@-xun/adhesive/check-method';
 import { testApiHandler } from 'next-test-api-route-handler';
+
 import { mockEnvFactory, noopHandler, wrapHandler } from 'testverse/setup';
 
+import type { Options } from '@-xun/adhesive/check-method';
 import type { ValidHttpMethod } from '@-xun/types';
 
 const withMockedEnv = mockEnvFactory({ NODE_ENV: 'test' });

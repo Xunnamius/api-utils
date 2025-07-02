@@ -1,12 +1,5 @@
-import handleError, { type Options } from '@-xun/adhesive/handle-error';
-import { withMiddleware } from '@-xun/api-glue';
+import handleError from '@-xun/adhesive/handle-error';
 import { testApiHandler } from 'next-test-api-route-handler';
-import {
-  itemFactory,
-  noopHandler,
-  withMockedOutput,
-  wrapHandler
-} from 'testverse/setup';
 import { toss } from 'toss-expression';
 
 import {
@@ -31,6 +24,15 @@ import {
   TrialError,
   ValidationError
 } from 'universe/error';
+
+import {
+  itemFactory,
+  noopHandler,
+  withMockedOutput,
+  wrapHandler
+} from 'testverse/setup';
+
+import type { Options } from '@-xun/adhesive/handle-error';
 
 it('sends correct HTTP error codes when certain errors occur', async () => {
   expect.hasAssertions();
@@ -94,7 +96,6 @@ it('throws without calling res.end if response is no longer writable', async () 
           descriptor: '/fake',
           use: [
             (_req, res) => {
-              // eslint-disable-next-line jest/unbound-method
               const send = res.end;
               res.end = ((...args: Parameters<typeof res.end>) => {
                 send(...args);

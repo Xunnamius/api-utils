@@ -1,63 +1,147 @@
-import { createDebugLogger } from 'rejoinder';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable @typescript-eslint/no-invalid-void-type */
+/* eslint-disable @typescript-eslint/no-unnecessary-type-parameters */
+import {
+  ApiError,
+  AuthError,
+  ClientValidationError,
+  NotFoundError,
+  NotImplementedError,
+  SanityError,
+  ServerValidationError
+} from '@-xun/api-strategy/error';
 
 import {
-  sendHttpError,
+  sendHttpBadRequest,
   sendHttpNotFound,
   sendHttpUnauthorized,
-  sendHttpBadRequest,
+  sendHttpUnspecifiedError,
   sendNotImplemented
 } from '@-xun/respond';
 
-import type { JsonError } from '@-xun/types';
-import type { MiddlewareContext } from '@-xun/api-glue';
-import type { Promisable } from 'type-fest';
+import { globalDebugLogger } from 'universe+api:constant.ts';
+import { ErrorMessage } from 'universe+api:error.ts';
 
-const debug = createDebugLogger('next-adhesive:handle-error');
+import type { JsonError } from '@-xun/respond';
+import type { EmptyObject, JsonObject, Promisable } from 'type-fest';
+
+import type {
+  LegacyMiddlewareContext,
+  MiddlewareContext,
+  ModernMiddlewareContext,
+  NextApiRequestLike,
+  NextApiResponseLike
+} from 'universe+api';
+
+import type { AnyMiddleware } from 'universe+api:types.ts';
+
+const debug = globalDebugLogger.extend('handle-error');
 
 /**
  * Special middleware used to handle custom errors.
+ *
+ * If you want to handle the custom error as if it were one of the well-known
+ * error classes from `@-xun/api-strategy/error`, return said class from this
+ * function.
+ *
+ * Errors thrown from within this function are ignored.
+ *
+ * @see {@link middleware}
  */
-export type ErrorHandler = (
-  res: NextApiResponse,
+export type ModernErrorHandler = (
+  request: Request,
+  response: Response,
   errorJson: Partial<JsonError>
-) => Promisable<void>;
+) => Promisable<Error | Response | undefined | void>;
+
+/**
+ * Special middleware used to handle custom errors.
+ *
+ * If you want to handle the custom error as if it were one of the well-known
+ * error classes from `@-xun/api-strategy/error`, return said class from this
+ * function.
+ *
+ * Errors thrown from within this function are ignored.
+ *
+ * @see {@link middleware}
+ */
+export type LegacyErrorHandler = (
+  req: NextApiRequestLike,
+  res: NextApiResponseLike,
+  errorJson: Partial<JsonError>
+) => Promisable<Error | void>;
 
 /**
  * A Map of Error class constructors to the special middleware that handles
  * them.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ErrorHandlerMap = Map<new (...args: any[]) => Error, ErrorHandler>;
 
-export type Options = {
+export type ErrorHandlerMap<
+  ErrorHandler extends ModernErrorHandler | LegacyErrorHandler
+> = Map<new (...args: any[]) => Error, ErrorHandler>;
+
+export type Options<ErrorHandler extends ModernErrorHandler | LegacyErrorHandler> = {
   /**
    * A mapping of Error classes and the functions that handle them.
    */
-  errorHandlers?: ErrorHandlerMap;
+  errorHandlers?: ErrorHandlerMap<ErrorHandler>;
 };
 
+export type Context = EmptyObject;
+
 /**
- * Generic error handling middleware. **This should be among the final
+ * Generic error handling middleware. **This should usually be the very last
  * middleware to run on the error handling middleware chain.**
  */
-export default async function (
-  req: NextApiRequest,
-  res: NextApiResponse,
-  context: MiddlewareContext<Options>
-) {
-  debug('entered middleware runtime');
+export default async function middleware<
+  RequestType extends Request,
+  ResponseType extends Response
+>(
+  request: RequestType,
+  context: ModernMiddlewareContext<Options<ModernErrorHandler>, Context>
+): Promise<ResponseType | undefined>;
+export default async function middleware<
+  RequestType extends NextApiRequestLike,
+  ResponseType extends NextApiResponseLike
+>(
+  req: RequestType,
+  res: ResponseType,
+  context: LegacyMiddlewareContext<Options<LegacyErrorHandler>, Context>
+): Promise<void>;
+export default async function middleware(
+  reqOrRequest: NextApiRequestLike | Request,
+  resOrContext:
+    | NextApiResponseLike
+    | ModernMiddlewareContext<Options<ModernErrorHandler>, Context>,
+  maybeContext?: LegacyMiddlewareContext<Options<LegacyErrorHandler>, Context>
+): Promise<Response | undefined | void> {
+  const isInLegacyMode = !!maybeContext;
+  debug('entered middleware runtime (mode: %O)', isInLegacyMode ? 'LEGACY' : 'MODERN');
+
+  const context = (isInLegacyMode ? resOrContext : maybeContext) as MiddlewareContext<
+    Options<ModernErrorHandler | LegacyErrorHandler>,
+    Context,
+    AnyMiddleware<Options<ModernErrorHandler | LegacyErrorHandler>, Context>
+  >;
 
   const {
     runtime: { error },
     options: { errorHandlers }
   } = context;
 
-  if (res.writableEnded) {
+  debug('handling error: %O', error);
+
+  if (isInLegacyMode && (resOrContext as NextApiResponseLike).writableEnded) {
     // ? We're past the point where we're able to change the response.
     debug('cannot handle error: response is no longer writable');
     debug('throwing unhandleable error');
     throw error;
   }
+
+  const resOrResponse = isInLegacyMode
+    ? (resOrContext as NextApiResponseLike)
+    : context.runtime.response || new Response();
 
   const errorJson: Partial<JsonError> = (error as { message: string }).message
     ? { error: (error as { message: string }).message }
@@ -65,51 +149,92 @@ export default async function (
 
   debug('handling error: %O', errorJson.error || '(no message)');
 
+  let handlerResult = undefined as undefined | Error | Response;
+
   if (errorHandlers) {
-    for (const [errorType, errorHandler] of errorHandlers) {
-      if (error instanceof errorType) {
-        debug(`using custom error handler for type "${error.name}"`);
-        // eslint-disable-next-line no-await-in-loop
-        await errorHandler(res, errorJson);
-        return;
+    try {
+      for (const [errorType, errorHandler] of errorHandlers) {
+        if (error instanceof errorType) {
+          debug(`using custom error handler for type "${error.name}"`);
+
+          // eslint-disable-next-line no-await-in-loop
+          const result = await errorHandler(
+            reqOrRequest as Request & NextApiRequestLike,
+            resOrResponse as Response & NextApiResponseLike,
+            errorJson
+          );
+
+          if (!result) {
+            return;
+          } else {
+            handlerResult = result;
+          }
+        }
       }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(
+        'custom error handler failed with error (will be ignored): %O',
+        error
+      );
     }
   }
 
+  if (handlerResult instanceof Response) {
+    return handlerResult;
+  }
+
+  const handleAs = handlerResult ?? error;
+
   debug(
     `using default error handler${
-      error instanceof Error ? ` for type "${error.name}"` : ''
+      handleAs instanceof Error ? ` for type "${handleAs.name}"` : ''
     }`
   );
 
-  if (error instanceof GuruMeditationError) {
+  const url = String(reqOrRequest.url);
+
+  if (handleAs instanceof SanityError) {
     // eslint-disable-next-line no-console
-    console.error(`error - sanity check failed on request: ${req.url}\n`, error);
-    sendHttpError(res, {
-      error: 'sanity check failed: please report exactly what you did just now!'
+    console.error(`sanity check failed on request: ${url}\n`, error);
+    return respondWith(sendHttpUnspecifiedError, {
+      error: ErrorMessage.SanityCheckFailed()
     });
-  } else if (error instanceof AppValidationError) {
+  } else if (handleAs instanceof ServerValidationError) {
     // eslint-disable-next-line no-console
-    console.error(
-      `error - server-side validation exception on request: ${req.url}\n`,
-      error
-    );
-    sendHttpError(res, errorJson);
-  } else if (error instanceof ValidationError) {
-    sendHttpBadRequest(res, errorJson);
-  } else if (error instanceof AuthError) {
-    sendHttpUnauthorized(res, errorJson);
-  } else if (error instanceof NotFoundError) {
-    sendHttpNotFound(res, errorJson);
-  } else if (error instanceof NotImplementedError) {
-    sendNotImplemented(res);
-  } else if (error instanceof AppError) {
+    console.error(`server-side validation exception on request: ${url}\n`, error);
+    return respondWith(sendHttpUnspecifiedError, errorJson);
+  } else if (handleAs instanceof ClientValidationError) {
+    return respondWith(sendHttpBadRequest, errorJson);
+  } else if (handleAs instanceof AuthError) {
+    return respondWith(sendHttpUnauthorized, errorJson);
+  } else if (handleAs instanceof NotFoundError) {
+    return respondWith(sendHttpNotFound, errorJson);
+  } else if (handleAs instanceof NotImplementedError) {
+    return respondWith(sendNotImplemented, {});
+  } else if (handleAs instanceof ApiError) {
     // eslint-disable-next-line no-console
-    console.error(`error - named exception on request: ${req.url}\n`, error);
-    sendHttpError(res, errorJson);
+    console.error(`error - named exception on request: ${url}\n`, error);
+    return respondWith(sendHttpUnspecifiedError, errorJson);
   } else {
     // eslint-disable-next-line no-console
-    console.error(`error - unnamed exception on request: ${req.url}\n`, error);
-    sendHttpError(res);
+    console.error(`error - unnamed exception on request: ${url}\n`, error);
+    return respondWith(sendHttpUnspecifiedError, {});
+  }
+
+  function respondWith(
+    sender:
+      | typeof sendHttpUnspecifiedError
+      | typeof sendHttpBadRequest
+      | typeof sendHttpUnauthorized
+      | typeof sendNotImplemented
+      | typeof sendHttpNotFound,
+    errorJson: Partial<JsonError>
+  ) {
+    if (isInLegacyMode) {
+      sender(resOrContext as NextApiResponseLike, errorJson as JsonObject);
+    } else {
+      return sender(errorJson as JsonObject);
+    }
   }
 }

@@ -1,7 +1,9 @@
-import checkVersion, { type Options } from '@-xun/adhesive/check-version';
-import { withMiddleware } from '@-xun/api-glue';
+import checkVersion from '@-xun/adhesive/check-version';
 import { testApiHandler } from 'next-test-api-route-handler';
+
 import { mockEnvFactory, noopHandler, wrapHandler } from 'testverse/setup';
+
+import type { Options } from '@-xun/adhesive/check-version';
 
 const withMockedEnv = mockEnvFactory({ NODE_ENV: 'test' });
 
