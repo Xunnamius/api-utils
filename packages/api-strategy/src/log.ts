@@ -79,7 +79,9 @@ export async function addToRequestLog(
 
   if (!endpoint) {
     // eslint-disable-next-line no-console
-    console.warn('API endpoint at url "%O" is missing its descriptor metadata', url);
+    console.warn(
+      `an API endpoint is missing its descriptor metadata at url: ${String(url)}`
+    );
   }
 
   // TODO: turns out getting the IP is non-trivial. This need to be revisited!

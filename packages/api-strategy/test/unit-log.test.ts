@@ -194,7 +194,7 @@ describe('::addToRequestLog', () => {
       });
 
       expect(warnSpy).toHaveBeenCalledWith(
-        expect.stringContaining(`API endpoint at ${String(req1.url)}`)
+        expect.stringContaining(`at url: ${String(req1.url)}`)
       );
 
       await expect(
@@ -212,7 +212,7 @@ describe('::addToRequestLog', () => {
         durationMs: 1234
       });
 
-      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('an API endpoint'));
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('at url: null'));
 
       await expect(
         reqlog.findOne({ resStatusCode: 2222 as HttpStatusCode })
