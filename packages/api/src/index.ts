@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 import { sendHttpUnspecifiedError, sendNotImplemented } from '@-xun/respond';
 import { toss } from 'toss-expression';
@@ -160,28 +161,35 @@ export function withMiddleware<
         },
         // ? Setting a new response must augment, not replace, the old one!
         set response(value: Response) {
-          const draftBody = value.bodyUsed ? undefined : value.body;
-          const currentBody = $response_.bodyUsed ? undefined : $response_.body;
-          const body = draftBody === undefined ? currentBody : draftBody;
+          // ? Technically, value could be "void" (i.e. undefined)
+          if (value instanceof Response) {
+            const draftBody = value.bodyUsed ? undefined : value.body;
+            const currentBody = $response_.bodyUsed ? undefined : $response_.body;
+            const body = draftBody === undefined ? currentBody : draftBody;
 
-          if (body === undefined) {
-            debug.warn(
-              'draft response body set to null: neither current nor updated Response has a usable body'
+            if (body === undefined) {
+              debug.warn(
+                'draft response body set to null: neither current nor updated Response has a usable body'
+              );
+            }
+
+            const draftResponse = new Response(body || null, {
+              status: value.status || $response_.status,
+              statusText: value.statusText || $response_.statusText
+            });
+
+            $response_.headers
+              .entries()
+              .toArray()
+              .concat(value.headers.entries().toArray())
+              .forEach(([key, value]) => draftResponse.headers.set(key, value));
+
+            $response_ = draftResponse;
+          } else {
+            debug.message(
+              'ignored attempt to set context.runtime.response to a non-Response type'
             );
           }
-
-          const draftResponse = new Response(body || null, {
-            status: value.status || $response_.status,
-            statusText: value.statusText || $response_.statusText
-          });
-
-          $response_.headers
-            .entries()
-            .toArray()
-            .concat(value.headers.entries().toArray())
-            .forEach(([key, value]) => draftResponse.headers.set(key, value));
-
-          $response_ = draftResponse;
         }
       },
       heap: {} as Heap,
