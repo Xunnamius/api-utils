@@ -38,6 +38,8 @@ import type { AnyMiddleware } from 'universe+api:types.ts';
 
 const debug = globalDebugLogger.extend('handle-error');
 
+type ErrorLikeOrUndefined = { message: string } | undefined;
+
 /**
  * Special middleware used to handle custom errors.
  *
@@ -143,8 +145,8 @@ export default async function middleware(
     ? (resOrContext as NextApiResponseLike)
     : context.runtime.response || new Response();
 
-  const errorJson: Partial<JsonError> = (error as { message: string }).message
-    ? { error: (error as { message: string }).message }
+  const errorJson: Partial<JsonError> = (error as ErrorLikeOrUndefined)?.message
+    ? { error: (error as NonNullable<ErrorLikeOrUndefined>).message }
     : {};
 
   debug('handling error: %O', errorJson.error || '(no message)');
