@@ -15,10 +15,10 @@ export async function isDueForContrivedError() {
   const { REQUESTS_PER_CONTRIVED_ERROR: reqPerError } = getEnv();
 
   if (reqPerError) {
-    const x = (await getDb({ name: 'root' })).collection('request-log');
-    const count = await x.estimatedDocumentCount();
+    const logsDb = (await getDb({ name: 'root' })).collection('request-log');
+    const count = await logsDb.estimatedDocumentCount();
 
-    debug(`${count}%${reqPerError} = ${count % reqPerError}`);
+    debug(`${count}%${reqPerError} = %O`, count % reqPerError);
 
     if (count % reqPerError === 0) {
       debug('determined request is due for contrived error');
