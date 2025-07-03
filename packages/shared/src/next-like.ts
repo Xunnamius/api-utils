@@ -92,3 +92,38 @@ export function getAuthorizationHeaderFromRequestLike(
 
   return header;
 }
+
+type FileSizeSuffix = `${
+  | 'k'
+  | 'K'
+  | 'm'
+  | 'M'
+  | 'g'
+  | 'G'
+  | 't'
+  | 'T'
+  | 'p'
+  | 'P'}${'b' | 'B'}`;
+
+/**
+ * An object that is probably a `PageConfig`.
+ */
+export type PageConfigLike = {
+  amp?: boolean | 'hybrid';
+  api?: {
+    responseLimit?: number | `${number}${FileSizeSuffix}` | boolean;
+    bodyParser?:
+      | {
+          sizeLimit?: number | `${number}${FileSizeSuffix}`;
+        }
+      | false;
+    externalResolver?: true;
+  };
+  env?: string[];
+  maxDuration?: number;
+  runtime?: 'nodejs' | 'experimental-edge' | 'edge' | undefined;
+  unstable_runtimeJS?: false;
+  unstable_JsPreload?: false;
+  unstable_includeFiles?: string[];
+  unstable_excludeFiles?: string[];
+};
