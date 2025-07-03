@@ -1,13 +1,14 @@
-import contriveError from '@-xun/adhesive/contrive-error';
-import { isDueForContrivedError } from '@-xun/contrived';
+import { isDueForContrivedError } from '@-xun/api-strategy/contrived';
 import { testApiHandler } from 'next-test-api-route-handler';
 
-import { noopHandler, wrapHandler } from 'testverse/setup';
-import { asMocked } from 'testverse:util.ts';
+import { withMiddleware } from 'universe+api';
+import { makeMiddleware } from 'universe+api:middleware/contrive-error.ts';
 
-import type { Options } from '@-xun/adhesive/contrive-error';
+import { asMocked, legacyNoopHandler, withLegacyConfig } from 'testverse:util.ts';
 
-jest.mock('@-xun/contrived');
+import type { Context, Options } from 'universe+api:middleware/contrive-error.ts';
+
+jest.mock('@-xun/api-strategy/contrived');
 
 const mockIsDueForContrivedError = asMocked(isDueForContrivedError);
 
@@ -15,43 +16,46 @@ beforeEach(() => {
   mockIsDueForContrivedError.mockReturnValue(Promise.resolve(false));
 });
 
-it('does not inject contrived errors by default', async () => {
-  expect.hasAssertions();
+describe('<legacy mode>', () => {
+  it('does not inject contrived errors by default', async () => {
+    expect.hasAssertions();
 
-  await testApiHandler({
-    rejectOnHandlerError: true,
-    pagesHandler: wrapHandler(
-      withMiddleware<Options>(noopHandler, {
-        descriptor: '/fake',
-        use: [contriveError]
-      })
-    ),
-    test: async ({ fetch }) => {
-      mockIsDueForContrivedError.mockReturnValue(Promise.resolve(true));
-      await expect(fetch().then((r) => r.status)).resolves.toBe(200);
-    }
+    await testApiHandler({
+      rejectOnHandlerError: true,
+      pagesHandler: withLegacyConfig(
+        withMiddleware<Options, Context>(legacyNoopHandler, {
+          descriptor: '/fake',
+          use: [makeMiddleware()],
+          options: { legacyMode: true }
+        })
+      ),
+      test: async ({ fetch }) => {
+        mockIsDueForContrivedError.mockReturnValue(Promise.resolve(true));
+        await expect(fetch().then((r) => r.status)).resolves.toBe(200);
+      }
+    });
   });
-});
 
-it('injects contrived errors when due if enabled', async () => {
-  expect.hasAssertions();
+  it('injects contrived errors when due if enabled', async () => {
+    expect.hasAssertions();
 
-  await testApiHandler({
-    rejectOnHandlerError: true,
-    pagesHandler: wrapHandler(
-      withMiddleware<Options>(noopHandler, {
-        descriptor: '/fake',
-        use: [contriveError],
-        options: { enableContrivedErrors: true }
-      })
-    ),
-    test: async ({ fetch }) => {
-      mockIsDueForContrivedError.mockReturnValue(Promise.resolve(false));
-      await expect(fetch().then((r) => r.status)).resolves.toBe(200);
-      mockIsDueForContrivedError.mockReturnValue(Promise.resolve(true));
-      await expect(fetch().then((r) => r.status)).resolves.toBe(555);
-      mockIsDueForContrivedError.mockReturnValue(Promise.resolve(false));
-      await expect(fetch().then((r) => r.status)).resolves.toBe(200);
-    }
+    await testApiHandler({
+      rejectOnHandlerError: true,
+      pagesHandler: withLegacyConfig(
+        withMiddleware<Options, Context>(legacyNoopHandler, {
+          descriptor: '/fake',
+          use: [makeMiddleware()],
+          options: { legacyMode: true, enableContrivedErrors: true }
+        })
+      ),
+      test: async ({ fetch }) => {
+        mockIsDueForContrivedError.mockReturnValue(Promise.resolve(false));
+        await expect(fetch().then((r) => r.status)).resolves.toBe(200);
+        mockIsDueForContrivedError.mockReturnValue(Promise.resolve(true));
+        await expect(fetch().then((r) => r.status)).resolves.toBe(555);
+        mockIsDueForContrivedError.mockReturnValue(Promise.resolve(false));
+        await expect(fetch().then((r) => r.status)).resolves.toBe(200);
+      }
+    });
   });
 });

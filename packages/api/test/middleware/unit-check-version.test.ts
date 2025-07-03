@@ -1,187 +1,194 @@
-import checkVersion from '@-xun/adhesive/check-version';
 import { testApiHandler } from 'next-test-api-route-handler';
 
-import { mockEnvFactory, noopHandler, wrapHandler } from 'testverse/setup';
+import { withMiddleware } from 'universe+api';
+import { makeMiddleware } from 'universe+api:middleware/check-version.ts';
 
-import type { Options } from '@-xun/adhesive/check-version';
+import { legacyNoopHandler, mockEnvFactory, withLegacyConfig } from 'testverse:util.ts';
+
+import type { Context, Options } from 'universe+api:middleware/check-version.ts';
 
 const withMockedEnv = mockEnvFactory({ NODE_ENV: 'test' });
 
-it('is a noop by default', async () => {
-  expect.hasAssertions();
+describe('<legacy mode>', () => {
+  it('is a noop by default', async () => {
+    expect.hasAssertions();
 
-  await testApiHandler({
-    rejectOnHandlerError: true,
-    pagesHandler: wrapHandler(
-      withMiddleware<Options>(noopHandler, {
-        descriptor: '/fake',
-        use: [checkVersion]
-      })
-    ),
-    test: async ({ fetch }) => expect((await fetch()).status).toBe(200)
+    await testApiHandler({
+      rejectOnHandlerError: true,
+      pagesHandler: withLegacyConfig(
+        withMiddleware<Options, Context>(legacyNoopHandler, {
+          descriptor: '/fake',
+          use: [makeMiddleware()],
+          options: { legacyMode: true }
+        })
+      ),
+      test: async ({ fetch }) => expect((await fetch()).status).toBe(200)
+    });
+
+    await testApiHandler({
+      rejectOnHandlerError: true,
+      pagesHandler: withLegacyConfig(
+        withMiddleware<Options, Context>(legacyNoopHandler, {
+          descriptor: '/fake',
+          use: [makeMiddleware()],
+          options: { legacyMode: true, apiVersion: 'one' }
+        })
+      ),
+      test: async ({ fetch }) => expect((await fetch()).status).toBe(200)
+    });
   });
 
-  await testApiHandler({
-    rejectOnHandlerError: true,
-    pagesHandler: wrapHandler(
-      withMiddleware<Options>(noopHandler, {
-        descriptor: '/fake',
-        use: [checkVersion],
-        options: { apiVersion: 'one' }
-      })
-    ),
-    test: async ({ fetch }) => expect((await fetch()).status).toBe(200)
+  it('sends 404 if its corresponding version is disabled', async () => {
+    expect.hasAssertions();
+
+    await testApiHandler({
+      rejectOnHandlerError: true,
+      pagesHandler: withLegacyConfig(
+        withMiddleware<Options, Context>(legacyNoopHandler, {
+          descriptor: '/fake',
+          use: [makeMiddleware()],
+          options: { legacyMode: true, apiVersion: '1' }
+        })
+      ),
+      test: async ({ fetch }) => {
+        await withMockedEnv(
+          async () => {
+            expect((await fetch()).status).toBe(404);
+          },
+          { DISABLED_API_VERSIONS: '1' }
+        );
+
+        await withMockedEnv(
+          async () => {
+            expect((await fetch()).status).toBe(200);
+          },
+          { DISABLED_API_VERSIONS: '2' }
+        );
+
+        await withMockedEnv(
+          async () => {
+            expect((await fetch()).status).toBe(404);
+          },
+          { DISABLED_API_VERSIONS: '2,1' }
+        );
+
+        await withMockedEnv(
+          async () => {
+            expect((await fetch()).status).toBe(200);
+          },
+          { DISABLED_API_VERSIONS: '3,2' }
+        );
+      }
+    });
+
+    await withMockedEnv(
+      async () => {
+        await testApiHandler({
+          rejectOnHandlerError: true,
+          pagesHandler: withLegacyConfig(
+            withMiddleware<Options, Context>(legacyNoopHandler, {
+              descriptor: '/fake',
+              use: [makeMiddleware()],
+              options: { legacyMode: true, apiVersion: '1' }
+            })
+          ),
+          test: async ({ fetch }) => expect((await fetch()).status).toBe(200)
+        });
+
+        await testApiHandler({
+          rejectOnHandlerError: true,
+          pagesHandler: withLegacyConfig(
+            withMiddleware<Options, Context>(legacyNoopHandler, {
+              descriptor: '/fake',
+              use: [makeMiddleware()],
+              options: { legacyMode: true, apiVersion: '2' }
+            })
+          ),
+          test: async ({ fetch }) => expect((await fetch()).status).toBe(404)
+        });
+
+        await testApiHandler({
+          rejectOnHandlerError: true,
+          pagesHandler: withLegacyConfig(
+            withMiddleware<Options, Context>(legacyNoopHandler, {
+              descriptor: '/fake',
+              use: [makeMiddleware()],
+              options: { legacyMode: true, apiVersion: 'three' }
+            })
+          ),
+          test: async ({ fetch }) => expect((await fetch()).status).toBe(404)
+        });
+
+        await testApiHandler({
+          rejectOnHandlerError: true,
+          pagesHandler: withLegacyConfig(
+            withMiddleware<Options, Context>(legacyNoopHandler, {
+              descriptor: '/fake',
+              use: [makeMiddleware()],
+              options: { legacyMode: true, apiVersion: '4' }
+            })
+          ),
+          test: async ({ fetch }) => expect((await fetch()).status).toBe(404)
+        });
+
+        await testApiHandler({
+          rejectOnHandlerError: true,
+          pagesHandler: withLegacyConfig(
+            withMiddleware<Options, Context>(async () => undefined, {
+              descriptor: '/fake',
+              use: [makeMiddleware()],
+              options: { legacyMode: true, apiVersion: '4' }
+            })
+          ),
+          test: async ({ fetch }) => expect((await fetch()).status).toBe(404)
+        });
+
+        await testApiHandler({
+          rejectOnHandlerError: true,
+          pagesHandler: withLegacyConfig(
+            withMiddleware<Options, Context>(legacyNoopHandler, {
+              descriptor: '/fake',
+              use: [makeMiddleware()],
+              options: { legacyMode: true }
+            })
+          ),
+          test: async ({ fetch }) => expect((await fetch()).status).toBe(200)
+        });
+      },
+      { DISABLED_API_VERSIONS: 'three,4,2,five' }
+    );
   });
-});
 
-it('sends 404 if its corresponding version is disabled', async () => {
-  expect.hasAssertions();
+  it('is a noop if DISABLED_API_VERSIONS is an empty string', async () => {
+    expect.hasAssertions();
 
-  await testApiHandler({
-    rejectOnHandlerError: true,
-    pagesHandler: wrapHandler(
-      withMiddleware<Options>(noopHandler, {
-        descriptor: '/fake',
-        use: [checkVersion],
-        options: { apiVersion: '1' }
-      })
-    ),
-    test: async ({ fetch }) => {
-      await withMockedEnv(
-        async () => {
-          expect((await fetch()).status).toBe(404);
-        },
-        { DISABLED_API_VERSIONS: '1' }
-      );
+    await withMockedEnv(
+      async () => {
+        await testApiHandler({
+          rejectOnHandlerError: true,
+          pagesHandler: withLegacyConfig(
+            withMiddleware<Options, Context>(legacyNoopHandler, {
+              descriptor: '/fake',
+              use: [makeMiddleware()],
+              options: { legacyMode: true, apiVersion: '4' }
+            })
+          ),
+          test: async ({ fetch }) => expect((await fetch()).status).toBe(200)
+        });
 
-      await withMockedEnv(
-        async () => {
-          expect((await fetch()).status).toBe(200);
-        },
-        { DISABLED_API_VERSIONS: '2' }
-      );
-
-      await withMockedEnv(
-        async () => {
-          expect((await fetch()).status).toBe(404);
-        },
-        { DISABLED_API_VERSIONS: '2,1' }
-      );
-
-      await withMockedEnv(
-        async () => {
-          expect((await fetch()).status).toBe(200);
-        },
-        { DISABLED_API_VERSIONS: '3,2' }
-      );
-    }
+        await testApiHandler({
+          rejectOnHandlerError: true,
+          pagesHandler: withLegacyConfig(
+            withMiddleware<Options, Context>(legacyNoopHandler, {
+              descriptor: '/fake',
+              use: [makeMiddleware()],
+              options: { legacyMode: true }
+            })
+          ),
+          test: async ({ fetch }) => expect((await fetch()).status).toBe(200)
+        });
+      },
+      { DISABLED_API_VERSIONS: '' }
+    );
   });
-
-  await withMockedEnv(
-    async () => {
-      await testApiHandler({
-        rejectOnHandlerError: true,
-        pagesHandler: wrapHandler(
-          withMiddleware<Options>(noopHandler, {
-            descriptor: '/fake',
-            use: [checkVersion],
-            options: { apiVersion: '1' }
-          })
-        ),
-        test: async ({ fetch }) => expect((await fetch()).status).toBe(200)
-      });
-
-      await testApiHandler({
-        rejectOnHandlerError: true,
-        pagesHandler: wrapHandler(
-          withMiddleware<Options>(noopHandler, {
-            descriptor: '/fake',
-            use: [checkVersion],
-            options: { apiVersion: '2' }
-          })
-        ),
-        test: async ({ fetch }) => expect((await fetch()).status).toBe(404)
-      });
-
-      await testApiHandler({
-        rejectOnHandlerError: true,
-        pagesHandler: wrapHandler(
-          withMiddleware<Options>(noopHandler, {
-            descriptor: '/fake',
-            use: [checkVersion],
-            options: { apiVersion: 'three' }
-          })
-        ),
-        test: async ({ fetch }) => expect((await fetch()).status).toBe(404)
-      });
-
-      await testApiHandler({
-        rejectOnHandlerError: true,
-        pagesHandler: wrapHandler(
-          withMiddleware<Options>(noopHandler, {
-            descriptor: '/fake',
-            use: [checkVersion],
-            options: { apiVersion: '4' }
-          })
-        ),
-        test: async ({ fetch }) => expect((await fetch()).status).toBe(404)
-      });
-
-      await testApiHandler({
-        rejectOnHandlerError: true,
-        pagesHandler: wrapHandler(
-          withMiddleware<Options>(async () => undefined, {
-            descriptor: '/fake',
-            use: [checkVersion],
-            options: { apiVersion: '4' }
-          })
-        ),
-        test: async ({ fetch }) => expect((await fetch()).status).toBe(404)
-      });
-
-      await testApiHandler({
-        rejectOnHandlerError: true,
-        pagesHandler: wrapHandler(
-          withMiddleware<Options>(noopHandler, {
-            descriptor: '/fake',
-            use: [checkVersion]
-          })
-        ),
-        test: async ({ fetch }) => expect((await fetch()).status).toBe(200)
-      });
-    },
-    { DISABLED_API_VERSIONS: 'three,4,2,five' }
-  );
-});
-
-it('is a noop if DISABLED_API_VERSIONS is an empty string', async () => {
-  expect.hasAssertions();
-
-  await withMockedEnv(
-    async () => {
-      await testApiHandler({
-        rejectOnHandlerError: true,
-        pagesHandler: wrapHandler(
-          withMiddleware<Options>(noopHandler, {
-            descriptor: '/fake',
-            use: [checkVersion],
-            options: { apiVersion: '4' }
-          })
-        ),
-        test: async ({ fetch }) => expect((await fetch()).status).toBe(200)
-      });
-
-      await testApiHandler({
-        rejectOnHandlerError: true,
-        pagesHandler: wrapHandler(
-          withMiddleware<Options>(noopHandler, {
-            descriptor: '/fake',
-            use: [checkVersion]
-          })
-        ),
-        test: async ({ fetch }) => expect((await fetch()).status).toBe(200)
-      });
-    },
-    { DISABLED_API_VERSIONS: '' }
-  );
 });

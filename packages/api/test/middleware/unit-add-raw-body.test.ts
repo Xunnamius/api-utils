@@ -1,159 +1,29 @@
-import addRawBody, {
-  ensureNextApiRequestHasRawBody,
-  isNextApiRequestWithRawBody
-} from '@-xun/adhesive/add-raw-body';
-
 import { testApiHandler } from 'next-test-api-route-handler';
 
-import { noopHandler, withMockedOutput, wrapHandler } from 'testverse/setup';
+import { withMiddleware } from 'universe+api';
+import { makeMiddleware } from 'universe+api:middleware/add-raw-body.ts';
 
-import type { Options, WithRawBody } from '@-xun/adhesive/add-raw-body';
+import {
+  legacyNoopHandler,
+  withLegacyConfig,
+  withMockedOutput
+} from 'testverse:util.ts';
 
-describe('::<default export>', () => {
-  it('throws if bodyParser is not disabled', async () => {
-    expect.hasAssertions();
+import type { Context, Options } from 'universe+api:middleware/add-raw-body.ts';
 
-    const pagesHandler = wrapHandler(
-      withMiddleware<Options>(noopHandler, {
-        descriptor: '/fake',
-        use: [addRawBody]
-      }),
-      {}
-    );
-
-    await withMockedOutput(async () => {
-      await expect(
-        testApiHandler({
-          rejectOnHandlerError: true,
-          pagesHandler,
-          test: async ({ fetch }) => void (await fetch())
-        })
-      ).rejects.toMatchObject({
-        message: expect.stringContaining('body parser must be disabled')
-      });
-    });
-
-    pagesHandler.config = { api: { bodyParser: false } };
-
-    await testApiHandler({
-      rejectOnHandlerError: true,
-      pagesHandler,
-      test: async ({ fetch }) => expect((await fetch()).status).toBe(200)
-    });
-  });
-
-  it('throws if rawBody property already defined on request object', async () => {
-    expect.hasAssertions();
-
-    const normalHandler = wrapHandler(
-      withMiddleware<Options>(noopHandler, {
-        descriptor: '/fake',
-        use: [addRawBody]
-      })
-    );
-
-    normalHandler.config = { api: { bodyParser: false } };
-
-    await testApiHandler({
-      rejectOnHandlerError: true,
-      pagesHandler: normalHandler,
-      test: async ({ fetch }) => expect((await fetch()).status).toBe(200)
-    });
-
-    const obsoleterHandler = wrapHandler(async (req, res) => {
-      (req as WithRawBody<NextApiRequest>).rawBody = 'fake raw body';
-      return withMiddleware<Options>(noopHandler, {
-        descriptor: '/fake',
-        use: [addRawBody]
-      })(req, res);
-    });
-
-    obsoleterHandler.config = { api: { bodyParser: false } };
-
-    await withMockedOutput(async () => {
-      await expect(
-        testApiHandler({
-          rejectOnHandlerError: true,
-          pagesHandler: obsoleterHandler,
-          test: async ({ fetch }) => void (await fetch())
-        })
-      ).rejects.toMatchObject({
-        message: expect.stringContaining('already has a defined "rawBody" property')
-      });
-    });
-  });
-
-  it('throws on bad JSON body', async () => {
-    expect.hasAssertions();
-
-    const pagesHandler = wrapHandler(
-      withMiddleware<Options>(noopHandler, {
-        descriptor: '/fake',
-        use: [addRawBody]
-      })
-    );
-
-    pagesHandler.config = { api: { bodyParser: false } };
-
-    await withMockedOutput(async () => {
-      await expect(
-        testApiHandler({
-          rejectOnHandlerError: true,
-          pagesHandler,
-          test: async ({ fetch }) =>
-            void (await fetch({
-              method: 'POST',
-              headers: { 'content-type': 'application/json' },
-              body: '<nope>'
-            }))
-        })
-      ).rejects.toMatchObject({
-        message: expect.stringContaining('invalid JSON body')
-      });
-    });
-  });
-
-  it('throws on invalid body (raw-body chokes)', async () => {
-    expect.hasAssertions();
-
-    const pagesHandler = wrapHandler(
-      withMiddleware<Options>(noopHandler, {
-        descriptor: '/fake',
-        use: [addRawBody]
-      })
-    );
-
-    pagesHandler.config = { api: { bodyParser: false } };
-
-    await withMockedOutput(async () => {
-      await expect(
-        testApiHandler({
-          rejectOnHandlerError: true,
-          pagesHandler,
-          requestPatcher(req) {
-            req.destroy();
-          },
-          test: async ({ fetch }) => void (await fetch())
-        })
-      ).rejects.toMatchObject({
-        message: expect.stringContaining('invalid body')
-      });
-    });
-  });
-
+describe('<legacy mode>', () => {
   it('adds rawBody to request object while still providing parsed body', async () => {
     expect.hasAssertions();
 
-    const pagesHandler = wrapHandler(
-      withMiddleware<Options>(
-        (req, res) => {
-          if (ensureNextApiRequestHasRawBody(req)) {
-            res.status(200).send({ body: req.body, rawBody: req.rawBody });
-          }
+    const pagesHandler = withLegacyConfig(
+      withMiddleware<Options, Context>(
+        (req, res, { rawBody }) => {
+          res.status(200).send({ body: req.body, rawBody });
         },
         {
           descriptor: '/fake',
-          use: [addRawBody]
+          use: [makeMiddleware()],
+          options: { legacyMode: true }
         }
       )
     );
@@ -245,11 +115,11 @@ describe('::<default export>', () => {
   it('respects requestBodySizeLimit option', async () => {
     expect.hasAssertions();
 
-    const pagesHandler = wrapHandler(
-      withMiddleware<Options>(noopHandler, {
+    const pagesHandler = withLegacyConfig(
+      withMiddleware<Options, Context>(legacyNoopHandler, {
         descriptor: '/fake',
-        use: [addRawBody],
-        options: { requestBodySizeLimit: 1 }
+        use: [makeMiddleware()],
+        options: { legacyMode: true, requestBodySizeLimit: 1 }
       })
     );
 
@@ -264,45 +134,103 @@ describe('::<default export>', () => {
       }
     });
   });
-});
 
-describe('::isNextApiRequestWithRawBody', () => {
-  it('functions properly as type predicate', async () => {
+  it('throws if bodyParser is not disabled', async () => {
     expect.hasAssertions();
 
-    const req = { rawBody: '' } as WithRawBody<NextApiRequest>;
-
-    if (isNextApiRequestWithRawBody(req)) {
-      // ? This test will "fail" during type checking if there is an error here
-      expect(req.rawBody).toBe('');
-    } else {
-      // @ts-expect-error: test will "fail" during type checking if no error
-      expect(req.rawBody).toBe('');
-    }
-  });
-});
-
-describe('::ensureNextApiRequestHasRawBody', () => {
-  it('functions properly as type guard', async () => {
-    expect.hasAssertions();
-
-    const req = { rawBody: '' } as WithRawBody<NextApiRequest>;
-
-    if (ensureNextApiRequestHasRawBody(req)) {
-      // ? This test will "fail" during type checking if there is an error here
-      expect(req.rawBody).toBe('');
-    }
-  });
-
-  it('throws if NextApiRequest object does not have raw body', async () => {
-    expect.hasAssertions();
-
-    expect(() => ensureNextApiRequestHasRawBody({} as NextApiRequest)).toThrow(
-      'encountered a NextApiRequest object without a rawBody property'
+    const pagesHandler = withLegacyConfig(
+      withMiddleware<Options, Context>(legacyNoopHandler, {
+        descriptor: '/fake',
+        use: [makeMiddleware()],
+        options: { legacyMode: true }
+      }),
+      {}
     );
 
-    expect(() =>
-      ensureNextApiRequestHasRawBody({ rawBody: '' } as WithRawBody<NextApiRequest>)
-    ).not.toThrow();
+    await withMockedOutput(async ({ errorSpy }) => {
+      await expect(
+        testApiHandler({
+          rejectOnHandlerError: true,
+          pagesHandler,
+          test: async ({ fetch }) => void (await fetch())
+        })
+      ).rejects.toMatchObject({
+        message: expect.stringContaining('body parser must be disabled')
+      });
+
+      expect(errorSpy).toHaveBeenCalledTimes(1);
+    });
+
+    pagesHandler.config = { api: { bodyParser: false } };
+
+    await testApiHandler({
+      rejectOnHandlerError: true,
+      pagesHandler,
+      test: async ({ fetch }) => expect((await fetch()).status).toBe(200)
+    });
+  });
+
+  it('throws on bad JSON body', async () => {
+    expect.hasAssertions();
+
+    const pagesHandler = withLegacyConfig(
+      withMiddleware<Options, Context>(legacyNoopHandler, {
+        descriptor: '/fake',
+        use: [makeMiddleware()],
+        options: { legacyMode: true }
+      })
+    );
+
+    pagesHandler.config = { api: { bodyParser: false } };
+
+    await withMockedOutput(async ({ errorSpy }) => {
+      await expect(
+        testApiHandler({
+          rejectOnHandlerError: true,
+          pagesHandler,
+          test: async ({ fetch }) =>
+            void (await fetch({
+              method: 'POST',
+              headers: { 'content-type': 'application/json' },
+              body: '<nope>'
+            }))
+        })
+      ).rejects.toMatchObject({
+        message: expect.stringContaining('invalid JSON body')
+      });
+
+      expect(errorSpy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('throws on invalid body (raw-body chokes)', async () => {
+    expect.hasAssertions();
+
+    const pagesHandler = withLegacyConfig(
+      withMiddleware<Options, Context>(legacyNoopHandler, {
+        descriptor: '/fake',
+        use: [makeMiddleware()],
+        options: { legacyMode: true }
+      })
+    );
+
+    pagesHandler.config = { api: { bodyParser: false } };
+
+    await withMockedOutput(async ({ errorSpy }) => {
+      await expect(
+        testApiHandler({
+          rejectOnHandlerError: true,
+          pagesHandler,
+          requestPatcher(req) {
+            req.destroy();
+          },
+          test: async ({ fetch }) => void (await fetch())
+        })
+      ).rejects.toMatchObject({
+        message: expect.stringContaining('invalid body')
+      });
+
+      expect(errorSpy).toHaveBeenCalledTimes(1);
+    });
   });
 });

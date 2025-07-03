@@ -1,175 +1,188 @@
-import checkMethod from '@-xun/adhesive/check-method';
 import { testApiHandler } from 'next-test-api-route-handler';
 
-import { mockEnvFactory, noopHandler, wrapHandler } from 'testverse/setup';
+import { withMiddleware } from 'universe+api';
+import { makeMiddleware } from 'universe+api:middleware/check-method.ts';
 
-import type { Options } from '@-xun/adhesive/check-method';
+import { legacyNoopHandler, mockEnvFactory, withLegacyConfig } from 'testverse:util.ts';
+
 import type { ValidHttpMethod } from '@-xun/types';
+import type { Context, Options } from 'universe+api:middleware/check-method.ts';
 
 const withMockedEnv = mockEnvFactory({ NODE_ENV: 'test' });
 
-it('sends 200 for allowed methods', async () => {
-  expect.hasAssertions();
+describe('<legacy mode>', () => {
+  it('sends 200 for allowed methods', async () => {
+    expect.hasAssertions();
 
-  await testApiHandler({
-    rejectOnHandlerError: true,
-    pagesHandler: wrapHandler(
-      withMiddleware<Options>(noopHandler, {
-        descriptor: '/fake',
-        use: [checkMethod],
-        options: { allowedMethods: ['GET', 'DELETE', 'POST', 'PUT'] }
-      })
-    ),
-    test: async ({ fetch }) => {
-      expect((await fetch({ method: 'GET' })).status).toBe(200);
-      expect((await fetch({ method: 'POST' })).status).toBe(200);
-      expect((await fetch({ method: 'PUT' })).status).toBe(200);
-      expect((await fetch({ method: 'DELETE' })).status).toBe(200);
-    }
+    await testApiHandler({
+      rejectOnHandlerError: true,
+      pagesHandler: withLegacyConfig(
+        withMiddleware<Options, Context>(legacyNoopHandler, {
+          descriptor: '/fake',
+          use: [makeMiddleware()],
+          options: { legacyMode: true, allowedMethods: ['GET', 'DELETE', 'POST', 'PUT'] }
+        })
+      ),
+      test: async ({ fetch }) => {
+        expect((await fetch({ method: 'GET' })).status).toBe(200);
+        expect((await fetch({ method: 'POST' })).status).toBe(200);
+        expect((await fetch({ method: 'PUT' })).status).toBe(200);
+        expect((await fetch({ method: 'DELETE' })).status).toBe(200);
+      }
+    });
   });
-});
 
-it('is restrictive by default', async () => {
-  expect.hasAssertions();
+  it('is restrictive by default', async () => {
+    expect.hasAssertions();
 
-  await testApiHandler({
-    pagesHandler: wrapHandler(
-      withMiddleware<Options>(noopHandler, {
-        descriptor: '/fake',
-        use: [checkMethod]
-      })
-    ),
-    test: async ({ fetch }) => {
-      expect((await fetch({ method: 'GET' })).status).toBe(405);
-      expect((await fetch({ method: 'POST' })).status).toBe(405);
-      expect((await fetch({ method: 'PUT' })).status).toBe(405);
-      expect((await fetch({ method: 'DELETE' })).status).toBe(405);
-    }
+    await testApiHandler({
+      pagesHandler: withLegacyConfig(
+        withMiddleware<Options, Context>(legacyNoopHandler, {
+          descriptor: '/fake',
+          use: [makeMiddleware()],
+          options: { legacyMode: true }
+        })
+      ),
+      test: async ({ fetch }) => {
+        expect((await fetch({ method: 'GET' })).status).toBe(405);
+        expect((await fetch({ method: 'POST' })).status).toBe(405);
+        expect((await fetch({ method: 'PUT' })).status).toBe(405);
+        expect((await fetch({ method: 'DELETE' })).status).toBe(405);
+      }
+    });
   });
-});
 
-it('sends 405 when request.method is undefined', async () => {
-  expect.hasAssertions();
+  it('sends 405 when request.method is undefined', async () => {
+    expect.hasAssertions();
 
-  await testApiHandler({
-    requestPatcher: (req) => (req.method = undefined),
-    pagesHandler: wrapHandler(
-      withMiddleware<Options>(noopHandler, {
-        descriptor: '/fake',
-        use: [checkMethod]
-      })
-    ),
-    test: async ({ fetch }) => {
-      expect((await fetch()).status).toBe(405);
-    }
+    await testApiHandler({
+      requestPatcher: (req) => (req.method = undefined),
+      pagesHandler: withLegacyConfig(
+        withMiddleware<Options, Context>(legacyNoopHandler, {
+          descriptor: '/fake',
+          use: [makeMiddleware()],
+          options: { legacyMode: true }
+        })
+      ),
+      test: async ({ fetch }) => {
+        expect((await fetch()).status).toBe(405);
+      }
+    });
   });
-});
 
-it('sends 405 when encountering unlisted methods', async () => {
-  expect.hasAssertions();
+  it('sends 405 when encountering unlisted methods', async () => {
+    expect.hasAssertions();
 
-  await testApiHandler({
-    pagesHandler: wrapHandler(
-      withMiddleware<Options>(noopHandler, {
-        descriptor: '/fake',
-        use: [checkMethod],
-        options: { allowedMethods: ['POST', 'PUT'] }
-      })
-    ),
-    test: async ({ fetch }) => {
-      expect((await fetch({ method: 'GET' })).status).toBe(405);
-      expect((await fetch({ method: 'POST' })).status).toBe(200);
-      expect((await fetch({ method: 'PUT' })).status).toBe(200);
-      expect((await fetch({ method: 'DELETE' })).status).toBe(405);
-    }
+    await testApiHandler({
+      pagesHandler: withLegacyConfig(
+        withMiddleware<Options, Context>(legacyNoopHandler, {
+          descriptor: '/fake',
+          use: [makeMiddleware()],
+          options: { legacyMode: true, allowedMethods: ['POST', 'PUT'] }
+        })
+      ),
+      test: async ({ fetch }) => {
+        expect((await fetch({ method: 'GET' })).status).toBe(405);
+        expect((await fetch({ method: 'POST' })).status).toBe(200);
+        expect((await fetch({ method: 'PUT' })).status).toBe(200);
+        expect((await fetch({ method: 'DELETE' })).status).toBe(405);
+      }
+    });
   });
-});
 
-it('sends 405 when encountering globally disallowed methods', async () => {
-  expect.hasAssertions();
+  it('sends 405 when encountering globally disallowed methods', async () => {
+    expect.hasAssertions();
 
-  await withMockedEnv(
-    async () => {
-      await testApiHandler({
-        pagesHandler: wrapHandler(
-          withMiddleware<Options>(noopHandler, {
-            descriptor: '/fake',
-            use: [checkMethod],
-            options: { allowedMethods: ['GET', 'POST', 'PUT', 'DELETE'] }
-          })
-        ),
-        test: async ({ fetch }) => {
-          expect((await fetch({ method: 'GET' })).status).toBe(200);
-          expect((await fetch({ method: 'POST' })).status).toBe(405);
-          expect((await fetch({ method: 'PUT' })).status).toBe(405);
-          expect((await fetch({ method: 'DELETE' })).status).toBe(405);
-        }
-      });
-    },
-    { DISALLOWED_METHODS: 'POST,PUT,DELETE' }
-  );
-});
-
-it('ignores spacing when parsing DISALLOWED_METHODS', async () => {
-  expect.hasAssertions();
-
-  await withMockedEnv(
-    async () => {
-      await testApiHandler({
-        pagesHandler: wrapHandler(
-          withMiddleware<Options>(noopHandler, {
-            descriptor: '/fake',
-            use: [checkMethod],
-            options: { allowedMethods: ['GET', 'POST', 'PUT', 'DELETE'] }
-          })
-        ),
-        test: async ({ fetch }) => {
-          expect((await fetch({ method: 'GET' })).status).toBe(405);
-          expect((await fetch({ method: 'POST' })).status).toBe(405);
-          expect((await fetch({ method: 'PUT' })).status).toBe(405);
-          expect((await fetch({ method: 'DELETE' })).status).toBe(200);
-        }
-      });
-    },
-    { DISALLOWED_METHODS: '  POST , PUT,          GET ' }
-  );
-});
-
-it('sends an Allow header in 405 responses', async () => {
-  expect.hasAssertions();
-
-  await testApiHandler({
-    pagesHandler: wrapHandler(
-      withMiddleware<Options>(noopHandler, {
-        descriptor: '/fake',
-        use: [checkMethod],
-        options: { allowedMethods: ['GET', 'POST', 'HEAD'] }
-      })
-    ),
-    test: async ({ fetch }) => {
-      const res = await fetch({ method: 'PUT' });
-      expect(res.status).toBe(405);
-      expect(res.headers.get('allow')).toBe('GET,POST,HEAD');
-    }
+    await withMockedEnv(
+      async () => {
+        await testApiHandler({
+          pagesHandler: withLegacyConfig(
+            withMiddleware<Options, Context>(legacyNoopHandler, {
+              descriptor: '/fake',
+              use: [makeMiddleware()],
+              options: {
+                legacyMode: true,
+                allowedMethods: ['GET', 'POST', 'PUT', 'DELETE']
+              }
+            })
+          ),
+          test: async ({ fetch }) => {
+            expect((await fetch({ method: 'GET' })).status).toBe(200);
+            expect((await fetch({ method: 'POST' })).status).toBe(405);
+            expect((await fetch({ method: 'PUT' })).status).toBe(405);
+            expect((await fetch({ method: 'DELETE' })).status).toBe(405);
+          }
+        });
+      },
+      { DISALLOWED_METHODS: 'POST,PUT,DELETE' }
+    );
   });
-});
 
-it('works even if allowedMethods specified in lowercase', async () => {
-  expect.hasAssertions();
+  it('ignores spacing when parsing DISALLOWED_METHODS', async () => {
+    expect.hasAssertions();
 
-  await testApiHandler({
-    pagesHandler: wrapHandler(
-      withMiddleware<Options>(noopHandler, {
-        descriptor: '/fake',
-        use: [checkMethod],
-        options: {
-          allowedMethods: ['get'] as unknown as ValidHttpMethod[]
-        }
-      })
-    ),
-    test: async ({ fetch }) => {
-      const res = await fetch();
-      expect(res.status).toBe(200);
-    }
+    await withMockedEnv(
+      async () => {
+        await testApiHandler({
+          pagesHandler: withLegacyConfig(
+            withMiddleware<Options, Context>(legacyNoopHandler, {
+              descriptor: '/fake',
+              use: [makeMiddleware()],
+              options: {
+                legacyMode: true,
+                allowedMethods: ['GET', 'POST', 'PUT', 'DELETE']
+              }
+            })
+          ),
+          test: async ({ fetch }) => {
+            expect((await fetch({ method: 'GET' })).status).toBe(405);
+            expect((await fetch({ method: 'POST' })).status).toBe(405);
+            expect((await fetch({ method: 'PUT' })).status).toBe(405);
+            expect((await fetch({ method: 'DELETE' })).status).toBe(200);
+          }
+        });
+      },
+      { DISALLOWED_METHODS: '  POST , PUT,          GET ' }
+    );
+  });
+
+  it('sends an Allow header in 405 responses', async () => {
+    expect.hasAssertions();
+
+    await testApiHandler({
+      pagesHandler: withLegacyConfig(
+        withMiddleware<Options, Context>(legacyNoopHandler, {
+          descriptor: '/fake',
+          use: [makeMiddleware()],
+          options: { legacyMode: true, allowedMethods: ['GET', 'POST', 'HEAD'] }
+        })
+      ),
+      test: async ({ fetch }) => {
+        const res = await fetch({ method: 'PUT' });
+        expect(res.status).toBe(405);
+        expect(res.headers.get('allow')).toBe('GET,POST,HEAD');
+      }
+    });
+  });
+
+  it('works even if allowedMethods specified in lowercase', async () => {
+    expect.hasAssertions();
+
+    await testApiHandler({
+      pagesHandler: withLegacyConfig(
+        withMiddleware<Options, Context>(legacyNoopHandler, {
+          descriptor: '/fake',
+          use: [makeMiddleware()],
+          options: {
+            legacyMode: true,
+            allowedMethods: ['get'] as unknown as ValidHttpMethod[]
+          }
+        })
+      ),
+      test: async ({ fetch }) => {
+        const res = await fetch();
+        expect(res.status).toBe(200);
+      }
+    });
   });
 });

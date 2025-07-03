@@ -1,5 +1,6 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
+import { getEnv } from '@-xun/env';
 import { sendHttpUnspecifiedError, sendNotImplemented } from '@-xun/respond';
 import { toss } from 'toss-expression';
 
@@ -8,28 +9,27 @@ import { ErrorMessage } from 'universe+api:error.ts';
 
 import type { ExtendedDebugger } from 'rejoinder';
 import type { UnextendableInternalLogger } from 'rejoinder/internal';
-import type { UnwrapTagged, Writable } from 'type-fest';
+import type { EmptyObject, UnwrapTagged, Writable } from 'type-fest';
 
 import type {
   NextApiRequestLike,
-  NextApiResponseLike
+  NextApiResponseLike,
+  PageConfigLike
 } from 'multiverse+shared:next-like.ts';
 
 import type {
-  AnyMiddleware,
-  GenericLegacyMiddleware,
-  GenericModernMiddleware,
   LegacyApiHandler,
+  LegacyApiHandlerWithHeap,
   LegacyMiddleware,
   MiddlewareContext,
   MiddlewareFactorySignatureLegacy,
   MiddlewareFactorySignatureModern,
   ModernApiHandler,
+  ModernApiHandlerWithHeap,
   ModernMiddleware,
+  ModernOrLegacyMiddleware,
   PickFactoriedOptions,
-  WithMiddlewareOptions,
-  WithMiddlewareSignatureLegacy,
-  WithMiddlewareSignatureModern
+  WithMiddlewareOptions
 } from 'universe+api:types.ts';
 
 export {
@@ -44,17 +44,13 @@ export type {
 } from 'multiverse+shared:next-like.ts';
 
 export type {
-  GenericLegacyApiHandler,
-  GenericLegacyMiddleware,
-  GenericModernApiHandler,
-  GenericModernMiddleware,
   LegacyApiHandler,
-  LegacyBasicApiHandler,
+  LegacyApiHandlerWithHeap,
   LegacyMiddleware,
   LegacyMiddlewareContext,
   MiddlewareContext,
   ModernApiHandler,
-  ModernBasicApiHandler,
+  ModernApiHandlerWithHeap,
   ModernMiddleware,
   ModernMiddlewareContext
 } from 'universe+api:types.ts';
@@ -68,65 +64,48 @@ export type {
  * `GET`, `POST`) compatible with the Next.js App Router.
  *
  * Passing `undefined` as `handler`, or not returning a {@link Response} from
- * your handler/middleware, will trigger an `HTTP 501 Not Implemented` response.
- * This can be used to to stub out endpoints and their middleware for later
- * implementation.
+ * one of your middlewares/handler, will trigger an `HTTP 501 Not Implemented`
+ * response. This can be used to to stub out endpoints and their middleware for
+ * later implementation.
  */
 export function withMiddleware<
   Options extends Record<string, unknown> = Record<string, unknown>,
-  RequestType extends Request = Request,
-  ResponseType extends Response = Response,
   Heap extends Record<PropertyKey, unknown> = Record<PropertyKey, unknown>
 >(
-  ...args: Parameters<
-    WithMiddlewareSignatureModern<Options, RequestType, ResponseType, Heap>
-  >
-): ReturnType<WithMiddlewareSignatureModern<Options, RequestType, ResponseType, Heap>>;
+  handler: ModernApiHandlerWithHeap<Heap> | undefined,
+  options: WithMiddlewareOptions<Options, Heap, ModernMiddleware<Options, Heap>>
+): ModernApiHandler;
 /**
- * This function decorates a {@link LegacyApiHandler}, returning a
+ * This function decorates a {@link LegacyApiHandlerWithHeap}, returning a
  * middleware runner compatible with legacy middleware like Express or the
  * Next.js Pages router.
  *
- * Passing `undefined` as `handler`, or not calling `res.end()` (and not sending
- * headers) from your handler nor middleware, will trigger an `HTTP 501 Not
- * Implemented` response. This can be used to to stub out endpoints and their
- * middleware for later implementation.
+ * Passing `undefined` as `handler`, or not calling `res.end()` nor sending
+ * headers from at least one of your middlewares/handler, will trigger an `HTTP
+ * 501 Not Implemented` response. This can be used to to stub out endpoints and
+ * their middleware for later implementation.
  */
 export function withMiddleware<
   Options extends Record<string, unknown> = Record<string, unknown>,
-  RequestType extends NextApiRequestLike = NextApiRequestLike,
-  ResponseType extends NextApiResponseLike = NextApiResponseLike,
   Heap extends Record<PropertyKey, unknown> = Record<PropertyKey, unknown>
 >(
-  ...args: Parameters<
-    WithMiddlewareSignatureLegacy<Options, RequestType, ResponseType, Heap>
-  >
-): ReturnType<WithMiddlewareSignatureLegacy<Options, RequestType, ResponseType, Heap>>;
+  handler: LegacyApiHandlerWithHeap<Heap> | undefined,
+  options: WithMiddlewareOptions<Options, Heap, LegacyMiddleware<Options, Heap>>
+): LegacyApiHandler;
 export function withMiddleware<
   Options extends Record<string, unknown>,
   Heap extends Record<PropertyKey, unknown>
 >(
-  handler:
-    | ModernApiHandler<Request, Response, Heap>
-    | LegacyApiHandler<NextApiRequestLike, NextApiResponseLike, Heap>
-    | undefined,
+  handler: ModernApiHandlerWithHeap<Heap> | LegacyApiHandlerWithHeap<Heap> | undefined,
   {
     descriptor,
     use,
     useOnError,
     options
   }:
-    | WithMiddlewareOptions<
-        Options,
-        Heap,
-        ModernMiddleware<Options, Request, Response, Heap>
-      >
-    | WithMiddlewareOptions<
-        Options,
-        Heap,
-        LegacyMiddleware<Options, NextApiRequestLike, NextApiResponseLike, Heap>
-      >
-) {
+    | WithMiddlewareOptions<Options, Heap, ModernMiddleware<Options, Heap>>
+    | WithMiddlewareOptions<Options, Heap, LegacyMiddleware<Options, Heap>>
+): ModernApiHandler | LegacyApiHandler {
   return async function (
     reqOrRequest: NextApiRequestLike | Request,
     resOrUndefined: NextApiResponseLike | Response
@@ -135,14 +114,14 @@ export function withMiddleware<
 
     debug('-- begin (%O mode) --', isInLegacyMode ? 'LEGACY' : 'MODERN');
 
-    const doMiddlewareAfterHandled = [] as AnyMiddleware<Options, Heap>[];
-    const doMiddlewareAfterSent = [] as AnyMiddleware<Options, Heap>[];
+    const doMiddlewareAfterHandled = [] as ModernOrLegacyMiddleware<Options, Heap>[];
+    const doMiddlewareAfterSent = [] as ModernOrLegacyMiddleware<Options, Heap>[];
     let $response_ = new Response();
 
     const middlewareContext: MiddlewareContext<
       Options,
       Heap,
-      AnyMiddleware<Options, Heap>
+      ModernOrLegacyMiddleware<Options, Heap>
     > & { runtime: { response: Response } } = {
       runtime: {
         endpoint: {
@@ -151,10 +130,14 @@ export function withMiddleware<
         done: () => toss(new Error(ErrorMessage.RuntimeDoneCalledTooEarly())),
         error: undefined,
         doAfterHandled(middleware) {
-          doMiddlewareAfterHandled.push(middleware as AnyMiddleware<Options, Heap>);
+          doMiddlewareAfterHandled.push(
+            middleware as ModernOrLegacyMiddleware<Options, Heap>
+          );
         },
         doAfterSent(middleware) {
-          doMiddlewareAfterSent.push(middleware as AnyMiddleware<Options, Heap>);
+          doMiddlewareAfterSent.push(
+            middleware as ModernOrLegacyMiddleware<Options, Heap>
+          );
         },
         get response() {
           return $response_;
@@ -200,7 +183,7 @@ export function withMiddleware<
       } as MiddlewareContext<
         Options,
         Heap,
-        GenericLegacyMiddleware & GenericModernMiddleware
+        ModernOrLegacyMiddleware<Options, Heap>
       >['options']
     };
 
@@ -229,7 +212,7 @@ export function withMiddleware<
             reqOrRequest,
             isInLegacyMode ? resOrUndefined : middlewareContext.heap,
             middlewareContext.heap
-          ]);
+          ] as Parameters<typeof handler>);
 
           debug('finished executing handler');
         }
@@ -290,8 +273,21 @@ export function withMiddleware<
       }
     }
 
-    await runMiddlewareAfterHandled();
-    const promisedMiddlewareAfterSent = runMiddlewareAfterSent();
+    await runMiddlewareAfterHandled().catch((error: unknown) => {
+      debug.error(
+        'a middleware task added via doAfterHandled failed (which was ignored): %O',
+        error
+      );
+    });
+
+    const promisedMiddlewareAfterSent = runMiddlewareAfterSent().catch(
+      (error: unknown) => {
+        debug.error(
+          'a middleware task added via doAfterSent failed (which was ignored): %O',
+          error
+        );
+      }
+    );
 
     if (options?.awaitMiddlewareAfterSent) {
       await promisedMiddlewareAfterSent;
@@ -311,12 +307,7 @@ export function withMiddleware<
     async function runMiddlewareAfterHandled() {
       for (const middleware of doMiddlewareAfterHandled) {
         if (isInLegacyMode) {
-          const typedMiddleware = middleware as LegacyMiddleware<
-            Options,
-            NextApiRequestLike,
-            NextApiResponseLike,
-            Heap
-          >;
+          const typedMiddleware = middleware as LegacyMiddleware<Options, Heap>;
 
           const [req, res] = [
             reqOrRequest as NextApiRequestLike,
@@ -330,12 +321,7 @@ export function withMiddleware<
           );
         } else {
           const request = reqOrRequest as Request;
-          const typedMiddleware = middleware as ModernMiddleware<
-            Options,
-            Request,
-            Response,
-            Heap
-          >;
+          const typedMiddleware = middleware as ModernMiddleware<Options, Heap>;
 
           writableContextRuntime.response =
             (await typedMiddleware(
@@ -353,12 +339,7 @@ export function withMiddleware<
     async function runMiddlewareAfterSent() {
       for (const middleware of doMiddlewareAfterSent) {
         if (isInLegacyMode) {
-          const typedMiddleware = middleware as LegacyMiddleware<
-            Options,
-            NextApiRequestLike,
-            NextApiResponseLike,
-            Heap
-          >;
+          const typedMiddleware = middleware as LegacyMiddleware<Options, Heap>;
 
           const [req, res] = [
             reqOrRequest as NextApiRequestLike,
@@ -372,12 +353,7 @@ export function withMiddleware<
           );
         } else {
           const request = reqOrRequest as Request;
-          const typedMiddleware = middleware as ModernMiddleware<
-            Options,
-            Request,
-            Response,
-            Heap
-          >;
+          const typedMiddleware = middleware as ModernMiddleware<Options, Heap>;
 
           writableContextRuntime.response =
             (await typedMiddleware(
@@ -398,10 +374,8 @@ export function withMiddleware<
      */
     async function startPullingChain(
       chain: IterableIterator<
-        | UnwrapTagged<ModernMiddleware<Options, Request, Response, Heap>>
-        | UnwrapTagged<
-            LegacyMiddleware<Options, NextApiRequestLike, NextApiResponseLike, Heap>
-          >
+        | UnwrapTagged<ModernMiddleware<Options, Heap>>
+        | UnwrapTagged<LegacyMiddleware<Options, Heap>>
       >,
       localDebug: ExtendedDebugger | UnextendableInternalLogger
     ): Promise<boolean> {
@@ -480,12 +454,8 @@ export function withMiddleware<
             localDebug('executing middleware');
 
             if (isInLegacyMode) {
-              const typedCurrentMiddleware = currentMiddleware as LegacyMiddleware<
-                Options,
-                NextApiRequestLike,
-                NextApiResponseLike,
-                Heap
-              >;
+              const typedCurrentMiddleware =
+                currentMiddleware as unknown as LegacyMiddleware<Options, Heap>;
 
               const [req, res] = [
                 reqOrRequest as NextApiRequestLike,
@@ -503,12 +473,8 @@ export function withMiddleware<
               );
             } else {
               const request = reqOrRequest as Request;
-              const typedCurrentMiddleware = currentMiddleware as ModernMiddleware<
-                Options,
-                Request,
-                Response,
-                Heap
-              >;
+              const typedCurrentMiddleware =
+                currentMiddleware as unknown as ModernMiddleware<Options, Heap>;
 
               writableContextRuntime.response =
                 (await typedCurrentMiddleware(
@@ -576,19 +542,13 @@ export function withMiddleware<
  * {@link withMiddleware}.
  */
 export function middlewareFactory<
-  Options extends Record<string, unknown> = Record<string, unknown>,
-  RequestType extends Request = Request,
-  ResponseType extends Response = Response,
+  Options extends Record<string, unknown> = EmptyObject,
   Heap extends Record<PropertyKey, unknown> = Record<PropertyKey, unknown>
 >(
   defaults: PickFactoriedOptions<
-    WithMiddlewareOptions<
-      Options,
-      Heap,
-      ModernMiddleware<Options, RequestType, ResponseType, Heap>
-    >
+    WithMiddlewareOptions<Options, Heap, ModernMiddleware<Options, Heap>>
   >
-): MiddlewareFactorySignatureModern<Options, RequestType, ResponseType, Heap>;
+): MiddlewareFactorySignatureModern<Options, Heap>;
 /**
  * Returns a _legacy_ {@link withMiddleware} function decorated with a "default"
  * configuration.
@@ -602,19 +562,13 @@ export function middlewareFactory<
  * of middleware every time you want to call {@link withMiddleware}.
  */
 export function middlewareFactory<
-  Options extends Record<string, unknown> = Record<string, unknown>,
-  RequestType extends NextApiRequestLike = NextApiRequestLike,
-  ResponseType extends NextApiResponseLike = NextApiResponseLike,
+  Options extends Record<string, unknown> = EmptyObject,
   Heap extends Record<PropertyKey, unknown> = Record<PropertyKey, unknown>
 >(
   defaults: PickFactoriedOptions<
-    WithMiddlewareOptions<
-      Options,
-      Heap,
-      LegacyMiddleware<Options, RequestType, ResponseType, Heap>
-    >
+    WithMiddlewareOptions<Options, Heap, LegacyMiddleware<Options, Heap>>
   >
-): MiddlewareFactorySignatureLegacy<Options, RequestType, ResponseType, Heap>;
+): MiddlewareFactorySignatureLegacy<Options, Heap>;
 export function middlewareFactory<
   Options extends Record<string, unknown>,
   Heap extends Record<PropertyKey, unknown>
@@ -623,25 +577,12 @@ export function middlewareFactory<
   useOnError: defaultUseOnError = [],
   options: defaultOptions
 }: PickFactoriedOptions<
-  | WithMiddlewareOptions<
-      Options,
-      Heap,
-      ModernMiddleware<Options, Request, Response, Heap>
-    >
-  | WithMiddlewareOptions<
-      Options,
-      Heap,
-      LegacyMiddleware<Options, NextApiRequestLike, NextApiResponseLike, Heap>
-    >
+  | WithMiddlewareOptions<Options, Heap, ModernMiddleware<Options, Heap>>
+  | WithMiddlewareOptions<Options, Heap, LegacyMiddleware<Options, Heap>>
 >): unknown {
   type GenericReturnTypeParameters = Parameters<
-    | MiddlewareFactorySignatureModern<Options, Request, Response, Heap>
-    | MiddlewareFactorySignatureLegacy<
-        Options,
-        NextApiRequestLike,
-        NextApiResponseLike,
-        Heap
-      >
+    | MiddlewareFactorySignatureModern<Options, Heap>
+    | MiddlewareFactorySignatureLegacy<Options, Heap>
   >;
 
   return function withFactoriedMiddleware(
@@ -656,14 +597,29 @@ export function middlewareFactory<
       options: additionalOptions
     } = params;
 
-    // ? Reaching the limits of TypeScript here (probably options's fault)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return withMiddleware<any, any, any, any>(handler as any, {
-      descriptor,
-      use: [...prependUse, ...defaultUse, ...appendUse],
-      useOnError: [...prependUseOnError, ...defaultUseOnError, ...appendUseOnError],
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      options: { ...defaultOptions, ...additionalOptions } as any
-    });
+    return Reflect.apply(withMiddleware, null, [
+      handler,
+      {
+        descriptor,
+        use: [...prependUse, ...defaultUse, ...appendUse],
+        useOnError: [...prependUseOnError, ...defaultUseOnError, ...appendUseOnError],
+        options: { ...defaultOptions, ...additionalOptions }
+      }
+    ]);
   };
 }
+
+/**
+ * The default app-wide configuration object for legacy Next.js APIs.
+ *
+ * @see https://nextjs.org/docs/api-routes/api-middlewares#custom-config
+ */
+export const defaultLegacyPageConfig: PageConfigLike = {
+  api: {
+    bodyParser: {
+      get sizeLimit() {
+        return getEnv().MAX_CONTENT_LENGTH_BYTES;
+      }
+    }
+  }
+};

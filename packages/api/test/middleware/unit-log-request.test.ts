@@ -1,12 +1,13 @@
-import logRequest from '@-xun/adhesive/log-request';
-import { addToRequestLog } from '@-xun/log';
+import { addToRequestLog } from '@-xun/api-strategy/log';
 import { testApiHandler } from 'next-test-api-route-handler';
 import { toss } from 'toss-expression';
 
-import { noopHandler, wrapHandler } from 'testverse/setup';
-import { asMocked } from 'testverse:util.ts';
+import { withMiddleware } from 'universe+api';
+import { makeMiddleware } from 'universe+api:middleware/log-request.ts';
 
-jest.mock('@-xun/log');
+import { asMocked, legacyNoopHandler, withLegacyConfig } from 'testverse:util.ts';
+
+jest.mock('@-xun/api-strategy/log');
 
 const mockAddToRequestLog = asMocked(addToRequestLog);
 
@@ -14,95 +15,93 @@ beforeEach(() => {
   mockAddToRequestLog.mockReturnValue(Promise.resolve());
 });
 
-it('logs requests on call to res.send', async () => {
-  expect.hasAssertions();
+describe('<legacy mode>', () => {
+  it('logs request after call to res.send', async () => {
+    expect.hasAssertions();
 
-  await testApiHandler({
-    rejectOnHandlerError: true,
-    pagesHandler: wrapHandler(
-      wrapHandler(
-        withMiddleware(async (_req, res) => res.status(404).send({}), {
-          descriptor: '/fake',
-          use: [logRequest]
-        })
-      )
-    ),
-    test: async ({ fetch }) => {
-      await Promise.all([fetch(), fetch(), fetch()]);
-      expect(mockAddToRequestLog).toBeCalledTimes(3);
-    }
-  });
-});
-
-it('logs requests on call to res.end', async () => {
-  expect.hasAssertions();
-
-  await testApiHandler({
-    rejectOnHandlerError: true,
-    pagesHandler: wrapHandler(
-      wrapHandler(
-        withMiddleware(async (_req, res) => void res.status(404).end(), {
-          descriptor: '/fake',
-          use: [logRequest]
-        })
-      )
-    ),
-    test: async ({ fetch }) => {
-      await Promise.all([fetch(), fetch(), fetch()]);
-      expect(mockAddToRequestLog).toBeCalledTimes(3);
-    }
-  });
-});
-
-it('logs requests once on multiple calls to res.end', async () => {
-  expect.hasAssertions();
-
-  await testApiHandler({
-    rejectOnHandlerError: true,
-    pagesHandler: wrapHandler(
-      wrapHandler(
-        withMiddleware(
-          async (_req, res) => {
-            res.status(404).end();
-            res.end();
-          },
-          {
+    await testApiHandler({
+      rejectOnHandlerError: true,
+      pagesHandler: withLegacyConfig(
+        withLegacyConfig(
+          withMiddleware(async (_req, res) => res.status(404).send({}), {
             descriptor: '/fake',
-            use: [logRequest]
-          }
+            use: [makeMiddleware()],
+            options: { legacyMode: true }
+          })
         )
-      )
-    ),
-    test: async ({ fetch }) => {
-      await Promise.all([fetch(), fetch(), fetch()]);
-      expect(mockAddToRequestLog).toBeCalledTimes(3);
-    }
+      ),
+      test: async ({ fetch }) => {
+        await Promise.all([fetch(), fetch(), fetch()]);
+        expect(mockAddToRequestLog).toHaveBeenCalledTimes(3);
+      }
+    });
   });
-});
 
-it('handles request log errors after res.end as gracefully as possible', async () => {
-  expect.hasAssertions();
+  it('logs request after call to res.end', async () => {
+    expect.hasAssertions();
 
-  mockAddToRequestLog.mockImplementation(() => toss(new Error('fake error')));
-  let called = false;
+    await testApiHandler({
+      rejectOnHandlerError: true,
+      pagesHandler: withLegacyConfig(
+        withLegacyConfig(
+          withMiddleware(async (_req, res) => void res.status(404).end(), {
+            descriptor: '/fake',
+            use: [makeMiddleware()],
+            options: { legacyMode: true }
+          })
+        )
+      ),
+      test: async ({ fetch }) => {
+        await Promise.all([fetch(), fetch(), fetch()]);
+        expect(mockAddToRequestLog).toHaveBeenCalledTimes(3);
+      }
+    });
+  });
 
-  await testApiHandler({
-    rejectOnHandlerError: true,
-    pagesHandler: wrapHandler(
-      withMiddleware(noopHandler, {
-        descriptor: '/fake',
-        use: [logRequest],
-        useOnError: [
-          (_req, _res, context) => {
-            expect(context.runtime.error).toMatchObject({ message: 'fake error' });
-            called = true;
-          }
-        ]
-      })
-    ),
-    test: async ({ fetch }) => {
-      expect((await fetch()).status).toBe(200);
-      expect(called).toBeTrue();
-    }
+  it('logs request once on multiple calls to res.end', async () => {
+    expect.hasAssertions();
+
+    await testApiHandler({
+      rejectOnHandlerError: true,
+      pagesHandler: withLegacyConfig(
+        withLegacyConfig(
+          withMiddleware(
+            async (_req, res) => {
+              res.status(404).end();
+              res.end();
+            },
+            {
+              descriptor: '/fake',
+              use: [makeMiddleware()],
+              options: { legacyMode: true }
+            }
+          )
+        )
+      ),
+      test: async ({ fetch }) => {
+        await Promise.all([fetch(), fetch(), fetch()]);
+        expect(mockAddToRequestLog).toHaveBeenCalledTimes(3);
+      }
+    });
+  });
+
+  it('ignores request log errors after response sent', async () => {
+    expect.hasAssertions();
+
+    mockAddToRequestLog.mockImplementation(() => toss(new Error('fake error')));
+
+    await testApiHandler({
+      pagesHandler: withLegacyConfig(
+        withMiddleware(legacyNoopHandler, {
+          descriptor: '/fake',
+          use: [makeMiddleware()],
+          useOnError: [],
+          options: { legacyMode: true }
+        })
+      ),
+      test: async ({ fetch }) => {
+        expect((await fetch()).status).toBe(200);
+      }
+    });
   });
 });

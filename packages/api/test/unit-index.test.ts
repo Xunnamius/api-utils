@@ -3,42 +3,19 @@ import { toss } from 'toss-expression';
 
 import { middlewareFactory, withMiddleware } from 'universe+api';
 
-import { withDebugEnabled, withMockedOutput } from 'testverse:util.ts';
+import {
+  legacyNoopHandler,
+  withDebugEnabled,
+  withMockedOutput
+} from 'testverse:util.ts';
 
-import type { NextApiRequest, NextApiResponse } from 'next';
-import type { UnwrapTagged } from 'type-fest';
-
-import type {
-  NextApiRequestLike,
-  NextApiResponseLike
-} from 'multiverse+shared:next-like.ts';
-
-import type {
-  GenericLegacyMiddleware,
-  LegacyApiHandler,
-  MiddlewareContext,
-  ModernApiHandler
-} from 'universe+api';
-
-type GenericRecord = Record<string, unknown>;
+import type { NextApiResponseLike } from 'universe+api';
+import type { ExportedMiddleware } from 'universe+api:types.ts';
 
 const MAX_CONTENT_LENGTH_BYTES = 100_000;
 const MAX_CONTENT_LENGTH_BYTES_PLUS_1 = 100_001;
 
-const legacyNoopHandler: LegacyApiHandler<
-  NextApiRequestLike,
-  NextApiResponseLike,
-  Record<PropertyKey, unknown>
-> = async (_req, res) => {
-  res.status(200).send({});
-};
-
-// TODO: add Request/Response to all NextApiRequest/NextApiResponse tests
-const modernNoopHandler: ModernApiHandler<
-  Request,
-  Response,
-  Record<PropertyKey, unknown>
-> = async () => Response.json({});
+type GenericRecord = Record<string, unknown>;
 
 describe('::withMiddleware', () => {
   it('rejects requests that are too big when exporting config (next.js)', async () => {
@@ -80,7 +57,7 @@ describe('::withMiddleware', () => {
 
     await testApiHandler({
       rejectOnHandlerError: true,
-      pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
+      pagesHandler: withMiddleware(
         async (req, res) => {
           res.status(req.headers.key === '1234' ? 200 : 555).send({});
         },
@@ -103,7 +80,7 @@ describe('::withMiddleware', () => {
         req.url = '/?some=url&yes';
       },
       rejectOnHandlerError: true,
-      pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
+      pagesHandler: withMiddleware(
         async (req, res) => {
           expect(req.query).toStrictEqual({ some: 'url', yes: '' });
           res.status(200).send({});
@@ -127,14 +104,11 @@ describe('::withMiddleware', () => {
 
     await testApiHandler({
       rejectOnHandlerError: true,
-      pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
-        legacyNoopHandler,
-        {
-          descriptor: '/fake',
-          use: [middleware],
-          options: { legacyMode: true }
-        }
-      ),
+      pagesHandler: withMiddleware(legacyNoopHandler, {
+        descriptor: '/fake',
+        use: [middleware],
+        options: { legacyMode: true }
+      }),
       test: async ({ fetch }) => {
         expect((await fetch()).status).toBe(200);
         expect(middleware).toHaveBeenCalledTimes(1);
@@ -149,14 +123,11 @@ describe('::withMiddleware', () => {
 
     await testApiHandler({
       rejectOnHandlerError: true,
-      pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
-        legacyNoopHandler,
-        {
-          descriptor: '/fake',
-          use: middleware,
-          options: { legacyMode: true }
-        }
-      ),
+      pagesHandler: withMiddleware(legacyNoopHandler, {
+        descriptor: '/fake',
+        use: middleware,
+        options: { legacyMode: true }
+      }),
       test: async ({ fetch }) => {
         expect((await fetch()).status).toBe(200);
         middleware.forEach((m) => expect(m).toHaveBeenCalledTimes(1));
@@ -167,22 +138,19 @@ describe('::withMiddleware', () => {
   it('runs primary chain middleware then handler', async () => {
     expect.hasAssertions();
 
-    const middleware = jest.fn(() =>
-      expect(handler).toHaveBeenCalledTimes(0)
-    ) as UnwrapTagged<GenericLegacyMiddleware>;
+    const middleware = jest.fn(async function () {
+      expect(handler).toHaveBeenCalledTimes(0);
+    } as ExportedMiddleware<GenericRecord, GenericRecord>);
 
     const handler = jest.fn(() => expect(middleware).toHaveBeenCalledTimes(1));
 
     await testApiHandler({
       rejectOnHandlerError: true,
-      pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
-        handler,
-        {
-          descriptor: '/fake',
-          use: [middleware],
-          options: { legacyMode: true }
-        }
-      ),
+      pagesHandler: withMiddleware(handler, {
+        descriptor: '/fake',
+        use: [middleware],
+        options: { legacyMode: true }
+      }),
       test: async ({ fetch }) => {
         await fetch();
         expect(middleware).toHaveBeenCalledTimes(1);
@@ -198,14 +166,11 @@ describe('::withMiddleware', () => {
 
     await testApiHandler({
       rejectOnHandlerError: true,
-      pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
-        handler,
-        {
-          descriptor: '',
-          use: [],
-          options: { legacyMode: true }
-        }
-      ),
+      pagesHandler: withMiddleware(handler, {
+        descriptor: '',
+        use: [],
+        options: { legacyMode: true }
+      }),
       test: async ({ fetch }) => {
         await fetch();
         expect(handler).toHaveBeenCalledTimes(1);
@@ -218,14 +183,11 @@ describe('::withMiddleware', () => {
 
     await testApiHandler({
       rejectOnHandlerError: true,
-      pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
-        undefined,
-        {
-          descriptor: '/fake',
-          use: [(_, res) => res.status(200).end()],
-          options: { legacyMode: true }
-        }
-      ),
+      pagesHandler: withMiddleware(undefined, {
+        descriptor: '/fake',
+        use: [(_, res) => void (res as NextApiResponseLike).status(200).end()],
+        options: { legacyMode: true }
+      }),
       test: async ({ fetch }) => {
         expect((await fetch()).status).toBe(200);
       }
@@ -237,17 +199,16 @@ describe('::withMiddleware', () => {
 
     await testApiHandler({
       rejectOnHandlerError: true,
-      pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
-        undefined,
-        {
-          descriptor: '/fake/:path',
-          use: [
-            (_, res, context) =>
-              res.status(200).send({ endpoint: context.runtime.endpoint })
-          ],
-          options: { legacyMode: true }
-        }
-      ),
+      pagesHandler: withMiddleware(undefined, {
+        descriptor: '/fake/:path',
+        use: [
+          (_, res, context) =>
+            (res as NextApiResponseLike)
+              .status(200)
+              .send({ endpoint: context?.runtime.endpoint })
+        ],
+        options: { legacyMode: true }
+      }),
       test: async ({ fetch }) => {
         await expect((await fetch()).json()).resolves.toStrictEqual({
           endpoint: {
@@ -265,14 +226,11 @@ describe('::withMiddleware', () => {
 
     await testApiHandler({
       rejectOnHandlerError: true,
-      pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
-        handler,
-        {
-          descriptor: '/fake',
-          use: [(_, __, context) => context.runtime.done()],
-          options: { legacyMode: true }
-        }
-      ),
+      pagesHandler: withMiddleware(handler, {
+        descriptor: '/fake',
+        use: [(_, __, context) => context?.runtime.done()],
+        options: { legacyMode: true }
+      }),
       test: async ({ fetch }) => {
         await fetch();
         expect(handler).toHaveBeenCalledTimes(0);
@@ -283,14 +241,11 @@ describe('::withMiddleware', () => {
       await expect(
         testApiHandler({
           rejectOnHandlerError: true,
-          pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
-            handler,
-            {
-              descriptor: '/fake',
-              use: [() => toss(new Error('bad'))],
-              options: { legacyMode: true }
-            }
-          ),
+          pagesHandler: withMiddleware(handler, {
+            descriptor: '/fake',
+            use: [() => toss(new Error('bad'))],
+            options: { legacyMode: true }
+          }),
           test: async ({ fetch }) => void (await fetch())
         })
       ).rejects.toMatchObject({ message: 'bad' });
@@ -306,14 +261,11 @@ describe('::withMiddleware', () => {
 
     await testApiHandler({
       rejectOnHandlerError: true,
-      pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
-        undefined,
-        {
-          descriptor: '/fake',
-          use: [],
-          options: { legacyMode: true }
-        }
-      ),
+      pagesHandler: withMiddleware(undefined, {
+        descriptor: '/fake',
+        use: [],
+        options: { legacyMode: true }
+      }),
       test: async ({ fetch }) => expect((await fetch()).status).toBe(501)
     });
   });
@@ -323,14 +275,11 @@ describe('::withMiddleware', () => {
 
     await testApiHandler({
       rejectOnHandlerError: true,
-      pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
-        async () => undefined,
-        {
-          descriptor: '/fake',
-          use: [],
-          options: { legacyMode: true }
-        }
-      ),
+      pagesHandler: withMiddleware(async () => undefined, {
+        descriptor: '/fake',
+        use: [],
+        options: { legacyMode: true }
+      }),
       test: async ({ fetch }) => expect((await fetch()).status).toBe(501)
     });
   });
@@ -344,22 +293,19 @@ describe('::withMiddleware', () => {
       await expect(
         testApiHandler({
           rejectOnHandlerError: true,
-          pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
-            legacyNoopHandler,
-            {
-              descriptor: '/fake',
-              use: [
-                (_, __, context) => expect(context.runtime.error).toBeUndefined(),
-                (_, __, context) => expect(context.runtime.error).toBeUndefined(),
-                () => toss(error)
-              ],
-              useOnError: [
-                (_, __, context) => expect(context.runtime.error).toBe(error),
-                (_, __, context) => expect(context.runtime.error).toBe(error)
-              ],
-              options: { legacyMode: true }
-            }
-          ),
+          pagesHandler: withMiddleware(legacyNoopHandler, {
+            descriptor: '/fake',
+            use: [
+              (_, __, context) => expect(context?.runtime.error).toBeUndefined(),
+              (_, __, context) => expect(context?.runtime.error).toBeUndefined(),
+              () => toss(error)
+            ],
+            useOnError: [
+              (_, __, context) => expect(context?.runtime.error).toBe(error),
+              (_, __, context) => expect(context?.runtime.error).toBe(error)
+            ],
+            options: { legacyMode: true }
+          }),
           test: async ({ fetch }) => void (await fetch())
         })
       ).toReject();
@@ -377,15 +323,12 @@ describe('::withMiddleware', () => {
     await withMockedOutput(async () => {
       await testApiHandler({
         rejectOnHandlerError: true,
-        pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
-          legacyNoopHandler,
-          {
-            descriptor: '/fake',
-            use: [() => toss(new Error('error'))],
-            useOnError: [middleware, (_, res) => res.end()],
-            options: { legacyMode: true }
-          }
-        ),
+        pagesHandler: withMiddleware(legacyNoopHandler, {
+          descriptor: '/fake',
+          use: [() => toss(new Error('error'))],
+          useOnError: [middleware, (_, res) => void (res as NextApiResponseLike).end()],
+          options: { legacyMode: true }
+        }),
         test: async ({ fetch }) => {
           await fetch();
           expect(middleware).toHaveBeenCalledTimes(1);
@@ -400,21 +343,20 @@ describe('::withMiddleware', () => {
     const middleware = [
       jest.fn(),
       jest.fn(),
-      ((_, res) => res.end()) as UnwrapTagged<GenericLegacyMiddleware>
+      function (_, res) {
+        (res as NextApiResponseLike).end();
+      } as ExportedMiddleware<GenericRecord, GenericRecord>
     ];
 
     await withMockedOutput(async () => {
       await testApiHandler({
         rejectOnHandlerError: true,
-        pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
-          legacyNoopHandler,
-          {
-            descriptor: '/fake',
-            use: [() => toss(new Error('error'))],
-            useOnError: middleware,
-            options: { legacyMode: true }
-          }
-        ),
+        pagesHandler: withMiddleware(legacyNoopHandler, {
+          descriptor: '/fake',
+          use: [() => toss(new Error('error'))],
+          useOnError: middleware,
+          options: { legacyMode: true }
+        }),
         test: async ({ fetch }) => {
           await fetch();
           middleware.slice(0, -1).forEach((m) => expect(m).toHaveBeenCalledTimes(1));
@@ -431,15 +373,12 @@ describe('::withMiddleware', () => {
     await withMockedOutput(async () => {
       await testApiHandler({
         rejectOnHandlerError: true,
-        pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
-          () => toss(new Error('error')),
-          {
-            descriptor: '/fake',
-            use: [],
-            useOnError: [middleware, (_, res) => res.end()],
-            options: { legacyMode: true }
-          }
-        ),
+        pagesHandler: withMiddleware(() => toss(new Error('error')), {
+          descriptor: '/fake',
+          use: [],
+          useOnError: [middleware, (_, res) => void (res as NextApiResponseLike).end()],
+          options: { legacyMode: true }
+        }),
         test: async ({ fetch }) => {
           await fetch();
           expect(middleware).toHaveBeenCalledTimes(1);
@@ -454,21 +393,20 @@ describe('::withMiddleware', () => {
     const middleware = [
       jest.fn(),
       jest.fn(),
-      ((_, res) => res.end()) as UnwrapTagged<GenericLegacyMiddleware>
+      async function (_, res) {
+        (res as NextApiResponseLike).end();
+      } as ExportedMiddleware<GenericRecord, GenericRecord>
     ];
 
     await withMockedOutput(async () => {
       await testApiHandler({
         rejectOnHandlerError: true,
-        pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
-          () => toss(new Error('error')),
-          {
-            descriptor: '/fake',
-            use: [],
-            useOnError: middleware,
-            options: { legacyMode: true }
-          }
-        ),
+        pagesHandler: withMiddleware(() => toss(new Error('error')), {
+          descriptor: '/fake',
+          use: [],
+          useOnError: middleware,
+          options: { legacyMode: true }
+        }),
         test: async ({ fetch }) => {
           await fetch();
           middleware.slice(0, -1).forEach((m) => expect(m).toHaveBeenCalledTimes(1));
@@ -485,19 +423,16 @@ describe('::withMiddleware', () => {
     await withMockedOutput(async ({ errorSpy }) => {
       await testApiHandler({
         rejectOnHandlerError: true,
-        pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
-          legacyNoopHandler,
-          {
-            descriptor: '/fake',
-            use: [(_, __, context) => context.runtime.done(), middleware, middleware],
-            useOnError: [
-              (_, __, context) => context.runtime.done(),
-              middleware,
-              middleware
-            ],
-            options: { legacyMode: true }
-          }
-        ),
+        pagesHandler: withMiddleware(legacyNoopHandler, {
+          descriptor: '/fake',
+          use: [(_, __, context) => context?.runtime.done(), middleware, middleware],
+          useOnError: [
+            (_, __, context) => context?.runtime.done(),
+            middleware,
+            middleware
+          ],
+          options: { legacyMode: true }
+        }),
         test: async ({ fetch }) => {
           await fetch();
           expect(middleware).toHaveBeenCalledTimes(0);
@@ -507,15 +442,12 @@ describe('::withMiddleware', () => {
       await expect(
         testApiHandler({
           rejectOnHandlerError: true,
-          pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
-            legacyNoopHandler,
-            {
-              descriptor: '/fake',
-              use: [() => toss(new Error('bad')), middleware, middleware],
-              useOnError: [() => toss(new Error('bad')), middleware, middleware],
-              options: { legacyMode: true }
-            }
-          ),
+          pagesHandler: withMiddleware(legacyNoopHandler, {
+            descriptor: '/fake',
+            use: [() => toss(new Error('bad')), middleware, middleware],
+            useOnError: [() => toss(new Error('bad')), middleware, middleware],
+            options: { legacyMode: true }
+          }),
           test: async ({ fetch }) => void (await fetch())
         })
       ).toReject();
@@ -533,15 +465,12 @@ describe('::withMiddleware', () => {
       await expect(
         testApiHandler({
           rejectOnHandlerError: true,
-          pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
-            undefined,
-            {
-              descriptor: '/fake',
-              use: [() => toss(new Error('bad'))],
-              useOnError: [() => toss(new Error('worse'))],
-              options: { legacyMode: true }
-            }
-          ),
+          pagesHandler: withMiddleware(undefined, {
+            descriptor: '/fake',
+            use: [() => toss(new Error('bad'))],
+            useOnError: [() => toss(new Error('worse'))],
+            options: { legacyMode: true }
+          }),
           test: async ({ fetch }) => void (await fetch())
         })
       ).rejects.toMatchObject({ message: 'worse' });
@@ -558,15 +487,12 @@ describe('::withMiddleware', () => {
       await expect(
         testApiHandler({
           rejectOnHandlerError: true,
-          pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
-            undefined,
-            {
-              descriptor: '/fake',
-              use: [() => toss(new Error('bad'))],
-              useOnError: [],
-              options: { legacyMode: true }
-            }
-          ),
+          pagesHandler: withMiddleware(undefined, {
+            descriptor: '/fake',
+            use: [() => toss(new Error('bad'))],
+            useOnError: [],
+            options: { legacyMode: true }
+          }),
           test: async ({ fetch }) => void (await fetch())
         })
       ).rejects.toMatchObject({ message: 'bad' });
@@ -583,15 +509,12 @@ describe('::withMiddleware', () => {
       await expect(
         testApiHandler({
           rejectOnHandlerError: true,
-          pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
-            undefined,
-            {
-              descriptor: '/fake',
-              use: [() => toss(new Error('bad'))],
-              useOnError: [() => undefined],
-              options: { legacyMode: true }
-            }
-          ),
+          pagesHandler: withMiddleware(undefined, {
+            descriptor: '/fake',
+            use: [() => toss(new Error('bad'))],
+            useOnError: [() => undefined],
+            options: { legacyMode: true }
+          }),
           test: async ({ fetch }) => void (await fetch())
         })
       ).rejects.toMatchObject({ message: 'bad' });
@@ -604,27 +527,19 @@ describe('::withMiddleware', () => {
   it('makes runtime control functions noops if chain completes', async () => {
     expect.hasAssertions();
 
-    const nextWarning = expect.stringContaining(
-      'already finished executing; calling runtime.next() at this point is a noop'
-    );
-
     const doneWarning = expect.stringContaining(
       'already finished executing; calling runtime.done() at this point is a noop'
     );
 
-    let next: () => Promise<void>, done: () => void;
+    let done: () => void;
 
     await withDebugEnabled(async () => {
       await withMockedOutput(async ({ nodeErrorSpy }) => {
         await testApiHandler({
           rejectOnHandlerError: true,
-          pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
+          pagesHandler: withMiddleware(
             async () => {
-              expect(nodeErrorSpy).not.toHaveBeenCalledWith(nextWarning);
               expect(nodeErrorSpy).not.toHaveBeenCalledWith(doneWarning);
-
-              await next();
-              expect(nodeErrorSpy).toHaveBeenCalledWith(nextWarning);
 
               done();
               expect(nodeErrorSpy).toHaveBeenCalledWith(doneWarning);
@@ -636,18 +551,16 @@ describe('::withMiddleware', () => {
 
               descriptor: '/fake',
               use: [
-                (_req, _res, { runtime }) => {
-                  next = runtime.next;
-                  done = runtime.done;
+                (_req, _res, context) => {
+                  done = context?.runtime.done || (() => toss(new Error('fail')));
                 }
               ],
               useOnError: [
-                (_req, res, { runtime }) => {
-                  expect(runtime.error).toMatchObject({ message: 'badness' });
+                (_req, res, context) => {
+                  expect(context?.runtime.error).toMatchObject({ message: 'badness' });
 
-                  next = runtime.next;
-                  done = runtime.done;
-                  res.end();
+                  done = context?.runtime.done || (() => toss(new Error('fail')));
+                  (res as NextApiResponseLike).end();
                 }
               ]
             }
@@ -656,9 +569,6 @@ describe('::withMiddleware', () => {
             await fetch();
 
             nodeErrorSpy.mockClear();
-
-            await next();
-            expect(nodeErrorSpy).toHaveBeenCalledWith(nextWarning);
 
             done();
             expect(nodeErrorSpy).toHaveBeenCalledWith(doneWarning);
@@ -671,175 +581,50 @@ describe('::withMiddleware', () => {
   it('makes runtime control functions noops if chain aborts', async () => {
     expect.hasAssertions();
 
-    const nextWarning = expect.stringContaining(
-      'aborted; calling runtime.next() at this point is a noop'
-    );
-
     const doneWarning = expect.stringContaining(
       'already aborted; calling runtime.done() at this point is a noop'
     );
 
-    let next: () => Promise<void>, done: () => void;
+    let done: () => void;
 
     await withDebugEnabled(async () => {
       await withMockedOutput(async ({ nodeErrorSpy, errorSpy }) => {
         await expect(
           testApiHandler({
             rejectOnHandlerError: true,
-            pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
-              undefined,
-              {
-                descriptor: '/fake',
-                use: [
-                  (_req, _res, { runtime }) => {
-                    next = runtime.next;
-                    done = runtime.done;
-                    throw new Error('aborted');
-                  }
-                ],
-                useOnError: [
-                  async (_req, _res, { runtime }) => {
-                    expect(nodeErrorSpy).not.toHaveBeenCalledWith(nextWarning);
-                    expect(nodeErrorSpy).not.toHaveBeenCalledWith(doneWarning);
+            pagesHandler: withMiddleware(undefined, {
+              descriptor: '/fake',
+              use: [
+                (_req, _res, context) => {
+                  done = context?.runtime.done || (() => toss(new Error('fail')));
+                  throw new Error('aborted');
+                }
+              ],
+              useOnError: [
+                async (_req, _res, context) => {
+                  expect(nodeErrorSpy).not.toHaveBeenCalledWith(doneWarning);
 
-                    await next();
-                    expect(nodeErrorSpy).toHaveBeenCalledWith(nextWarning);
+                  done();
+                  expect(nodeErrorSpy).toHaveBeenCalledWith(doneWarning);
 
-                    done();
-                    expect(nodeErrorSpy).toHaveBeenCalledWith(doneWarning);
+                  done = context?.runtime.done || (() => toss(new Error('fail')));
 
-                    next = runtime.next;
-                    done = runtime.done;
-
-                    throw new Error('aborted again');
-                  }
-                ],
-                options: { legacyMode: true }
-              }
-            ),
+                  throw new Error('aborted again');
+                }
+              ],
+              options: { legacyMode: true }
+            }),
             test: async ({ fetch }) => void (await fetch())
           })
         ).rejects.toMatchObject({ message: 'aborted again' });
 
         nodeErrorSpy.mockClear();
 
-        await next();
-        expect(nodeErrorSpy).toHaveBeenCalledWith(nextWarning);
-
         done();
         expect(nodeErrorSpy).toHaveBeenCalledWith(doneWarning);
 
         // ? This is coming from within Next.js itself
         expect(errorSpy).toHaveBeenCalledTimes(1);
-      });
-    });
-  });
-
-  it('can pull entire chain (and then some) manually using runtime.next', async () => {
-    expect.hasAssertions();
-
-    const nextWarning = expect.stringContaining(
-      'already finished executing; calling runtime.next() at this point is a noop'
-    );
-
-    await withDebugEnabled(async () => {
-      await withMockedOutput(async ({ nodeErrorSpy }) => {
-        await testApiHandler({
-          rejectOnHandlerError: true,
-          pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
-            undefined,
-            {
-              descriptor: '/fake',
-              use: [
-                async (_req, res, { runtime: { next } }) => {
-                  await next();
-                  expect(nodeErrorSpy).not.toHaveBeenCalledWith(nextWarning);
-
-                  await next();
-                  expect(nodeErrorSpy).toHaveBeenCalledWith(nextWarning);
-
-                  nodeErrorSpy.mockClear();
-
-                  await next();
-                  expect(nodeErrorSpy).toHaveBeenCalledWith(nextWarning);
-
-                  res.status(200).end();
-                }
-              ],
-              options: { legacyMode: true }
-            }
-          ),
-          test: async ({ fetch }) => {
-            expect((await fetch()).status).toBe(200);
-          }
-        });
-      });
-    });
-  });
-
-  it('can pull entire chain manually using runtime.next with warning if called multiple times', async () => {
-    expect.hasAssertions();
-
-    const middleware = jest.fn();
-    const nextWarning = expect.stringContaining(
-      'already finished executing; calling runtime.next() at this point is a noop'
-    );
-
-    await withMockedOutput(async ({ nodeErrorSpy }) => {
-      await withDebugEnabled(async () => {
-        await testApiHandler({
-          rejectOnHandlerError: true,
-          pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
-            undefined,
-            {
-              descriptor: '/fake',
-              use: [
-                async (_req, _res, { runtime: { next } }) => {
-                  await next();
-                  expect(nodeErrorSpy).not.toHaveBeenCalledWith(nextWarning);
-
-                  nodeErrorSpy.mockClear();
-
-                  await next();
-                  expect(nodeErrorSpy).toHaveBeenCalledWith(nextWarning);
-
-                  throw new Error('not good bad bad');
-                },
-                middleware,
-                middleware
-              ],
-              useOnError: [
-                async (_req, _res, { runtime: { next, error } }) => {
-                  expect(middleware).toHaveBeenCalledTimes(2);
-                  expect(error).toMatchObject({ message: 'not good bad bad' });
-                  nodeErrorSpy.mockClear();
-
-                  await next();
-                  expect(nodeErrorSpy).not.toHaveBeenCalledWith(nextWarning);
-
-                  nodeErrorSpy.mockClear();
-
-                  await next();
-                  expect(nodeErrorSpy).toHaveBeenCalledWith(
-                    expect.stringContaining(
-                      'aborted; calling runtime.next() at this point is a noop'
-                    )
-                  );
-                },
-                middleware,
-                middleware,
-                (_, res) => {
-                  expect(middleware).toHaveBeenCalledTimes(4);
-                  res.status(200).end();
-                }
-              ],
-              options: { legacyMode: true }
-            }
-          ),
-          test: async ({ fetch }) => {
-            expect((await fetch()).status).toBe(200);
-          }
-        });
       });
     });
   });
@@ -851,22 +636,19 @@ describe('::withMiddleware', () => {
       await withMockedOutput(async ({ nodeErrorSpy }) => {
         await testApiHandler({
           rejectOnHandlerError: true,
-          pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
-            undefined,
-            {
-              descriptor: '/fake',
-              use: [
-                // @ts-expect-error: bad middleware value
-                'bad',
-                // @ts-expect-error: bad middleware value
-                null,
-                // @ts-expect-error: bad middleware value
-                {},
-                (_, res) => res.status(403).end()
-              ],
-              options: { legacyMode: true }
-            }
-          ),
+          pagesHandler: withMiddleware(undefined, {
+            descriptor: '/fake',
+            use: [
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              'bad' as any,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              null as any,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              {} as any,
+              (_, res) => void (res as NextApiResponseLike).status(403).end()
+            ],
+            options: { legacyMode: true }
+          }),
           test: async ({ fetch }) => {
             expect((await fetch()).status).toBe(403);
             expect(nodeErrorSpy).toHaveBeenCalledWith(
@@ -885,14 +667,14 @@ describe('::withMiddleware', () => {
 
     await testApiHandler({
       rejectOnHandlerError: true,
-      pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
-        undefined,
-        {
-          descriptor: '/fake',
-          use: [(_, res) => res.status(404).end(), middleware],
-          options: { legacyMode: true, callDoneOnEnd: false }
-        }
-      ),
+      pagesHandler: withMiddleware(undefined, {
+        descriptor: '/fake',
+        use: [
+          (_, res) => void (res as NextApiResponseLike).status(404).end(),
+          middleware
+        ],
+        options: { legacyMode: true, callDoneOnEnd: false }
+      }),
       test: async ({ fetch }) => {
         expect((await fetch()).status).toBe(404);
         expect(middleware).toHaveBeenCalledTimes(1);
@@ -901,14 +683,14 @@ describe('::withMiddleware', () => {
 
     await testApiHandler({
       rejectOnHandlerError: true,
-      pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
-        undefined,
-        {
-          descriptor: '/fake',
-          use: [(_, res) => res.status(403).end(), middleware],
-          options: { legacyMode: true, callDoneOnEnd: true }
-        }
-      ),
+      pagesHandler: withMiddleware(undefined, {
+        descriptor: '/fake',
+        use: [
+          (_, res) => void (res as NextApiResponseLike).status(403).end(),
+          middleware
+        ],
+        options: { legacyMode: true, callDoneOnEnd: true }
+      }),
       test: async ({ fetch }) => {
         expect((await fetch()).status).toBe(403);
         expect(middleware).toHaveBeenCalledTimes(1);
@@ -925,21 +707,20 @@ describe('::withMiddleware', () => {
       await withMockedOutput(async ({ nodeErrorSpy }) => {
         await testApiHandler({
           rejectOnHandlerError: true,
-          pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
-            undefined,
-            {
-              descriptor: '/fake',
-              use: [
-                async (_, res, { runtime: { done } }) => {
-                  done();
+          pagesHandler: withMiddleware(undefined, {
+            descriptor: '/fake',
+            use: [
+              async (_, res, context) => {
+                if (context?.runtime.done) {
+                  context.runtime.done();
                   expect(nodeErrorSpy).not.toHaveBeenCalledWith(skippedMessage);
-                  res.status(404).end();
+                  void (res as NextApiResponseLike).status(404).end();
                   expect(nodeErrorSpy).toHaveBeenCalledWith(skippedMessage);
                 }
-              ],
-              options: { legacyMode: true }
-            }
-          ),
+              }
+            ],
+            options: { legacyMode: true }
+          }),
           test: async ({ fetch }) => {
             expect((await fetch()).status).toBe(404);
           }
@@ -947,30 +728,30 @@ describe('::withMiddleware', () => {
 
         await testApiHandler({
           rejectOnHandlerError: true,
-          pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
-            undefined,
-            {
-              descriptor: '/fake',
-              use: [
-                async () => {
-                  throw new Error('contrived');
-                }
-              ],
-              useOnError: [
-                async (_, res, { runtime: { done, error } }) => {
-                  expect(error).toMatchObject({ message: 'contrived' });
+          pagesHandler: withMiddleware(undefined, {
+            descriptor: '/fake',
+            use: [
+              async () => {
+                throw new Error('contrived');
+              }
+            ],
+            useOnError: [
+              async (_, res, context) => {
+                if (context?.runtime.done) {
+                  expect(context.runtime.error).toMatchObject({ message: 'contrived' });
 
-                  done();
+                  context.runtime.done();
 
                   nodeErrorSpy.mockClear();
                   expect(nodeErrorSpy).not.toHaveBeenCalledWith(skippedMessage);
-                  res.status(404).end();
+
+                  (res as NextApiResponseLike).status(404).end();
                   expect(nodeErrorSpy).toHaveBeenCalledWith(skippedMessage);
                 }
-              ],
-              options: { legacyMode: true }
-            }
-          ),
+              }
+            ],
+            options: { legacyMode: true }
+          }),
           test: async ({ fetch }) => {
             expect((await fetch()).status).toBe(404);
           }
@@ -988,7 +769,7 @@ describe('::withMiddleware', () => {
       await withMockedOutput(async ({ nodeErrorSpy }) => {
         await testApiHandler({
           rejectOnHandlerError: true,
-          pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
+          pagesHandler: withMiddleware(
             async (_, res) => {
               expect(nodeErrorSpy).not.toHaveBeenCalledWith(skippedMessage);
               res.status(404).end();
@@ -1017,7 +798,7 @@ describe('::withMiddleware', () => {
       await withMockedOutput(async ({ nodeErrorSpy }) => {
         await testApiHandler({
           rejectOnHandlerError: true,
-          pagesHandler: withMiddleware<GenericRecord, NextApiRequest, NextApiResponse>(
+          pagesHandler: withMiddleware(
             async (_, res) => {
               expect(nodeErrorSpy).not.toHaveBeenCalledWith(skippedMessage);
               res.status(404).end();
@@ -1043,24 +824,23 @@ describe('::withMiddleware', () => {
 });
 
 describe('::middlewareFactory', () => {
+  type MyMiddlewareOptions = { customOption: boolean };
+  const customOption = true;
+
+  const myMiddleware: ExportedMiddleware<MyMiddlewareOptions> = (_, res, ctx) => {
+    // ? The innards of these exported middleware can be janky. The middleware
+    // ? runner will never know :)
+    const {
+      options: { customOption }
+    } = ctx!;
+
+    (res as NextApiResponseLike).status(200).send(customOption);
+  };
+
   it('returns a pre-configured withMiddleware instance', async () => {
     expect.hasAssertions();
 
-    type myMiddlewareOptions = { customOption: boolean };
-
-    const myMiddleware = (
-      _: NextApiRequest,
-      res: NextApiResponse,
-      {
-        options: { customOption }
-      }: MiddlewareContext<myMiddlewareOptions, Record<string, unknown>>
-    ) => {
-      res.status(200).send({ customOption });
-    };
-
-    const customOption = true;
-
-    const pagesHandler = middlewareFactory<myMiddlewareOptions>({
+    const pagesHandler = middlewareFactory<MyMiddlewareOptions>({
       use: [myMiddleware],
       options: { customOption, legacyMode: true }
     })(undefined, {
@@ -1070,7 +850,7 @@ describe('::middlewareFactory', () => {
     await testApiHandler({
       pagesHandler,
       test: async ({ fetch }) => {
-        await expect((await fetch()).json()).resolves.toStrictEqual({ customOption });
+        await expect((await fetch()).json()).resolves.toStrictEqual(customOption);
       }
     });
   });
@@ -1078,27 +858,13 @@ describe('::middlewareFactory', () => {
   it('handles appending and prepending to middleware chains', async () => {
     expect.hasAssertions();
 
-    type myMiddlewareOptions = { customOption: boolean };
-
-    const myMiddleware = (
-      _: NextApiRequest,
-      res: NextApiResponse,
-      {
-        options: { customOption }
-      }: MiddlewareContext<myMiddlewareOptions, Record<string, unknown>>
-    ) => {
-      res.status(200).send({ customOption });
-    };
-
-    const customOption = true;
-
     await testApiHandler({
-      pagesHandler: middlewareFactory<myMiddlewareOptions>({
+      pagesHandler: middlewareFactory<MyMiddlewareOptions>({
         use: [myMiddleware],
-        options: { customOption }
+        options: { customOption, legacyMode: true }
       })(undefined, {
         descriptor: '/fake',
-        prependUse: [(_, res) => res.status(201).send({ a: 1 })]
+        prependUse: [(_, res) => (res as NextApiResponseLike).status(201).send({ a: 1 })]
       }),
       test: async ({ fetch }) => {
         const res = await fetch();
@@ -1109,10 +875,11 @@ describe('::middlewareFactory', () => {
 
     await testApiHandler({
       pagesHandler: middlewareFactory({
-        use: [(_, res) => void res.status(202)]
+        use: [(_, res) => void (res as NextApiResponseLike).status(202)],
+        options: { legacyMode: true }
       })(undefined, {
         descriptor: '/fake',
-        appendUse: [(_, res) => res.send({ b: 1 })]
+        appendUse: [(_, res) => (res as NextApiResponseLike).send({ b: 1 })]
       }),
       test: async ({ fetch }) => {
         const res = await fetch();
@@ -1122,14 +889,14 @@ describe('::middlewareFactory', () => {
     });
 
     await testApiHandler({
-      pagesHandler: middlewareFactory<myMiddlewareOptions>({
+      pagesHandler: middlewareFactory<MyMiddlewareOptions>({
         use: [myMiddleware],
-        options: { customOption }
+        options: { customOption, legacyMode: true }
       })(undefined, {
         descriptor: '/fake',
-        prependUse: [() => toss(new DummyError('bad bad not good'))],
-        prependUseOnError: [(_, res) => void res.status(203)],
-        appendUseOnError: [(_, res) => res.send({ c: 1 })]
+        prependUse: [() => toss(new Error('bad bad not good'))],
+        prependUseOnError: [(_, res) => void (res as NextApiResponseLike).status(203)],
+        appendUseOnError: [(_, res) => (res as NextApiResponseLike).send({ c: 1 })]
       }),
       test: async ({ fetch }) => {
         const res = await fetch();

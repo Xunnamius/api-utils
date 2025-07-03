@@ -9,6 +9,12 @@ export const ErrorMessage = {
   ReachedEndOfRuntime() {
     return 'end of runtime reached but legacy response was not sent';
   },
+  ModernMiddlewareApiNotSupported() {
+    return 'this middleware only supports the legacy interface';
+  },
+  LegacyMiddlewareApiNotSupported() {
+    return 'this middleware only supports the modern interface';
+  },
   RuntimeDoneCalledTooEarly() {
     return 'runtime.done was called too early';
   },
@@ -23,9 +29,6 @@ export const ErrorMessage = {
   },
   UnexpectedPropertyCollision() {
     return 'NextApiRequest object already has a defined "rawBody" property (is the add-raw-body middleware obsolete?)';
-  },
-  MissingRawBodyProperty() {
-    return 'encountered a NextApiRequestLike object without a rawBody property';
   },
   MethodIsUndefined() {
     return 'undefined method';

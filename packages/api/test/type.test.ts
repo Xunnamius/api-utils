@@ -1,43 +1,56 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // * These tests ensure the exported types under test function as expected.
 
 import { describe, expect, it } from 'tstyche';
 
 import { middlewareFactory, withMiddleware } from 'universe+api';
-import authRequest from 'universe+api:middleware/auth-request.ts';
-import limitRequest from 'universe+api:middleware/enforce-limits.ts';
-import handleError from 'universe+api:middleware/handle-error.ts';
-
-import type { NextApiRequest, NextApiResponse } from 'next';
-import type { NextRequest, NextResponse } from 'next/server';
+import { makeMiddleware as makeAuthMiddleware } from 'universe+api:middleware/auth-request.ts';
+import { makeMiddleware as makeLimitsMiddleware } from 'universe+api:middleware/enforce-limits.ts';
+import { makeMiddleware as makeErrorHandlingMiddleware } from 'universe+api:middleware/handle-error.ts';
 
 import type {
   NextApiRequestLike,
   NextApiResponseLike
 } from 'multiverse+shared:next-like.ts';
 
-import type { LegacyApiHandler, ModernApiHandler } from 'universe+api';
-import type { Options as AuthRequestOptions } from 'universe+api:middleware/auth-request.ts';
-import type { Options as LimitRequestOptions } from 'universe+api:middleware/enforce-limits.ts';
-import type { Options as HandleErrorOptions } from 'universe+api:middleware/handle-error.ts';
+import type { Options as AuthMiddlewareOptions } from 'universe+api:middleware/auth-request.ts';
+import type { Options as LimitsMiddlewareOptions } from 'universe+api:middleware/enforce-limits.ts';
 
 import type {
+  LegacyErrorHandler,
+  ModernErrorHandler,
+  Options as ErrorHandlingMiddlewareOptions
+} from 'universe+api:middleware/handle-error.ts';
+
+import type {
+  ExportedMiddleware,
+  LegacyApiHandler,
   LegacyMiddlewareContext,
+  ModernApiHandler,
   ModernMiddlewareContext
 } from 'universe+api:types.ts';
 
 import type { JsonError } from 'universe+respond';
 
-type GenericLegacyApiHandler = LegacyApiHandler<
-  NextApiRequestLike,
-  NextApiResponseLike,
-  Record<PropertyKey, unknown>
->;
+type MyMiddlewareOptions = { customOption: boolean };
 
-type GenericModernApiHandler = ModernApiHandler<
-  Request,
-  Response,
-  Record<PropertyKey, unknown>
->;
+const myMiddleware: ExportedMiddleware<MyMiddlewareOptions> = (_, res, ctx) => {
+  // ? The innards of these exported middleware can be janky. The middleware
+  // ? runner will never know :)
+  const {
+    options: { customOption }
+  } = ctx!;
+
+  (res as NextApiResponseLike).status(200).send(customOption);
+};
+
+const myPartialMiddleware: ExportedMiddleware<MyMiddlewareOptions> = (_, res, ctx) => {
+  const {
+    options: { customOption }
+  } = ctx!;
+
+  (res as NextApiResponseLike).status(200).send(customOption);
+};
 
 describe('::withMiddleware', () => {
   it('supports legacy and modern middleware call signatures', async () => {
@@ -48,7 +61,7 @@ describe('::withMiddleware', () => {
         options: { legacyMode: true }
       });
 
-      expect(middleware).type.toBe<GenericLegacyApiHandler>();
+      expect(middleware).type.toBe<LegacyApiHandler>();
     }
 
     {
@@ -63,7 +76,7 @@ describe('::withMiddleware', () => {
         }
       );
 
-      expect(middleware).type.toBe<GenericLegacyApiHandler>();
+      expect(middleware).type.toBe<LegacyApiHandler>();
     }
 
     {
@@ -79,7 +92,7 @@ describe('::withMiddleware', () => {
         }
       );
 
-      expect(middleware).type.toBe<GenericLegacyApiHandler>();
+      expect(middleware).type.toBe<LegacyApiHandler>();
     }
 
     {
@@ -96,13 +109,65 @@ describe('::withMiddleware', () => {
         }
       );
 
-      expect(middleware).type.toBe<GenericLegacyApiHandler>();
+      expect(withMiddleware).type.not.toBeCallableWith([
+        (
+          _req: NextApiRequestLike,
+          _res: NextApiResponseLike,
+          _ctx: Record<PropertyKey, unknown>
+        ) => undefined,
+        {
+          descriptor: '',
+          use: []
+          // ? Missing the required "legacyMode: true" option!
+          //options: { legacyMode: true }
+        }
+      ]);
+
+      expect(middleware).type.toBe<LegacyApiHandler>();
+    }
+
+    {
+      const middleware = withMiddleware(() => undefined, {
+        descriptor: '',
+        use: []
+      });
+
+      expect(middleware).type.toBe<ModernApiHandler>();
+    }
+
+    {
+      const middleware = withMiddleware(
+        (request) => {
+          expect(request).type.toBe<Request>();
+        },
+        {
+          descriptor: '',
+          use: []
+        }
+      );
+
+      expect(middleware).type.toBe<ModernApiHandler>();
     }
 
     {
       const middleware = withMiddleware(
         (request, ctx) => {
-          expect(request).type.toBe<NextApiRequestLike>();
+          expect(request).type.toBe<Request>();
+          expect(ctx).type.toBeAssignableTo<Record<PropertyKey, unknown>>();
+        },
+        {
+          descriptor: '',
+          use: []
+        }
+      );
+
+      expect(middleware).type.toBe<ModernApiHandler>();
+    }
+
+    {
+      const middleware = withMiddleware(
+        (request, ctx) => {
+          expect(request).type.toBe<Request>();
           expect(ctx).type.toBeAssignableTo<Record<PropertyKey, unknown>>();
         },
         {
@@ -112,129 +177,172 @@ describe('::withMiddleware', () => {
         }
       );
 
-      expect(middleware).type.toBe<GenericModernApiHandler>();
-    }
-
-    {
-      const middleware = withMiddleware(() => undefined, {
-        descriptor: '',
-        use: []
-      });
-
-      expect(middleware).type.toBe<GenericModernApiHandler>();
-    }
-
-    {
-      const middleware = withMiddleware(
-        (request) => {
-          expect(request).type.toBe<NextApiRequestLike>();
-        },
-        {
-          descriptor: '',
-          use: []
-        }
-      );
-
-      expect(middleware).type.toBe<GenericModernApiHandler>();
-    }
-
-    {
-      const middleware = withMiddleware(
-        (request, ctx) => {
-          expect(request).type.toBe<NextApiRequestLike>();
-          expect(ctx).type.toBeAssignableTo<Record<PropertyKey, unknown>>();
-        },
-        {
-          descriptor: '',
-          use: []
-        }
-      );
-
-      expect(middleware).type.toBe<GenericModernApiHandler>();
+      expect(middleware).type.toBe<ModernApiHandler>();
     }
   });
 
-  it('supports specifying custom request, response, and heap types', async () => {
+  it('supports specifying custom options and heap types', async () => {
     {
-      const middleware = withMiddleware<
-        { extra: boolean },
-        NextRequest,
-        NextResponse,
-        { thingy: boolean }
-      >(
+      const middleware = withMiddleware<{ extra: boolean }, { thingy: boolean }>(
         (request, ctx) => {
-          expect(request).type.toBe<NextRequest>();
+          expect(request).type.toBe<Request>();
           expect(ctx).type.toBe<{ thingy: boolean }>();
         },
         {
           descriptor: '',
           use: [
-            (request, ctx) => {
-              expect(request).type.toBe<NextRequest>();
-              expect(ctx).type.toBeAssignableTo<
-                ModernMiddlewareContext<{ extra: boolean }, { thingy: boolean }>
+            (reqOrRequest, ResOrContext, maybeContext) => {
+              expect(reqOrRequest).type.toBe<NextApiRequestLike | Request>();
+
+              expect(ResOrContext).type.toBe<
+                NextApiResponseLike | ModernMiddlewareContext<any, any>
               >();
-            }
-          ]
-        }
-      );
 
-      expect<ReturnType<typeof middleware>>().type.toBeAssignableWith<NextResponse>();
-      expect(middleware).type.toBeAssignableTo<GenericModernApiHandler>();
-    }
-
-    {
-      const middleware = withMiddleware<
-        { extra: boolean },
-        NextApiRequest,
-        NextApiResponse,
-        { thingy: boolean }
-      >(
-        (req, res, ctx) => {
-          expect(req).type.toBe<NextApiRequest>();
-          expect(res).type.toBe<NextApiResponse>();
-          expect(ctx).type.toBe<{ thingy: boolean }>();
-        },
-        {
-          descriptor: '',
-          use: [
-            (req, res, ctx) => {
-              expect(req).type.toBe<NextApiRequest>();
-              expect(res).type.toBe<NextApiResponse>();
-              expect(ctx).type.toBeAssignableTo<
-                LegacyMiddlewareContext<{ extra: boolean }, { thingy: boolean }>
+              expect(maybeContext).type.toBeAssignableTo<
+                | LegacyMiddlewareContext<
+                    Record<string, unknown>,
+                    Record<PropertyKey, unknown>
+                  >
+                | undefined
               >();
             }
           ],
-          options: { legacyMode: true }
+          options: { extra: true }
         }
       );
 
-      expect(middleware).type.toBeAssignableTo<GenericLegacyApiHandler>();
+      expect(middleware).type.toBeAssignableTo<ModernApiHandler>();
+      expect<ReturnType<typeof middleware>>().type.toBeAssignableWith<
+        Promise<Response>
+      >();
+
+      expect(
+        withMiddleware<{ extra: boolean }, { thingy: boolean }>
+      ).type.not.toBeCallableWith([
+        () => undefined,
+        {
+          descriptor: '',
+          use: []
+          // ? Missing the required "extra" option!
+          //options: { extra: true }
+        }
+      ]);
+
+      expect(
+        withMiddleware<{ extra: boolean }, { thingy: boolean }>
+      ).type.not.toBeCallableWith([
+        () => undefined,
+        {
+          descriptor: '',
+          use: [],
+          // ? Missing the required "extra" option!
+          options: {
+            /* extra: true */
+          }
+        }
+      ]);
+    }
+
+    {
+      const middleware = withMiddleware<{ extra: boolean }, { thingy: boolean }>(
+        (req, res, ctx) => {
+          expect(req).type.toBe<NextApiRequestLike>();
+          expect(res).type.toBe<NextApiResponseLike>();
+          expect(ctx).type.toBe<{ thingy: boolean }>();
+        },
+        {
+          descriptor: '',
+          use: [
+            (reqOrRequest, ResOrContext, maybeContext) => {
+              expect(reqOrRequest).type.toBe<NextApiRequestLike | Request>();
+
+              expect(ResOrContext).type.toBe<
+                NextApiResponseLike | ModernMiddlewareContext<any, any>
+              >();
+
+              expect(maybeContext).type.toBeAssignableTo<
+                | LegacyMiddlewareContext<
+                    Record<string, unknown>,
+                    Record<PropertyKey, unknown>
+                  >
+                | undefined
+              >();
+            }
+          ],
+          options: { extra: true, legacyMode: true }
+        }
+      );
+
+      expect(middleware).type.toBeAssignableTo<LegacyApiHandler>();
+      expect<ReturnType<typeof middleware>>().type.toBeAssignableWith<
+        Promise<Response>
+      >();
+
+      expect(
+        withMiddleware<{ extra: boolean }, { thingy: boolean }>
+      ).type.not.toBeCallableWith([
+        (
+          _req: NextApiRequestLike,
+          _res: NextApiResponseLike,
+          _ctx: Record<PropertyKey, unknown>
+        ) => undefined,
+        {
+          descriptor: '',
+          use: [],
+          // ? Missing the required "legacyMode" option!
+          options: { extra: true }
+        }
+      ]);
+
+      expect(
+        withMiddleware<{ extra: boolean }, { thingy: boolean }>
+      ).type.not.toBeCallableWith([
+        (
+          _req: NextApiRequestLike,
+          _res: NextApiResponseLike,
+          _ctx: Record<PropertyKey, unknown>
+        ) => undefined,
+        {
+          descriptor: '',
+          use: [],
+          // ? Missing the required "extra" option!
+          options: { legacyMode: true }
+        }
+      ]);
     }
   });
 
   it('supports invoking other middleware bound by their custom options', async () => {
+    type BaselineOptions = AuthMiddlewareOptions & LimitsMiddlewareOptions;
+    type Heap = { value: true };
+
     {
       withMiddleware<
-        AuthRequestOptions & LimitRequestOptions & HandleErrorOptions,
-        NextRequest,
-        NextResponse
+        BaselineOptions &
+          ErrorHandlingMiddlewareOptions<ModernErrorHandler<BaselineOptions, Heap>>,
+        Heap
       >(
-        (request) => {
-          expect(request).type.toBe<NextRequest>();
+        (request, heap) => {
+          expect(request).type.toBe<InstanceType<typeof Request>>();
+          expect(heap).type.toBe<Heap>();
         },
         {
           descriptor: '',
-          use: [authRequest, limitRequest],
-          useOnError: [handleError],
+          use: [makeAuthMiddleware(), makeLimitsMiddleware()],
+          useOnError: [makeErrorHandlingMiddleware()],
           options: {
+            requiresAuth: false,
             errorHandlers: new Map([
               [
                 TypeError,
-                (error, ctx) => {
-                  expect(error).type.toBeAssignableTo<JsonError>();
-                  expect(ctx).type.toBeAssignableTo<Record<PropertyKey, unknown>>();
+                (request, response, error, ctx) => {
+                  expect(request).type.toBe<Request>();
+                  expect(response).type.toBe<Response>();
+                  expect(error).type.toBeAssignableWith<JsonError>();
+                  expect(ctx).type.toBe<
+                    ModernMiddlewareContext<BaselineOptions, Heap>
+                  >();
+
                   return Response.json(error, { status: 500 });
                 }
               ]
@@ -242,65 +350,102 @@ describe('::withMiddleware', () => {
           }
         }
       );
+
+      expect(
+        withMiddleware<
+          BaselineOptions &
+            ErrorHandlingMiddlewareOptions<ModernErrorHandler<BaselineOptions, Heap>>,
+          Heap
+        >
+      ).type.not.toBeCallableWith([
+        () => undefined,
+        {
+          descriptor: '',
+          use: [],
+          // ? Missing the required "requiresAuth" option!
+          options: { errorHandlers: new Map([]) }
+        }
+      ]);
     }
 
     {
       withMiddleware<
-        AuthRequestOptions & LimitRequestOptions & HandleErrorOptions,
-        NextApiRequest,
-        NextApiResponse
+        ErrorHandlingMiddlewareOptions<LegacyErrorHandler<BaselineOptions, Heap>>,
+        Heap
       >(
-        (req, res) => {
-          expect(req).type.toBe<NextApiRequest>();
-          expect(res).type.toBe<NextApiResponse>();
+        (req, res, heap) => {
+          expect(req).type.toBe<NextApiRequestLike>();
+          expect(res).type.toBe<NextApiResponseLike>();
+          expect(heap).type.toBe<Heap>();
         },
         {
           descriptor: '',
-          use: [authRequest, limitRequest],
-          useOnError: [handleError],
+          use: [makeAuthMiddleware(), makeLimitsMiddleware()],
+          useOnError: [makeErrorHandlingMiddleware()],
           options: {
             legacyMode: true,
             errorHandlers: new Map([
               [
                 TypeError,
                 (req, res, error, ctx) => {
-                  expect(req).type.toBe<NextApiRequest>();
-                  expect(res).type.toBe<NextApiResponse>();
-                  expect(error).type.toBeAssignableTo<JsonError>();
-                  expect(ctx).type.toBeAssignableTo<Record<PropertyKey, unknown>>();
-                  return res.status(500).send(error);
+                  expect(req).type.toBe<NextApiRequestLike>();
+                  expect(res).type.toBe<NextApiResponseLike>();
+                  expect(error).type.toBeAssignableWith<JsonError>();
+                  expect(ctx).type.toBe<
+                    LegacyMiddlewareContext<BaselineOptions, Heap>
+                  >();
+
+                  res.status(500).send(error);
                 }
               ]
             ])
           }
         }
       );
+
+      expect(
+        withMiddleware<
+          BaselineOptions &
+            ErrorHandlingMiddlewareOptions<LegacyErrorHandler<BaselineOptions, Heap>>,
+          Heap
+        >
+      ).type.not.toBeCallableWith([
+        (
+          _req: NextApiRequestLike,
+          _res: NextApiResponseLike,
+          _ctx: Record<PropertyKey, unknown>
+        ) => undefined,
+        {
+          descriptor: '',
+          use: [],
+          // ? Missing the required "legacyMode: true" option!
+          options: { errorHandlers: new Map([]) }
+        }
+      ]);
+
+      expect(
+        withMiddleware<
+          BaselineOptions &
+            ErrorHandlingMiddlewareOptions<LegacyErrorHandler<BaselineOptions, Heap>>,
+          Heap
+        >
+      ).type.not.toBeCallableWith([
+        (
+          _req: NextApiRequestLike,
+          _res: NextApiResponseLike,
+          _ctx: Record<PropertyKey, unknown>
+        ) => undefined,
+        {
+          descriptor: '',
+          use: [],
+          // ? Missing the required "errorHandlers" option!
+          options: { legacyMode: true }
+        }
+      ]);
     }
   });
 
   it('supports type generics', async () => {
-    type MyMiddlewareOptions = { customOption: boolean };
-
-    const myMiddleware = (
-      _: NextApiRequestLike,
-      res: NextApiResponseLike,
-      {
-        options: { customOption }
-      }: LegacyMiddlewareContext<MyMiddlewareOptions, Record<string, unknown>>
-    ) => {
-      res.status(200).send(customOption);
-    };
-
-    const myPartialMiddleware = (
-      _: NextApiRequestLike,
-      res: NextApiResponseLike,
-      {
-        options: { customOption }
-      }: LegacyMiddlewareContext<Partial<MyMiddlewareOptions>, Record<string, unknown>>
-    ) => {
-      res.status(200).send(customOption);
-    };
-
     withMiddleware(undefined, {
       descriptor: '',
       use: [myMiddleware],
@@ -310,14 +455,17 @@ describe('::withMiddleware', () => {
     withMiddleware<MyMiddlewareOptions>(undefined, {
       descriptor: '/fake',
       use: [myMiddleware],
-      options: { legacyMode: true }
+      options: { customOption: false, legacyMode: true }
     });
 
-    withMiddleware<MyMiddlewareOptions>(undefined, {
-      descriptor: '/fake',
-      use: [myMiddleware],
-      options: { legacyMode: true }
-    });
+    expect(withMiddleware<MyMiddlewareOptions>).type.not.toBeCallableWith([
+      undefined,
+      {
+        descriptor: '/fake',
+        use: [myMiddleware],
+        options: { legacyMode: true }
+      }
+    ]);
 
     withMiddleware<MyMiddlewareOptions>(undefined, {
       descriptor: '/fake',
@@ -325,12 +473,35 @@ describe('::withMiddleware', () => {
       options: { customOption: true, legacyMode: true }
     });
 
+    withMiddleware<MyMiddlewareOptions>(undefined, {
+      descriptor: '/fake',
+      use: [myMiddleware],
+      options: { customOption: true as boolean, legacyMode: true }
+    });
+
     withMiddleware<MyMiddlewareOptions & { anotherOpt: boolean }>(undefined, {
       descriptor: '/fake',
       use: [
         myMiddleware,
-        (_, __, { options: { anotherOpt } }) => {
-          expect(anotherOpt).type.toBe<boolean>();
+        (_, __, context) => {
+          const {
+            options: { anotherOpt }
+          } = context!;
+          void anotherOpt;
+        }
+      ],
+      options: { customOption: true, anotherOpt: true, legacyMode: true }
+    });
+
+    withMiddleware<MyMiddlewareOptions & { anotherOpt?: boolean }>(undefined, {
+      descriptor: '/fake',
+      use: [
+        myMiddleware,
+        (_, __, context) => {
+          const {
+            options: { anotherOpt }
+          } = context!;
+          void anotherOpt;
         }
       ],
       options: { customOption: true, legacyMode: true }
@@ -352,31 +523,6 @@ describe('::withMiddleware', () => {
 
 describe('::middlewareFactory', () => {
   it('supports type generics', async () => {
-    type myMiddlewareRequiredOptions = { customOption: boolean };
-
-    const myMiddleware = (
-      _: NextApiRequestLike,
-      res: NextApiResponseLike,
-      {
-        options: { customOption }
-      }: LegacyMiddlewareContext<myMiddlewareRequiredOptions, Record<string, unknown>>
-    ) => {
-      res.status(200).send(customOption);
-    };
-
-    const myPartialMiddleware = (
-      _: NextApiRequestLike,
-      res: NextApiResponseLike,
-      {
-        options: { customOption }
-      }: LegacyMiddlewareContext<
-        Partial<myMiddlewareRequiredOptions>,
-        Record<string, unknown>
-      >
-    ) => {
-      res.status(200).send(customOption);
-    };
-
     middlewareFactory({
       use: [myMiddleware],
       options: { legacyMode: true }
@@ -384,28 +530,31 @@ describe('::middlewareFactory', () => {
       descriptor: '/fake'
     });
 
-    middlewareFactory<myMiddlewareRequiredOptions>({
+    middlewareFactory<MyMiddlewareOptions>({
       use: [myMiddleware],
-      options: { legacyMode: true }
+      options: { legacyMode: true, customOption: true }
     })(undefined, {
       descriptor: '/fake'
     });
 
-    middlewareFactory<myMiddlewareRequiredOptions>({
+    middlewareFactory<MyMiddlewareOptions>({
       use: [myMiddleware],
       options: { customOption: false, legacyMode: true }
     })(undefined, {
       descriptor: '/fake'
     });
 
-    middlewareFactory<myMiddlewareRequiredOptions & { anotherOpt: boolean }>({
+    middlewareFactory<MyMiddlewareOptions & { anotherOpt: boolean }>({
       use: [
         myMiddleware,
-        (_, __, { options: { anotherOpt } }) => {
+        (_, __, context) => {
+          const {
+            options: { anotherOpt }
+          } = context!;
           void anotherOpt;
         }
       ],
-      options: { customOption: true, legacyMode: true }
+      options: { customOption: true, anotherOpt: false, legacyMode: true }
     })(undefined, {
       descriptor: '/fake'
     });
@@ -417,7 +566,7 @@ describe('::middlewareFactory', () => {
       descriptor: '/fake'
     });
 
-    middlewareFactory<Partial<myMiddlewareRequiredOptions>>({
+    middlewareFactory<Partial<MyMiddlewareOptions>>({
       use: [myPartialMiddleware],
       options: { legacyMode: true }
     })(undefined, {
@@ -441,18 +590,18 @@ describe('::middlewareFactory', () => {
       appendUseOnError: [myPartialMiddleware]
     });
 
-    middlewareFactory<myMiddlewareRequiredOptions>({
+    middlewareFactory<MyMiddlewareOptions>({
       use: [myPartialMiddleware],
-      options: { legacyMode: true }
+      options: { legacyMode: true, customOption: false }
     })(undefined, {
       descriptor: '/fake',
       prependUse: [myMiddleware],
       prependUseOnError: [myMiddleware]
     });
 
-    middlewareFactory<myMiddlewareRequiredOptions>({
+    middlewareFactory<MyMiddlewareOptions>({
       use: [myPartialMiddleware],
-      options: { legacyMode: true }
+      options: { legacyMode: true, customOption: false }
     })(undefined, {
       descriptor: '/fake',
       // @ts-expect-error: bad type for required property: customOption

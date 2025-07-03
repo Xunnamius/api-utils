@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-import type { Promisable, Tagged, UnwrapTagged } from 'type-fest';
+import type { Merge, Promisable, Tagged, UnwrapTagged } from 'type-fest';
 
 import type {
   NextApiRequestLike,
@@ -20,139 +21,96 @@ export type WithLegacyTag<T> = Tagged<T, 'legacy'>;
 
 /**
  * The shape of a modern fetch request handler.
+ */
+export type ModernApiHandler = (
+  request: Request
+) => Promisable<Response | undefined | void>;
+
+/**
+ * The shape of a modern fetch request handler + an additional context
+ * parameter.
  *
  * Note that this type of handler is not necessarily consumable by third parties
- * (see {@link ModernBasicApiHandler}).
+ * (see {@link ModernApiHandler}).
  */
-export type ModernApiHandler<
-  RequestType extends Request,
-  ResponseType extends Response,
-  Heap extends Record<PropertyKey, unknown>
-> = (request: RequestType, ctx: Heap) => Promisable<ResponseType | undefined | void>;
-
-/**
- * A generic version of {@link ModernApiHandler}.
- */
-export type GenericModernApiHandler = ModernApiHandler<
-  Request,
-  Response,
-  Record<PropertyKey, unknown>
->;
-
-/**
- * The shape of a modern fetch request handler that is also consumable by third
- * parties.
- *
- * This is a reduced-functionality version of {@link ModernApiHandler}.
- */
-export type ModernBasicApiHandler<
-  RequestType extends Request = Request,
-  ResponseType extends Response = Response
-> = (request: RequestType) => Promisable<ResponseType | undefined | void>;
+export type ModernApiHandlerWithHeap<Heap extends Record<PropertyKey, unknown>> = (
+  request: Request,
+  handlerContext: Heap
+) => Promisable<Response | undefined | void>;
 
 /**
  * The shape of a modern middleware function.
  */
 export type ModernMiddleware<
   Options extends Record<string, unknown>,
-  RequestType extends Request,
-  ResponseType extends Response,
   Heap extends Record<PropertyKey, unknown>
 > = WithModernTag<
   (
-    request: RequestType,
-    context: MiddlewareContext<
-      Options,
-      Heap,
-      ModernMiddleware<Options, RequestType, ResponseType, Heap>
-    >
-  ) => Promisable<ResponseType | undefined | void>
+    request: Request,
+    middlewareContext: MiddlewareContext<Options, Heap, ModernMiddleware<Options, Heap>>
+  ) => Promisable<Response | undefined | void>
 >;
 
 /**
- * A generic version of {@link ModernMiddleware}.
+ * The shape of a legacy fetch request handler that is also consumable by third
+ * parties (currently optimized for Next.js's Pages router).
+ *
+ * This is a reduced-functionality version of {@link LegacyApiHandlerWithHeap}.
  */
-export type GenericModernMiddleware = ModernMiddleware<
-  Record<string, unknown>,
-  Request,
-  Response,
-  Record<PropertyKey, unknown>
->;
+export type LegacyApiHandler = (
+  req: NextApiRequestLike,
+  res: NextApiResponseLike
+) => Promisable<unknown>;
 
 /**
  * The shape of a legacy fetch request handler.
  *
  * Note that this type of handler is not necessarily consumable by third parties
- * (see {@link LegacyBasicApiHandler}).
+ * (see {@link LegacyApiHandler}).
  */
-export type LegacyApiHandler<
-  RequestType extends NextApiRequestLike,
-  ResponseType extends NextApiResponseLike,
-  Heap extends Record<PropertyKey, unknown>
-> = (req: RequestType, res: ResponseType, ctx: Heap) => Promisable<unknown>;
-
-/**
- * A generic version of {@link LegacyApiHandler}.
- */
-export type GenericLegacyApiHandler = LegacyApiHandler<
-  NextApiRequestLike,
-  NextApiResponseLike,
-  Record<PropertyKey, unknown>
->;
-
-/**
- * The shape of a legacy fetch request handler that is also consumable by third
- * parties.
- *
- * This is a reduced-functionality version of {@link LegacyApiHandler}.
- */
-export type LegacyBasicApiHandler<
-  RequestType extends NextApiRequestLike = NextApiRequestLike,
-  ResponseType extends NextApiResponseLike = NextApiResponseLike
-> = (req: RequestType, res: ResponseType) => Promisable<unknown>;
+export type LegacyApiHandlerWithHeap<Heap extends Record<PropertyKey, unknown>> = (
+  req: NextApiRequestLike,
+  res: NextApiResponseLike,
+  handlerContext: Heap
+) => Promisable<unknown>;
 
 /**
  * The shape of a legacy middleware function.
  */
 export type LegacyMiddleware<
   Options extends Record<string, unknown>,
-  RequestType extends NextApiRequestLike,
-  ResponseType extends NextApiResponseLike,
   Heap extends Record<PropertyKey, unknown>
 > = WithLegacyTag<
   (
-    req: RequestType,
-    res: ResponseType,
-    context: MiddlewareContext<
-      Options,
-      Heap,
-      LegacyMiddleware<Options, RequestType, ResponseType, Heap>
-    >
+    req: NextApiRequestLike,
+    res: NextApiResponseLike,
+    middlewareContext: MiddlewareContext<Options, Heap, LegacyMiddleware<Options, Heap>>
   ) => Promisable<unknown>
 >;
 
 /**
- * A generic version of {@link LegacyMiddleware}.
+ * The union of {@link ModernMiddleware} and {@link LegacyMiddleware}.
  */
-export type GenericLegacyMiddleware = LegacyMiddleware<
-  Record<string, unknown>,
-  NextApiRequestLike,
-  NextApiResponseLike,
-  Record<PropertyKey, unknown>
->;
-
-/**
- * The union of {@link ModernMiddleware} and {@link LegacyMiddleware} that allow
- * any request/response shape.
- */
-export type AnyMiddleware<
+export type ModernOrLegacyMiddleware<
   Options extends Record<string, unknown>,
   Heap extends Record<PropertyKey, unknown>
-> =
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  | ModernMiddleware<Options, any, any, Heap>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  | LegacyMiddleware<Options, any, any, Heap>;
+> = ModernMiddleware<Options, Heap> | LegacyMiddleware<Options, Heap>;
+
+/**
+ * The shape of the return type of a middleware function exported by a file
+ * under the `middleware/` directory. Supports both the legacy and modern
+ * middleware interfaces simultaneously (hence the awkward parameterization).
+ *
+ * This type if meant for end-users and isn't used internally by the library.
+ */
+export type ExportedMiddleware<
+  Options extends Record<string, unknown> = Record<string, unknown>,
+  Heap extends Record<PropertyKey, unknown> = Record<PropertyKey, unknown>
+> = (
+  reqOrRequest: NextApiRequestLike | Request,
+  resOrModernContext: NextApiResponseLike | ModernMiddlewareContext<Options, Heap>,
+  maybeLegacyContext?: LegacyMiddlewareContext<Options, Heap>
+) => Promisable<Response | undefined | void>;
 
 /**
  * The shape of a middleware context object, potentially customized with
@@ -165,7 +123,8 @@ export type AnyMiddleware<
 export type MiddlewareContext<
   Options extends Record<string, unknown>,
   Heap extends Record<PropertyKey, unknown>,
-  Middleware extends AnyMiddleware<Options, Heap>
+  Middleware extends ModernOrLegacyMiddleware<Options, Heap>,
+  PartialOptions extends 'partial' | 'required' = 'required'
 > = {
   /**
    * Contains middleware use chain control functions and various metadata.
@@ -255,43 +214,46 @@ export type MiddlewareContext<
   /**
    * Options expected by middleware functions at runtime.
    */
-  options: Options & {
-    /**
-     * If `true` and `legacyMode` is also `true`, `context.runtime.done` is
-     * called whenever `res.end()` is called before the middleware chain
-     * completes execution.
-     *
-     * If `false` (or if `legacyMode` is `false`), the entire primary middleware
-     * chain will always run to completion, even if the response has already
-     * been sent before it completes.
-     *
-     * @default true
-     */
-    callDoneOnEnd: boolean;
-    /**
-     * If `true`, the middleware assumes a legacy runtime environment (e.g.
-     * Next.js Pages router or Express middleware). Otherwise, a modern runtime
-     * environment is assumed (e.g. using {@link Request} and {@link Response})
-     *
-     * @default false
-     */
-    legacyMode: boolean;
-    /**
-     * By default, modern usage of `withMiddleware` will return a
-     * {@link Response} as soon as possible by _not_ awaiting the promises
-     * generated by calling `doAfterSent()`.
-     *
-     * To make testing easier, `withMiddleware` can be configured to await said
-     * promises instead; when `true`, the `doAfterSent` middleware promises will
-     * complete before the {@link Response} is returned or "sent" by this
-     * function.
-     *
-     * Do not enable this in production.
-     *
-     * @default false
-     */
-    awaitMiddlewareAfterSent: boolean;
-  };
+  options: Options &
+    ('partial' extends PartialOptions ? Partial<BaseOptions> : BaseOptions);
+};
+
+type BaseOptions = {
+  /**
+   * If `true` and `legacyMode` is also `true`, `context.runtime.done` is
+   * called whenever `res.end()` is called before the middleware chain
+   * completes execution.
+   *
+   * If `false` (or if `legacyMode` is `false`), the entire primary middleware
+   * chain will always run to completion, even if the response has already
+   * been sent before it completes.
+   *
+   * @default true
+   */
+  callDoneOnEnd: boolean;
+  /**
+   * If `true`, the middleware assumes a legacy runtime environment (e.g.
+   * Next.js Pages router or Express middleware). Otherwise, a modern runtime
+   * environment is assumed (e.g. using {@link Request} and {@link Response})
+   *
+   * @default false
+   */
+  legacyMode: boolean;
+  /**
+   * By default, modern usage of `withMiddleware` will return a
+   * {@link Response} as soon as possible by _not_ awaiting the promises
+   * generated by calling `doAfterSent()`.
+   *
+   * To make testing easier, `withMiddleware` can be configured to await said
+   * promises instead; when `true`, the `doAfterSent` middleware promises will
+   * complete before the {@link Response} is returned or "sent" by this
+   * function.
+   *
+   * Do not enable this in production.
+   *
+   * @default false
+   */
+  awaitMiddlewareAfterSent: boolean;
 };
 
 /**
@@ -301,14 +263,8 @@ export type MiddlewareContext<
  */
 export type ModernMiddlewareContext<
   Options extends Record<string, unknown>,
-  Heap extends Record<PropertyKey, unknown>,
-  RequestType extends Request = Request,
-  ResponseType extends Response = Response
-> = MiddlewareContext<
-  Options,
-  Heap,
-  ModernMiddleware<Options, RequestType, ResponseType, Heap>
->;
+  Heap extends Record<PropertyKey, unknown>
+> = MiddlewareContext<Options, Heap, ModernMiddleware<Options, Heap>>;
 
 /**
  * Meant for use when typing middleware function parameters.
@@ -317,14 +273,8 @@ export type ModernMiddlewareContext<
  */
 export type LegacyMiddlewareContext<
   Options extends Record<string, unknown>,
-  Heap extends Record<PropertyKey, unknown>,
-  RequestType extends NextApiRequestLike = NextApiRequestLike,
-  ResponseType extends NextApiResponseLike = NextApiResponseLike
-> = MiddlewareContext<
-  Options,
-  Heap,
-  LegacyMiddleware<Options, RequestType, ResponseType, Heap>
->;
+  Heap extends Record<PropertyKey, unknown>
+> = MiddlewareContext<Options, Heap, LegacyMiddleware<Options, Heap>>;
 
 /**
  * @see `withMiddleware`
@@ -332,7 +282,7 @@ export type LegacyMiddlewareContext<
 export type WithMiddlewareOptions<
   Options extends Record<string, unknown>,
   Heap extends Record<PropertyKey, unknown>,
-  Middleware extends AnyMiddleware<Options, Heap>
+  Middleware extends ModernOrLegacyMiddleware<Options, Heap>
 > = {
   /**
    * A parameterized path string in the form of a URI path corresponding to the
@@ -350,7 +300,7 @@ export type WithMiddlewareOptions<
    * receiving a chance to mutate the request and short-circuit the "use chain"
    * to deliver a response.
    */
-  use: UnwrapTagged<Middleware>[];
+  use: ExportedMiddleware<any, any>[];
   /**
    * When a middleware or handler throws, this secondary array of middleware
    * functions are executed in order similar to `use`.
@@ -359,50 +309,18 @@ export type WithMiddlewareOptions<
    * `MiddlewareContext.runtime.error` property, which contains the uncaught
    * error that interrupted the primary use chain.
    */
-  useOnError?: UnwrapTagged<Middleware>[];
+  useOnError?: ExportedMiddleware<any, any>[];
   /**
    * Various options made available to all middleware and handlers.
    */
-  options?: Partial<MiddlewareContext<Options, Heap, Middleware>['options']>;
+  options?: MiddlewareContext<Options, Heap, Middleware, 'partial'>['options'];
 } & (Middleware extends WithModernTag<unknown>
-  ? { options?: { legacyMode?: false } }
+  ? Partial<Options> extends Options
+    ? { options?: { legacyMode?: false } }
+    : { options: { legacyMode?: false } }
   : Middleware extends WithLegacyTag<unknown>
     ? { options: { legacyMode: true } }
     : object);
-
-/**
- * @see `withMiddleware`
- */
-export type WithMiddlewareSignatureModern<
-  Options extends Record<string, unknown>,
-  RequestType extends Request,
-  ResponseType extends Response,
-  Heap extends Record<PropertyKey, unknown>
-> = (
-  handler: ModernApiHandler<RequestType, ResponseType, Heap> | undefined,
-  options: WithMiddlewareOptions<
-    Options,
-    Heap,
-    ModernMiddleware<Options, RequestType, ResponseType, Heap>
-  >
-) => ModernBasicApiHandler<RequestType, ResponseType>;
-
-/**
- * @see `withMiddleware`
- */
-export type WithMiddlewareSignatureLegacy<
-  Options extends Record<string, unknown>,
-  RequestType extends NextApiRequestLike,
-  ResponseType extends NextApiResponseLike,
-  Heap extends Record<PropertyKey, unknown>
-> = (
-  handler: LegacyApiHandler<RequestType, ResponseType, Heap> | undefined,
-  options: WithMiddlewareOptions<
-    Options,
-    Heap,
-    LegacyMiddleware<Options, RequestType, ResponseType, Heap>
-  >
-) => LegacyBasicApiHandler<RequestType, ResponseType>;
 
 /**
  * {@link middlewareFactory}
@@ -410,24 +328,34 @@ export type WithMiddlewareSignatureLegacy<
 export type FactoriedMiddlewareOptions<
   Options extends Record<string, unknown>,
   Heap extends Record<PropertyKey, unknown>,
-  Middleware extends AnyMiddleware<Options, Heap>
-> = Omit<WithMiddlewareOptions<Options, Heap, Middleware>, 'use' | 'useOnError'> & {
+  Middleware extends ModernOrLegacyMiddleware<Options, Heap>
+> = Partial<
+  Omit<
+    WithMiddlewareOptions<Options, Heap, Middleware>,
+    'use' | 'useOnError' | 'options'
+  >
+> & {
+  options?: Merge<
+    WithMiddlewareOptions<Options, Heap, Middleware>['options'],
+    { legacyMode?: boolean }
+  >;
+} & {
   /**
    * @see {@link WithMiddlewareOptions.use}
    */
-  prependUse?: UnwrapTagged<Middleware>[];
+  prependUse?: ExportedMiddleware<any, any>[];
   /**
    * @see {@link WithMiddlewareOptions.use}
    */
-  appendUse?: UnwrapTagged<Middleware>[];
+  appendUse?: ExportedMiddleware<any, any>[];
   /**
    * @see {@link WithMiddlewareOptions.useOnError}
    */
-  prependUseOnError?: UnwrapTagged<Middleware>[];
+  prependUseOnError?: ExportedMiddleware<any, any>[];
   /**
    * @see {@link WithMiddlewareOptions.useOnError}
    */
-  appendUseOnError?: UnwrapTagged<Middleware>[];
+  appendUseOnError?: ExportedMiddleware<any, any>[];
 };
 
 /**
@@ -435,34 +363,22 @@ export type FactoriedMiddlewareOptions<
  */
 export type MiddlewareFactorySignatureModern<
   Options extends Record<string, unknown>,
-  RequestType extends Request,
-  ResponseType extends Response,
   Heap extends Record<PropertyKey, unknown>
 > = (
-  handler: ModernApiHandler<RequestType, ResponseType, Heap> | undefined,
-  options: FactoriedMiddlewareOptions<
-    Options,
-    Heap,
-    ModernMiddleware<Options, RequestType, ResponseType, Heap>
-  >
-) => ModernBasicApiHandler<RequestType, ResponseType>;
+  handler: ModernApiHandlerWithHeap<Heap> | undefined,
+  options: FactoriedMiddlewareOptions<Options, Heap, ModernMiddleware<Options, Heap>>
+) => ModernApiHandler;
 
 /**
  * {@link middlewareFactory}
  */
 export type MiddlewareFactorySignatureLegacy<
   Options extends Record<string, unknown>,
-  RequestType extends NextApiRequestLike,
-  ResponseType extends NextApiResponseLike,
   Heap extends Record<PropertyKey, unknown>
 > = (
-  handler: LegacyApiHandler<RequestType, ResponseType, Heap> | undefined,
-  options: FactoriedMiddlewareOptions<
-    Options,
-    Heap,
-    LegacyMiddleware<Options, RequestType, ResponseType, Heap>
-  >
-) => LegacyBasicApiHandler<RequestType, ResponseType>;
+  handler: LegacyApiHandlerWithHeap<Heap> | undefined,
+  options: FactoriedMiddlewareOptions<Options, Heap, LegacyMiddleware<Options, Heap>>
+) => LegacyApiHandler;
 
 /**
  * @internal

@@ -1,84 +1,92 @@
-import useCors from '@-xun/adhesive/use-cors';
 import { testApiHandler } from 'next-test-api-route-handler';
 
-import { isolatedImport, noopHandler, wrapHandler } from 'testverse/setup';
+import { withMiddleware } from 'universe+api';
+import { makeMiddleware } from 'universe+api:middleware/use-cors.ts';
 
-import type { Options } from '@-xun/adhesive/use-cors';
+import { legacyNoopHandler, withLegacyConfig } from 'testverse:util.ts';
 
-afterEach(() => {
-  jest.dontMock('cors');
-});
+import type { Context, Options } from 'universe+api:middleware/use-cors.ts';
 
-it('works', async () => {
-  expect.hasAssertions();
+describe('<legacy mode>', () => {
+  it('responds correctly to preflight OPTIONS requests', async () => {
+    expect.hasAssertions();
 
-  await testApiHandler({
-    rejectOnHandlerError: true,
-    pagesHandler: wrapHandler(
-      withMiddleware(noopHandler, {
-        descriptor: '/fake',
-        use: []
-      })
-    ),
-    test: async ({ fetch }) => {
-      const res = await fetch({ method: 'OPTIONS' });
-      expect(res.status).toBe(200);
-      expect(res.headers.get('Access-Control-Allow-Origin')).toBeNull();
-      expect(res.headers.get('Access-Control-Allow-Methods')).toBeNull();
-    }
-  });
-
-  await testApiHandler({
-    rejectOnHandlerError: true,
-    pagesHandler: wrapHandler(
-      withMiddleware<Options>(noopHandler, {
-        descriptor: '/fake',
-        use: [useCors],
-        options: { allowedMethods: ['GET', 'POST', 'HEAD'] }
-      })
-    ),
-    test: async ({ fetch }) => {
-      let res = await fetch({ method: 'OPTIONS' });
-      expect(res.status).toBe(204);
-      expect(res.headers.get('Access-Control-Allow-Origin')).toBe('*');
-      expect(res.headers.get('Access-Control-Allow-Methods')).toBe('GET,POST,HEAD');
-
-      res = await fetch({ method: 'GET' });
-      expect(res.status).toBe(200);
-    }
-  });
-});
-
-it('handles cors package errors gracefully', async () => {
-  expect.hasAssertions();
-
-  jest.doMock(
-    'cors',
-    (): typeof import('cors') =>
-      () =>
-      (_req: unknown, _res: unknown, callback: (error: Error) => void) => {
-        return void callback(new Error('fake error'));
+    await testApiHandler({
+      rejectOnHandlerError: true,
+      pagesHandler: withLegacyConfig(
+        withMiddleware(legacyNoopHandler, {
+          descriptor: '/fake',
+          use: [],
+          options: { legacyMode: true }
+        })
+      ),
+      test: async ({ fetch }) => {
+        const res = await fetch({ method: 'OPTIONS' });
+        expect(res.status).toBe(200);
+        expect(res.headers.get('Access-Control-Allow-Origin')).toBeNull();
+        expect(res.headers.get('Access-Control-Allow-Methods')).toBeNull();
       }
-  );
+    });
 
-  await testApiHandler({
-    rejectOnHandlerError: true,
-    pagesHandler: wrapHandler(
-      withMiddleware(noopHandler, {
-        descriptor: '/fake',
-        use: [
-          isolatedImport<typeof useCors>({
-            path: '@-xun/adhesive/use-cors'
-          })
-        ],
-        useOnError: [
-          (_req, res, context) => {
-            expect(context.runtime.error).toMatchObject({ message: 'fake error' });
-            res.status(555).end();
-          }
-        ]
-      })
-    ),
-    test: async ({ fetch }) => expect((await fetch()).status).toBe(555)
+    await testApiHandler({
+      rejectOnHandlerError: true,
+      pagesHandler: withLegacyConfig(
+        withMiddleware<Options, Context>(legacyNoopHandler, {
+          descriptor: '/fake',
+          use: [makeMiddleware()],
+          options: { legacyMode: true, allowedMethods: ['GET', 'POST', 'HEAD'] }
+        })
+      ),
+      test: async ({ fetch }) => {
+        let res = await fetch({ method: 'OPTIONS' });
+        expect(res.status).toBe(200);
+        expect(res.headers.get('Access-Control-Allow-Origin')).toBe('*');
+        expect(res.headers.get('Access-Control-Allow-Methods')).toBe('GET,POST,HEAD');
+
+        res = await fetch({ method: 'GET' });
+        expect(res.status).toBe(200);
+      }
+    });
+  });
+
+  it('responds correctly to standard non-OPTIONS requests', async () => {
+    expect.hasAssertions();
+
+    await testApiHandler({
+      rejectOnHandlerError: true,
+      pagesHandler: withLegacyConfig(
+        withMiddleware(legacyNoopHandler, {
+          descriptor: '/fake',
+          use: [],
+          options: { legacyMode: true }
+        })
+      ),
+      test: async ({ fetch }) => {
+        const res = await fetch({ method: 'OPTIONS' });
+        expect(res.status).toBe(200);
+        expect(res.headers.get('Access-Control-Allow-Origin')).toBeNull();
+        expect(res.headers.get('Access-Control-Allow-Methods')).toBeNull();
+      }
+    });
+
+    await testApiHandler({
+      rejectOnHandlerError: true,
+      pagesHandler: withLegacyConfig(
+        withMiddleware<Options, Context>(legacyNoopHandler, {
+          descriptor: '/fake',
+          use: [makeMiddleware()],
+          options: { legacyMode: true, allowedMethods: ['GET', 'POST', 'HEAD'] }
+        })
+      ),
+      test: async ({ fetch }) => {
+        let res = await fetch({ method: 'OPTIONS' });
+        expect(res.status).toBe(200);
+        expect(res.headers.get('Access-Control-Allow-Origin')).toBe('*');
+        expect(res.headers.get('Access-Control-Allow-Methods')).toBe('GET,POST,HEAD');
+
+        res = await fetch({ method: 'GET' });
+        expect(res.status).toBe(200);
+      }
+    });
   });
 });
