@@ -5,8 +5,17 @@
 
 import { disableLoggers, enableLoggers, LoggerType } from 'rejoinder';
 
+import { defaultLegacyPageConfig } from 'universe+api';
+
 import type { withMockedEnv } from '@-xun/jest';
 import type { WithId } from 'mongodb';
+import type { LegacyApiHandler } from 'universe+api';
+
+import type {
+  NextApiRequestLike,
+  NextApiResponseLike,
+  PageConfigLike
+} from 'universe+shared:next-like.ts';
 
 export * from '@-xun/jest';
 
@@ -46,7 +55,8 @@ export function objectIdPseudoSortPredicate(order: 'ascending' | 'descending') {
  *
  * **That is: don't delete/unwrap this when you see it!**
  */
-// TODO: use the latest enable/disable api to only disable previously enabled
+// TODO: Use the latest enable/disable api to only disable previously enabled.
+// TODO: Also, consider adding this to @-xun/jest (with warnings about badness)
 export async function withDebugEnabled(fn: Parameters<typeof withMockedEnv>[0]) {
   enableLoggers({ type: LoggerType.DebugOnly });
 
@@ -56,3 +66,34 @@ export async function withDebugEnabled(fn: Parameters<typeof withMockedEnv>[0]) 
     disableLoggers({ type: LoggerType.DebugOnly });
   }
 }
+
+/**
+ * A mock legacy Next.js API handler that sends a `ServerResponse` with an empty
+ * object body and 200 status code.
+ */
+export const legacyNoopHandler = async (
+  _req: NextApiRequestLike,
+  res: NextApiResponseLike
+) => {
+  res.status(200).send({});
+};
+
+/**
+ * A mock modern handler that sends a {@link Reponse} with an empty object body
+ * and 200 status code.
+ */
+export const modernNoopHandler = async (_request: Request) => {
+  return Response.json({}, { status: 200 });
+};
+
+/**
+ * This function wraps a legacy or modern handler function so that it provides
+ * the default (or a custom) API configuration object along with its
+ * implementation.
+ */
+export const withLegacyConfig = (handler: LegacyApiHandler, config?: PageConfigLike) => {
+  const api: LegacyApiHandler & { config: PageConfigLike } = (...args) =>
+    handler(...args);
+  api.config = config || defaultLegacyPageConfig;
+  return api;
+};
