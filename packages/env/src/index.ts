@@ -7,6 +7,10 @@ import { ErrorMessage } from 'universe+env:error.ts';
 import type { ValidHttpMethod } from '@-xun/types';
 import type { Primitive } from 'type-fest';
 
+// TODO: fix the badness that happens when trying to reference a non-existent
+// TODO: key from getEnv() (right now it says something like Primitive |
+// TODO: Primitive[] when it should be never)
+
 /**
  * This method takes an environment variable value (string), removes illegal
  * characters, and then splits the string by its commas, returning the resulting
