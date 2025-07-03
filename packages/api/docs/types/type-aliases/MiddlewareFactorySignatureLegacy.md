@@ -4,11 +4,11 @@
 
 [@-xun/api](../../README.md) / [types](../README.md) / MiddlewareFactorySignatureLegacy
 
-# Type Alias: MiddlewareFactorySignatureLegacy()\<Options, RequestType, ResponseType, Heap\>
+# Type Alias: MiddlewareFactorySignatureLegacy()\<Options, Heap\>
 
-> **MiddlewareFactorySignatureLegacy**\<`Options`, `RequestType`, `ResponseType`, `Heap`\> = (`handler`, `options`) => [`LegacyBasicApiHandler`](LegacyBasicApiHandler.md)\<`RequestType`, `ResponseType`\>
+> **MiddlewareFactorySignatureLegacy**\<`Options`, `Heap`\> = (`handler`, `options`) => [`LegacyApiHandler`](LegacyApiHandler.md)
 
-Defined in: [packages/api/src/types.ts:453](https://github.com/Xunnamius/api-utils/blob/2999e4472bea4c5a8ecd8f7c7fbf77e6b4bc26db/packages/api/src/types.ts#L453)
+Defined in: [packages/api/src/types.ts:375](https://github.com/Xunnamius/api-utils/blob/c09789cf368e76cc20c657b2a1b00afeebcaaa9d/packages/api/src/types.ts#L375)
 
 middlewareFactory
 
@@ -18,14 +18,6 @@ middlewareFactory
 
 `Options` *extends* `Record`\<`string`, `unknown`\>
 
-### RequestType
-
-`RequestType` *extends* [`NextApiRequestLike`](../../index/interfaces/NextApiRequestLike.md)
-
-### ResponseType
-
-`ResponseType` *extends* [`NextApiResponseLike`](../../index/type-aliases/NextApiResponseLike.md)
-
 ### Heap
 
 `Heap` *extends* `Record`\<`PropertyKey`, `unknown`\>
@@ -34,12 +26,12 @@ middlewareFactory
 
 ### handler
 
-[`LegacyApiHandler`](LegacyApiHandler.md)\<`RequestType`, `ResponseType`, `Heap`\> | `undefined`
+[`LegacyApiHandlerWithHeap`](LegacyApiHandlerWithHeap.md)\<`Heap`\> | `undefined`
 
 ### options
 
-[`FactoriedMiddlewareOptions`](FactoriedMiddlewareOptions.md)\<`Options`, `Heap`, [`LegacyMiddleware`](LegacyMiddleware.md)\<`Options`, `RequestType`, `ResponseType`, `Heap`\>\>
+[`FactoriedMiddlewareOptions`](FactoriedMiddlewareOptions.md)\<`Options`, `Heap`, [`LegacyMiddleware`](LegacyMiddleware.md)\<`Options`, `Heap`\>\>
 
 ## Returns
 
-[`LegacyBasicApiHandler`](LegacyBasicApiHandler.md)\<`RequestType`, `ResponseType`\>
+[`LegacyApiHandler`](LegacyApiHandler.md)

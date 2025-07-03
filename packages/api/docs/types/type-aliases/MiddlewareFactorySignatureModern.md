@@ -4,11 +4,11 @@
 
 [@-xun/api](../../README.md) / [types](../README.md) / MiddlewareFactorySignatureModern
 
-# Type Alias: MiddlewareFactorySignatureModern()\<Options, RequestType, ResponseType, Heap\>
+# Type Alias: MiddlewareFactorySignatureModern()\<Options, Heap\>
 
-> **MiddlewareFactorySignatureModern**\<`Options`, `RequestType`, `ResponseType`, `Heap`\> = (`handler`, `options`) => [`ModernBasicApiHandler`](ModernBasicApiHandler.md)\<`RequestType`, `ResponseType`\>
+> **MiddlewareFactorySignatureModern**\<`Options`, `Heap`\> = (`handler`, `options`) => [`ModernApiHandler`](ModernApiHandler.md)
 
-Defined in: [packages/api/src/types.ts:436](https://github.com/Xunnamius/api-utils/blob/2999e4472bea4c5a8ecd8f7c7fbf77e6b4bc26db/packages/api/src/types.ts#L436)
+Defined in: [packages/api/src/types.ts:364](https://github.com/Xunnamius/api-utils/blob/c09789cf368e76cc20c657b2a1b00afeebcaaa9d/packages/api/src/types.ts#L364)
 
 middlewareFactory
 
@@ -18,14 +18,6 @@ middlewareFactory
 
 `Options` *extends* `Record`\<`string`, `unknown`\>
 
-### RequestType
-
-`RequestType` *extends* `Request`
-
-### ResponseType
-
-`ResponseType` *extends* `Response`
-
 ### Heap
 
 `Heap` *extends* `Record`\<`PropertyKey`, `unknown`\>
@@ -34,12 +26,12 @@ middlewareFactory
 
 ### handler
 
-[`ModernApiHandler`](ModernApiHandler.md)\<`RequestType`, `ResponseType`, `Heap`\> | `undefined`
+[`ModernApiHandlerWithHeap`](ModernApiHandlerWithHeap.md)\<`Heap`\> | `undefined`
 
 ### options
 
-[`FactoriedMiddlewareOptions`](FactoriedMiddlewareOptions.md)\<`Options`, `Heap`, [`ModernMiddleware`](ModernMiddleware.md)\<`Options`, `RequestType`, `ResponseType`, `Heap`\>\>
+[`FactoriedMiddlewareOptions`](FactoriedMiddlewareOptions.md)\<`Options`, `Heap`, [`ModernMiddleware`](ModernMiddleware.md)\<`Options`, `Heap`\>\>
 
 ## Returns
 
-[`ModernBasicApiHandler`](ModernBasicApiHandler.md)\<`RequestType`, `ResponseType`\>
+[`ModernApiHandler`](ModernApiHandler.md)

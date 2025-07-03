@@ -4,11 +4,11 @@
 
 [@-xun/api](../../README.md) / [types](../README.md) / ModernMiddlewareContext
 
-# Type Alias: ModernMiddlewareContext\<Options, Heap, RequestType, ResponseType\>
+# Type Alias: ModernMiddlewareContext\<Options, Heap\>
 
-> **ModernMiddlewareContext**\<`Options`, `Heap`, `RequestType`, `ResponseType`\> = [`MiddlewareContext`](MiddlewareContext.md)\<`Options`, `Heap`, [`ModernMiddleware`](ModernMiddleware.md)\<`Options`, `RequestType`, `ResponseType`, `Heap`\>\>
+> **ModernMiddlewareContext**\<`Options`, `Heap`\> = [`MiddlewareContext`](MiddlewareContext.md)\<`Options`, `Heap`, [`ModernMiddleware`](ModernMiddleware.md)\<`Options`, `Heap`\>\>
 
-Defined in: [packages/api/src/types.ts:302](https://github.com/Xunnamius/api-utils/blob/2999e4472bea4c5a8ecd8f7c7fbf77e6b4bc26db/packages/api/src/types.ts#L302)
+Defined in: [packages/api/src/types.ts:264](https://github.com/Xunnamius/api-utils/blob/c09789cf368e76cc20c657b2a1b00afeebcaaa9d/packages/api/src/types.ts#L264)
 
 Meant for use when typing middleware function parameters.
 
@@ -21,14 +21,6 @@ Meant for use when typing middleware function parameters.
 ### Heap
 
 `Heap` *extends* `Record`\<`PropertyKey`, `unknown`\>
-
-### RequestType
-
-`RequestType` *extends* `Request` = `Request`
-
-### ResponseType
-
-`ResponseType` *extends* `Response` = `Response`
 
 ## See
 

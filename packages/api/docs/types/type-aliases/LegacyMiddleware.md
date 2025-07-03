@@ -4,11 +4,11 @@
 
 [@-xun/api](../../README.md) / [types](../README.md) / LegacyMiddleware
 
-# Type Alias: LegacyMiddleware\<Options, RequestType, ResponseType, Heap\>
+# Type Alias: LegacyMiddleware\<Options, Heap\>
 
-> **LegacyMiddleware**\<`Options`, `RequestType`, `ResponseType`, `Heap`\> = [`WithLegacyTag`](WithLegacyTag.md)\<(`req`, `res`, `context`) => `Promisable`\<`unknown`\>\>
+> **LegacyMiddleware**\<`Options`, `Heap`\> = [`WithLegacyTag`](WithLegacyTag.md)\<(`req`, `res`, `middlewareContext`) => `Promisable`\<`unknown`\>\>
 
-Defined in: [packages/api/src/types.ts:117](https://github.com/Xunnamius/api-utils/blob/2999e4472bea4c5a8ecd8f7c7fbf77e6b4bc26db/packages/api/src/types.ts#L117)
+Defined in: [packages/api/src/types.ts:80](https://github.com/Xunnamius/api-utils/blob/c09789cf368e76cc20c657b2a1b00afeebcaaa9d/packages/api/src/types.ts#L80)
 
 The shape of a legacy middleware function.
 
@@ -17,14 +17,6 @@ The shape of a legacy middleware function.
 ### Options
 
 `Options` *extends* `Record`\<`string`, `unknown`\>
-
-### RequestType
-
-`RequestType` *extends* [`NextApiRequestLike`](../../index/interfaces/NextApiRequestLike.md)
-
-### ResponseType
-
-`ResponseType` *extends* [`NextApiResponseLike`](../../index/type-aliases/NextApiResponseLike.md)
 
 ### Heap
 

@@ -8,4 +8,4 @@
 
 > **Context** = `EmptyObject`
 
-Defined in: [packages/api/src/middleware/check-method.ts:31](https://github.com/Xunnamius/api-utils/blob/2999e4472bea4c5a8ecd8f7c7fbf77e6b4bc26db/packages/api/src/middleware/check-method.ts#L31)
+Defined in: [packages/api/src/middleware/check-method.ts:25](https://github.com/Xunnamius/api-utils/blob/c09789cf368e76cc20c657b2a1b00afeebcaaa9d/packages/api/src/middleware/check-method.ts#L25)

@@ -8,13 +8,13 @@
 
 > **Options**\<`ErrorHandler`\> = `object`
 
-Defined in: [packages/api/src/middleware/handle-error.ts:86](https://github.com/Xunnamius/api-utils/blob/2999e4472bea4c5a8ecd8f7c7fbf77e6b4bc26db/packages/api/src/middleware/handle-error.ts#L86)
+Defined in: [packages/api/src/middleware/handle-error.ts:98](https://github.com/Xunnamius/api-utils/blob/c09789cf368e76cc20c657b2a1b00afeebcaaa9d/packages/api/src/middleware/handle-error.ts#L98)
 
 ## Type Parameters
 
 ### ErrorHandler
 
-`ErrorHandler` *extends* [`ModernErrorHandler`](ModernErrorHandler.md) \| [`LegacyErrorHandler`](LegacyErrorHandler.md)
+`ErrorHandler` *extends* [`ModernErrorHandler`](ModernErrorHandler.md)\<`never`, `never`\> \| [`LegacyErrorHandler`](LegacyErrorHandler.md)\<`never`, `never`\>
 
 ## Properties
 
@@ -22,6 +22,6 @@ Defined in: [packages/api/src/middleware/handle-error.ts:86](https://github.com/
 
 > `optional` **errorHandlers**: [`ErrorHandlerMap`](ErrorHandlerMap.md)\<`ErrorHandler`\>
 
-Defined in: [packages/api/src/middleware/handle-error.ts:90](https://github.com/Xunnamius/api-utils/blob/2999e4472bea4c5a8ecd8f7c7fbf77e6b4bc26db/packages/api/src/middleware/handle-error.ts#L90)
+Defined in: [packages/api/src/middleware/handle-error.ts:106](https://github.com/Xunnamius/api-utils/blob/c09789cf368e76cc20c657b2a1b00afeebcaaa9d/packages/api/src/middleware/handle-error.ts#L106)
 
 A mapping of Error classes and the functions that handle them.

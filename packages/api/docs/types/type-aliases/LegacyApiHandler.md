@@ -4,44 +4,26 @@
 
 [@-xun/api](../../README.md) / [types](../README.md) / LegacyApiHandler
 
-# Type Alias: LegacyApiHandler()\<RequestType, ResponseType, Heap\>
+# Type Alias: LegacyApiHandler()
 
-> **LegacyApiHandler**\<`RequestType`, `ResponseType`, `Heap`\> = (`req`, `res`, `ctx`) => `Promisable`\<`unknown`\>
+> **LegacyApiHandler** = (`req`, `res`) => `Promisable`\<`unknown`\>
 
-Defined in: [packages/api/src/types.ts:88](https://github.com/Xunnamius/api-utils/blob/2999e4472bea4c5a8ecd8f7c7fbf77e6b4bc26db/packages/api/src/types.ts#L88)
+Defined in: [packages/api/src/types.ts:60](https://github.com/Xunnamius/api-utils/blob/c09789cf368e76cc20c657b2a1b00afeebcaaa9d/packages/api/src/types.ts#L60)
 
-The shape of a legacy fetch request handler.
+The shape of a legacy fetch request handler that is also consumable by third
+parties (currently optimized for Next.js's Pages router).
 
-Note that this type of handler is not necessarily consumable by third parties
-(see [LegacyBasicApiHandler](LegacyBasicApiHandler.md)).
-
-## Type Parameters
-
-### RequestType
-
-`RequestType` *extends* [`NextApiRequestLike`](../../index/interfaces/NextApiRequestLike.md)
-
-### ResponseType
-
-`ResponseType` *extends* [`NextApiResponseLike`](../../index/type-aliases/NextApiResponseLike.md)
-
-### Heap
-
-`Heap` *extends* `Record`\<`PropertyKey`, `unknown`\>
+This is a reduced-functionality version of [LegacyApiHandlerWithHeap](LegacyApiHandlerWithHeap.md).
 
 ## Parameters
 
 ### req
 
-`RequestType`
+[`NextApiRequestLike`](../../index/interfaces/NextApiRequestLike.md)
 
 ### res
 
-`ResponseType`
-
-### ctx
-
-`Heap`
+[`NextApiResponseLike`](../../index/type-aliases/NextApiResponseLike.md)
 
 ## Returns
 

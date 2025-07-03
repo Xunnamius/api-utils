@@ -13,4 +13,4 @@
 
 ## Functions
 
-- [default](functions/default.md)
+- [makeMiddleware](functions/makeMiddleware.md)

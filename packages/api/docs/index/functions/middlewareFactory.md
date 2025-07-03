@@ -8,9 +8,9 @@
 
 ## Call Signature
 
-> **middlewareFactory**\<`Options`, `RequestType`, `ResponseType`, `Heap`\>(`defaults`): [`MiddlewareFactorySignatureModern`](../../types/type-aliases/MiddlewareFactorySignatureModern.md)\<`Options`, `RequestType`, `ResponseType`, `Heap`\>
+> **middlewareFactory**\<`Options`, `Heap`\>(`defaults`): [`MiddlewareFactorySignatureModern`](../../types/type-aliases/MiddlewareFactorySignatureModern.md)\<`Options`, `Heap`\>
 
-Defined in: [packages/api/src/index.ts:570](https://github.com/Xunnamius/api-utils/blob/2999e4472bea4c5a8ecd8f7c7fbf77e6b4bc26db/packages/api/src/index.ts#L570)
+Defined in: [packages/api/src/index.ts:544](https://github.com/Xunnamius/api-utils/blob/c09789cf368e76cc20c657b2a1b00afeebcaaa9d/packages/api/src/index.ts#L544)
 
 Returns a _modern_ [withMiddleware](withMiddleware.md) function decorated with a "default"
 configuration.
@@ -28,15 +28,7 @@ and list a bunch of middleware every time you want to call
 
 #### Options
 
-`Options` *extends* `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\>
-
-#### RequestType
-
-`RequestType` *extends* `Request` = `Request`
-
-#### ResponseType
-
-`ResponseType` *extends* `Response` = `Response`
+`Options` *extends* `Record`\<`string`, `unknown`\> = `EmptyObject`
 
 #### Heap
 
@@ -46,17 +38,17 @@ and list a bunch of middleware every time you want to call
 
 #### defaults
 
-`PickFactoriedOptions`\<[`WithMiddlewareOptions`](../../types/type-aliases/WithMiddlewareOptions.md)\<`Options`, `Heap`, [`ModernMiddleware`](../../types/type-aliases/ModernMiddleware.md)\<`Options`, `RequestType`, `ResponseType`, `Heap`\>\>\>
+`PickFactoriedOptions`\<[`WithMiddlewareOptions`](../../types/type-aliases/WithMiddlewareOptions.md)\<`Options`, `Heap`, [`ModernMiddleware`](../../types/type-aliases/ModernMiddleware.md)\<`Options`, `Heap`\>\>\>
 
 ### Returns
 
-[`MiddlewareFactorySignatureModern`](../../types/type-aliases/MiddlewareFactorySignatureModern.md)\<`Options`, `RequestType`, `ResponseType`, `Heap`\>
+[`MiddlewareFactorySignatureModern`](../../types/type-aliases/MiddlewareFactorySignatureModern.md)\<`Options`, `Heap`\>
 
 ## Call Signature
 
-> **middlewareFactory**\<`Options`, `RequestType`, `ResponseType`, `Heap`\>(`defaults`): [`MiddlewareFactorySignatureLegacy`](../../types/type-aliases/MiddlewareFactorySignatureLegacy.md)\<`Options`, `RequestType`, `ResponseType`, `Heap`\>
+> **middlewareFactory**\<`Options`, `Heap`\>(`defaults`): [`MiddlewareFactorySignatureLegacy`](../../types/type-aliases/MiddlewareFactorySignatureLegacy.md)\<`Options`, `Heap`\>
 
-Defined in: [packages/api/src/index.ts:596](https://github.com/Xunnamius/api-utils/blob/2999e4472bea4c5a8ecd8f7c7fbf77e6b4bc26db/packages/api/src/index.ts#L596)
+Defined in: [packages/api/src/index.ts:564](https://github.com/Xunnamius/api-utils/blob/c09789cf368e76cc20c657b2a1b00afeebcaaa9d/packages/api/src/index.ts#L564)
 
 Returns a _legacy_ [withMiddleware](withMiddleware.md) function decorated with a "default"
 configuration.
@@ -73,15 +65,7 @@ of middleware every time you want to call [withMiddleware](withMiddleware.md).
 
 #### Options
 
-`Options` *extends* `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\>
-
-#### RequestType
-
-`RequestType` *extends* [`NextApiRequestLike`](../interfaces/NextApiRequestLike.md) = [`NextApiRequestLike`](../interfaces/NextApiRequestLike.md)
-
-#### ResponseType
-
-`ResponseType` *extends* [`NextApiResponseLike`](../type-aliases/NextApiResponseLike.md) = [`NextApiResponseLike`](../type-aliases/NextApiResponseLike.md)
+`Options` *extends* `Record`\<`string`, `unknown`\> = `EmptyObject`
 
 #### Heap
 
@@ -91,8 +75,8 @@ of middleware every time you want to call [withMiddleware](withMiddleware.md).
 
 #### defaults
 
-`PickFactoriedOptions`\<[`WithMiddlewareOptions`](../../types/type-aliases/WithMiddlewareOptions.md)\<`Options`, `Heap`, [`LegacyMiddleware`](../../types/type-aliases/LegacyMiddleware.md)\<`Options`, `RequestType`, `ResponseType`, `Heap`\>\>\>
+`PickFactoriedOptions`\<[`WithMiddlewareOptions`](../../types/type-aliases/WithMiddlewareOptions.md)\<`Options`, `Heap`, [`LegacyMiddleware`](../../types/type-aliases/LegacyMiddleware.md)\<`Options`, `Heap`\>\>\>
 
 ### Returns
 
-[`MiddlewareFactorySignatureLegacy`](../../types/type-aliases/MiddlewareFactorySignatureLegacy.md)\<`Options`, `RequestType`, `ResponseType`, `Heap`\>
+[`MiddlewareFactorySignatureLegacy`](../../types/type-aliases/MiddlewareFactorySignatureLegacy.md)\<`Options`, `Heap`\>

@@ -14,6 +14,10 @@
 
 - [NextApiResponseLike](type-aliases/NextApiResponseLike.md)
 
+## Variables
+
+- [defaultLegacyPageConfig](variables/defaultLegacyPageConfig.md)
+
 ## Functions
 
 - [getAuthorizationHeaderFromRequestLike](functions/getAuthorizationHeaderFromRequestLike.md)
@@ -24,39 +28,15 @@
 
 ## References
 
-### GenericLegacyApiHandler
-
-Re-exports [GenericLegacyApiHandler](../types/type-aliases/GenericLegacyApiHandler.md)
-
-***
-
-### GenericLegacyMiddleware
-
-Re-exports [GenericLegacyMiddleware](../types/type-aliases/GenericLegacyMiddleware.md)
-
-***
-
-### GenericModernApiHandler
-
-Re-exports [GenericModernApiHandler](../types/type-aliases/GenericModernApiHandler.md)
-
-***
-
-### GenericModernMiddleware
-
-Re-exports [GenericModernMiddleware](../types/type-aliases/GenericModernMiddleware.md)
-
-***
-
 ### LegacyApiHandler
 
 Re-exports [LegacyApiHandler](../types/type-aliases/LegacyApiHandler.md)
 
 ***
 
-### LegacyBasicApiHandler
+### LegacyApiHandlerWithHeap
 
-Re-exports [LegacyBasicApiHandler](../types/type-aliases/LegacyBasicApiHandler.md)
+Re-exports [LegacyApiHandlerWithHeap](../types/type-aliases/LegacyApiHandlerWithHeap.md)
 
 ***
 
@@ -84,9 +64,9 @@ Re-exports [ModernApiHandler](../types/type-aliases/ModernApiHandler.md)
 
 ***
 
-### ModernBasicApiHandler
+### ModernApiHandlerWithHeap
 
-Re-exports [ModernBasicApiHandler](../types/type-aliases/ModernBasicApiHandler.md)
+Re-exports [ModernApiHandlerWithHeap](../types/type-aliases/ModernApiHandlerWithHeap.md)
 
 ***
 

@@ -4,11 +4,11 @@
 
 [@-xun/api](../../README.md) / [types](../README.md) / ModernMiddleware
 
-# Type Alias: ModernMiddleware\<Options, RequestType, ResponseType, Heap\>
+# Type Alias: ModernMiddleware\<Options, Heap\>
 
-> **ModernMiddleware**\<`Options`, `RequestType`, `ResponseType`, `Heap`\> = [`WithModernTag`](WithModernTag.md)\<(`request`, `context`) => `Promisable`\<`ResponseType` \| `undefined` \| `void`\>\>
+> **ModernMiddleware**\<`Options`, `Heap`\> = [`WithModernTag`](WithModernTag.md)\<(`request`, `middlewareContext`) => `Promisable`\<`Response` \| `undefined` \| `void`\>\>
 
-Defined in: [packages/api/src/types.ts:56](https://github.com/Xunnamius/api-utils/blob/2999e4472bea4c5a8ecd8f7c7fbf77e6b4bc26db/packages/api/src/types.ts#L56)
+Defined in: [packages/api/src/types.ts:44](https://github.com/Xunnamius/api-utils/blob/c09789cf368e76cc20c657b2a1b00afeebcaaa9d/packages/api/src/types.ts#L44)
 
 The shape of a modern middleware function.
 
@@ -17,14 +17,6 @@ The shape of a modern middleware function.
 ### Options
 
 `Options` *extends* `Record`\<`string`, `unknown`\>
-
-### RequestType
-
-`RequestType` *extends* `Request`
-
-### ResponseType
-
-`ResponseType` *extends* `Response`
 
 ### Heap
 

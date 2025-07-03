@@ -6,9 +6,9 @@
 
 # Type Alias: WithMiddlewareOptions\<Options, Heap, Middleware\>
 
-> **WithMiddlewareOptions**\<`Options`, `Heap`, `Middleware`\> = `object` & `Middleware` *extends* [`WithModernTag`](WithModernTag.md)\<`unknown`\> ? `object` : `Middleware` *extends* [`WithLegacyTag`](WithLegacyTag.md)\<`unknown`\> ? `object` : `object`
+> **WithMiddlewareOptions**\<`Options`, `Heap`, `Middleware`\> = `object` & `Middleware` *extends* [`WithModernTag`](WithModernTag.md)\<`unknown`\> ? `Partial`\<`Options`\> *extends* `Options` ? `object` : `object` : `Middleware` *extends* [`WithLegacyTag`](WithLegacyTag.md)\<`unknown`\> ? `object` : `object`
 
-Defined in: [packages/api/src/types.ts:332](https://github.com/Xunnamius/api-utils/blob/2999e4472bea4c5a8ecd8f7c7fbf77e6b4bc26db/packages/api/src/types.ts#L332)
+Defined in: [packages/api/src/types.ts:282](https://github.com/Xunnamius/api-utils/blob/c09789cf368e76cc20c657b2a1b00afeebcaaa9d/packages/api/src/types.ts#L282)
 
 ## Type declaration
 
@@ -23,13 +23,13 @@ Used for logging purposes only.
 
 ### options?
 
-> `optional` **options**: `Partial`\<[`MiddlewareContext`](MiddlewareContext.md)\<`Options`, `Heap`, `Middleware`\>\[`"options"`\]\>
+> `optional` **options**: [`MiddlewareContext`](MiddlewareContext.md)\<`Options`, `Heap`, `Middleware`, `"partial"`\>\[`"options"`\]
 
 Various options made available to all middleware and handlers.
 
 ### use
 
-> **use**: `UnwrapTagged`\<`Middleware`\>[]
+> **use**: [`ExportedMiddleware`](ExportedMiddleware.md)\<`any`, `any`\>[]
 
 An array of middleware functions that will be executed in order, each
 receiving a chance to mutate the request and short-circuit the "use chain"
@@ -37,7 +37,7 @@ to deliver a response.
 
 ### useOnError?
 
-> `optional` **useOnError**: `UnwrapTagged`\<`Middleware`\>[]
+> `optional` **useOnError**: [`ExportedMiddleware`](ExportedMiddleware.md)\<`any`, `any`\>[]
 
 When a middleware or handler throws, this secondary array of middleware
 functions are executed in order similar to `use`.
@@ -58,7 +58,7 @@ error that interrupted the primary use chain.
 
 ### Middleware
 
-`Middleware` *extends* [`AnyMiddleware`](AnyMiddleware.md)\<`Options`, `Heap`\>
+`Middleware` *extends* [`ModernOrLegacyMiddleware`](ModernOrLegacyMiddleware.md)\<`Options`, `Heap`\>
 
 ## See
 

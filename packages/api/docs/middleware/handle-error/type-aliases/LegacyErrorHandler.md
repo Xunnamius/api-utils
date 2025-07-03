@@ -4,11 +4,11 @@
 
 [@-xun/api](../../../README.md) / [middleware/handle-error](../README.md) / LegacyErrorHandler
 
-# Type Alias: LegacyErrorHandler()
+# Type Alias: LegacyErrorHandler()\<Options, Heap\>
 
-> **LegacyErrorHandler** = (`req`, `res`, `errorJson`) => `Promisable`\<`Error` \| `void`\>
+> **LegacyErrorHandler**\<`Options`, `Heap`\> = (`req`, `res`, `errorJson`, `middlewareContext`) => `Promisable`\<`Error` \| `void`\>
 
-Defined in: [packages/api/src/middleware/handle-error.ts:71](https://github.com/Xunnamius/api-utils/blob/2999e4472bea4c5a8ecd8f7c7fbf77e6b4bc26db/packages/api/src/middleware/handle-error.ts#L71)
+Defined in: [packages/api/src/middleware/handle-error.ts:78](https://github.com/Xunnamius/api-utils/blob/c09789cf368e76cc20c657b2a1b00afeebcaaa9d/packages/api/src/middleware/handle-error.ts#L78)
 
 Special middleware used to handle custom errors.
 
@@ -17,6 +17,16 @@ error classes from `@-xun/api-strategy/error`, return said class from this
 function.
 
 Errors thrown from within this function are ignored.
+
+## Type Parameters
+
+### Options
+
+`Options` *extends* `Record`\<`string`, `unknown`\>
+
+### Heap
+
+`Heap` *extends* `Record`\<`PropertyKey`, `unknown`\>
 
 ## Parameters
 
@@ -32,10 +42,14 @@ Errors thrown from within this function are ignored.
 
 `Partial`\<`JsonError`\>
 
+### middlewareContext
+
+[`LegacyMiddlewareContext`](../../../types/type-aliases/LegacyMiddlewareContext.md)\<`Options`, `Heap`\>
+
 ## Returns
 
 `Promisable`\<`Error` \| `void`\>
 
 ## See
 
-[middleware](../functions/default.md)
+middleware

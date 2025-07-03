@@ -8,7 +8,7 @@
 
 > `const` **ErrorMessage**: `object`
 
-Defined in: [packages/api/src/error.ts:5](https://github.com/Xunnamius/api-utils/blob/2999e4472bea4c5a8ecd8f7c7fbf77e6b4bc26db/packages/api/src/error.ts#L5)
+Defined in: [packages/api/src/error.ts:5](https://github.com/Xunnamius/api-utils/blob/c09789cf368e76cc20c657b2a1b00afeebcaaa9d/packages/api/src/error.ts#L5)
 
 A collection of possible error and warning messages.
 
@@ -70,6 +70,14 @@ A collection of possible error and warning messages.
 
 `string`
 
+### LegacyMiddlewareApiNotSupported()
+
+> **LegacyMiddlewareApiNotSupported**(): `string`
+
+#### Returns
+
+`string`
+
 ### MethodIsUndefined()
 
 > **MethodIsUndefined**(): `string`
@@ -78,9 +86,9 @@ A collection of possible error and warning messages.
 
 `string`
 
-### MissingRawBodyProperty()
+### ModernMiddlewareApiNotSupported()
 
-> **MissingRawBodyProperty**(): `string`
+> **ModernMiddlewareApiNotSupported**(): `string`
 
 #### Returns
 

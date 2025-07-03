@@ -6,17 +6,23 @@
 
 # Type Alias: FactoriedMiddlewareOptions\<Options, Heap, Middleware\>
 
-> **FactoriedMiddlewareOptions**\<`Options`, `Heap`, `Middleware`\> = `Omit`\<[`WithMiddlewareOptions`](WithMiddlewareOptions.md)\<`Options`, `Heap`, `Middleware`\>, `"use"` \| `"useOnError"`\> & `object`
+> **FactoriedMiddlewareOptions**\<`Options`, `Heap`, `Middleware`\> = `Partial`\<`Omit`\<[`WithMiddlewareOptions`](WithMiddlewareOptions.md)\<`Options`, `Heap`, `Middleware`\>, `"use"` \| `"useOnError"` \| `"options"`\>\> & `object` & `object`
 
-Defined in: [packages/api/src/types.ts:410](https://github.com/Xunnamius/api-utils/blob/2999e4472bea4c5a8ecd8f7c7fbf77e6b4bc26db/packages/api/src/types.ts#L410)
+Defined in: [packages/api/src/types.ts:328](https://github.com/Xunnamius/api-utils/blob/c09789cf368e76cc20c657b2a1b00afeebcaaa9d/packages/api/src/types.ts#L328)
 
 middlewareFactory
 
 ## Type declaration
 
+### options?
+
+> `optional` **options**: `Merge`\<[`WithMiddlewareOptions`](WithMiddlewareOptions.md)\<`Options`, `Heap`, `Middleware`\>\[`"options"`\], \{ `legacyMode?`: `boolean`; \}\>
+
+## Type declaration
+
 ### appendUse?
 
-> `optional` **appendUse**: `UnwrapTagged`\<`Middleware`\>[]
+> `optional` **appendUse**: [`ExportedMiddleware`](ExportedMiddleware.md)\<`any`, `any`\>[]
 
 #### See
 
@@ -24,7 +30,7 @@ middlewareFactory
 
 ### appendUseOnError?
 
-> `optional` **appendUseOnError**: `UnwrapTagged`\<`Middleware`\>[]
+> `optional` **appendUseOnError**: [`ExportedMiddleware`](ExportedMiddleware.md)\<`any`, `any`\>[]
 
 #### See
 
@@ -32,7 +38,7 @@ middlewareFactory
 
 ### prependUse?
 
-> `optional` **prependUse**: `UnwrapTagged`\<`Middleware`\>[]
+> `optional` **prependUse**: [`ExportedMiddleware`](ExportedMiddleware.md)\<`any`, `any`\>[]
 
 #### See
 
@@ -40,7 +46,7 @@ middlewareFactory
 
 ### prependUseOnError?
 
-> `optional` **prependUseOnError**: `UnwrapTagged`\<`Middleware`\>[]
+> `optional` **prependUseOnError**: [`ExportedMiddleware`](ExportedMiddleware.md)\<`any`, `any`\>[]
 
 #### See
 
@@ -58,4 +64,4 @@ middlewareFactory
 
 ### Middleware
 
-`Middleware` *extends* [`AnyMiddleware`](AnyMiddleware.md)\<`Options`, `Heap`\>
+`Middleware` *extends* [`ModernOrLegacyMiddleware`](ModernOrLegacyMiddleware.md)\<`Options`, `Heap`\>

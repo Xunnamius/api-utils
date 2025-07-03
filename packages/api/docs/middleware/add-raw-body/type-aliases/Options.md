@@ -8,7 +8,7 @@
 
 > **Options** = `object`
 
-Defined in: [packages/api/src/middleware/add-raw-body.ts:29](https://github.com/Xunnamius/api-utils/blob/2999e4472bea4c5a8ecd8f7c7fbf77e6b4bc26db/packages/api/src/middleware/add-raw-body.ts#L29)
+Defined in: [packages/api/src/middleware/add-raw-body.ts:24](https://github.com/Xunnamius/api-utils/blob/c09789cf368e76cc20c657b2a1b00afeebcaaa9d/packages/api/src/middleware/add-raw-body.ts#L24)
 
 ## Properties
 
@@ -16,7 +16,7 @@ Defined in: [packages/api/src/middleware/add-raw-body.ts:29](https://github.com/
 
 > `optional` **requestBodySizeLimit**: `number` \| `string` \| `null`
 
-Defined in: [packages/api/src/middleware/add-raw-body.ts:38](https://github.com/Xunnamius/api-utils/blob/2999e4472bea4c5a8ecd8f7c7fbf77e6b4bc26db/packages/api/src/middleware/add-raw-body.ts#L38)
+Defined in: [packages/api/src/middleware/add-raw-body.ts:33](https://github.com/Xunnamius/api-utils/blob/c09789cf368e76cc20c657b2a1b00afeebcaaa9d/packages/api/src/middleware/add-raw-body.ts#L33)
 
 The byte limit of the request body. This is the number of bytes or any
 string format supported by bytes, for example `1000`, `'500kb'` or `'3mb'`.
