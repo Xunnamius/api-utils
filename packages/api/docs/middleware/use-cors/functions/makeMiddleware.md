@@ -8,7 +8,7 @@
 
 > **makeMiddleware**(): (`reqOrRequest`, `resOrModernContext`, `maybeLegacyContext`) => `Promise`\<`undefined` \| `Response`\>
 
-Defined in: [packages/api/src/middleware/use-cors.ts:43](https://github.com/Xunnamius/api-utils/blob/c09789cf368e76cc20c657b2a1b00afeebcaaa9d/packages/api/src/middleware/use-cors.ts#L43)
+Defined in: [packages/api/src/middleware/use-cors.ts:43](https://github.com/Xunnamius/api-utils/blob/1f0c4ddbfee87314a3a69fe0605abddd045878f2/packages/api/src/middleware/use-cors.ts#L43)
 
 Allows _cross-origin_ requests for the most popular request types. **Note
 that this can be dangerous (huge security hole) and should only be used for

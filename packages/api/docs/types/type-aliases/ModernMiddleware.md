@@ -8,7 +8,7 @@
 
 > **ModernMiddleware**\<`Options`, `Heap`\> = [`WithModernTag`](WithModernTag.md)\<(`request`, `middlewareContext`) => `Promisable`\<`Response` \| `undefined` \| `void`\>\>
 
-Defined in: [packages/api/src/types.ts:44](https://github.com/Xunnamius/api-utils/blob/c09789cf368e76cc20c657b2a1b00afeebcaaa9d/packages/api/src/types.ts#L44)
+Defined in: [packages/api/src/types.ts:44](https://github.com/Xunnamius/api-utils/blob/1f0c4ddbfee87314a3a69fe0605abddd045878f2/packages/api/src/types.ts#L44)
 
 The shape of a modern middleware function.
 

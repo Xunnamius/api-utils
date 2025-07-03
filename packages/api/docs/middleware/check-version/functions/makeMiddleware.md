@@ -8,7 +8,7 @@
 
 > **makeMiddleware**(): (`_reqOrRequest`, `resOrModernContext`, `maybeLegacyContext`) => `Promise`\<`undefined` \| `Response`\>
 
-Defined in: [packages/api/src/middleware/check-version.ts:28](https://github.com/Xunnamius/api-utils/blob/c09789cf368e76cc20c657b2a1b00afeebcaaa9d/packages/api/src/middleware/check-version.ts#L28)
+Defined in: [packages/api/src/middleware/check-version.ts:28](https://github.com/Xunnamius/api-utils/blob/1f0c4ddbfee87314a3a69fe0605abddd045878f2/packages/api/src/middleware/check-version.ts#L28)
 
 Rejects requests to disabled versions of the API.
 

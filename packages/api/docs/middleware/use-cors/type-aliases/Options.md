@@ -8,7 +8,7 @@
 
 > **Options** = `object`
 
-Defined in: [packages/api/src/middleware/use-cors.ts:23](https://github.com/Xunnamius/api-utils/blob/c09789cf368e76cc20c657b2a1b00afeebcaaa9d/packages/api/src/middleware/use-cors.ts#L23)
+Defined in: [packages/api/src/middleware/use-cors.ts:23](https://github.com/Xunnamius/api-utils/blob/1f0c4ddbfee87314a3a69fe0605abddd045878f2/packages/api/src/middleware/use-cors.ts#L23)
 
 ## Properties
 
@@ -16,7 +16,7 @@ Defined in: [packages/api/src/middleware/use-cors.ts:23](https://github.com/Xunn
 
 > `optional` **allowedMethods**: [`Options`](../../check-method/type-aliases/Options.md)\[`"allowedMethods"`\]
 
-Defined in: [packages/api/src/middleware/use-cors.ts:27](https://github.com/Xunnamius/api-utils/blob/c09789cf368e76cc20c657b2a1b00afeebcaaa9d/packages/api/src/middleware/use-cors.ts#L27)
+Defined in: [packages/api/src/middleware/use-cors.ts:27](https://github.com/Xunnamius/api-utils/blob/1f0c4ddbfee87314a3a69fe0605abddd045878f2/packages/api/src/middleware/use-cors.ts#L27)
 
 #### Default
 

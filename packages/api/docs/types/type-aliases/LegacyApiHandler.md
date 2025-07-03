@@ -8,7 +8,7 @@
 
 > **LegacyApiHandler** = (`req`, `res`) => `Promisable`\<`unknown`\>
 
-Defined in: [packages/api/src/types.ts:60](https://github.com/Xunnamius/api-utils/blob/c09789cf368e76cc20c657b2a1b00afeebcaaa9d/packages/api/src/types.ts#L60)
+Defined in: [packages/api/src/types.ts:60](https://github.com/Xunnamius/api-utils/blob/1f0c4ddbfee87314a3a69fe0605abddd045878f2/packages/api/src/types.ts#L60)
 
 The shape of a legacy fetch request handler that is also consumable by third
 parties (currently optimized for Next.js's Pages router).

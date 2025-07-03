@@ -8,7 +8,7 @@
 
 > **MiddlewareContext**\<`Options`, `Heap`, `Middleware`, `PartialOptions`\> = `object`
 
-Defined in: [packages/api/src/types.ts:123](https://github.com/Xunnamius/api-utils/blob/c09789cf368e76cc20c657b2a1b00afeebcaaa9d/packages/api/src/types.ts#L123)
+Defined in: [packages/api/src/types.ts:123](https://github.com/Xunnamius/api-utils/blob/1f0c4ddbfee87314a3a69fe0605abddd045878f2/packages/api/src/types.ts#L123)
 
 The shape of a middleware context object, potentially customized with
 additional middleware-specific options.
@@ -41,7 +41,7 @@ handler executes respectively) changes.
 
 > **heap**: `Heap`
 
-Defined in: [packages/api/src/types.ts:213](https://github.com/Xunnamius/api-utils/blob/c09789cf368e76cc20c657b2a1b00afeebcaaa9d/packages/api/src/types.ts#L213)
+Defined in: [packages/api/src/types.ts:213](https://github.com/Xunnamius/api-utils/blob/1f0c4ddbfee87314a3a69fe0605abddd045878f2/packages/api/src/types.ts#L213)
 
 A context object meant to be written to and read by any middleware.
 
@@ -55,7 +55,7 @@ share data.
 
 > **options**: `Options` & `"partial"` *extends* `PartialOptions` ? `Partial`\<`BaseOptions`\> : `BaseOptions`
 
-Defined in: [packages/api/src/types.ts:217](https://github.com/Xunnamius/api-utils/blob/c09789cf368e76cc20c657b2a1b00afeebcaaa9d/packages/api/src/types.ts#L217)
+Defined in: [packages/api/src/types.ts:217](https://github.com/Xunnamius/api-utils/blob/1f0c4ddbfee87314a3a69fe0605abddd045878f2/packages/api/src/types.ts#L217)
 
 Options expected by middleware functions at runtime.
 
@@ -65,7 +65,7 @@ Options expected by middleware functions at runtime.
 
 > **runtime**: `object`
 
-Defined in: [packages/api/src/types.ts:132](https://github.com/Xunnamius/api-utils/blob/c09789cf368e76cc20c657b2a1b00afeebcaaa9d/packages/api/src/types.ts#L132)
+Defined in: [packages/api/src/types.ts:132](https://github.com/Xunnamius/api-utils/blob/1f0c4ddbfee87314a3a69fe0605abddd045878f2/packages/api/src/types.ts#L132)
 
 Contains middleware use chain control functions and various metadata.
 
