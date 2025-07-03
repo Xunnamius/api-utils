@@ -8,7 +8,7 @@
 
 > **getAuthDb**(): `Promise`\<`Collection`\<[`InternalAuthEntry`](../../types/type-aliases/InternalAuthEntry.md)\>\>
 
-Defined in: [packages/api-strategy/src/auth/db.ts:38](https://github.com/Xunnamius/api-utils/blob/51ed4560620e631b81b4890e48c56dab5e8d6449/packages/api-strategy/src/auth/db.ts#L38)
+Defined in: [packages/api-strategy/src/auth/db.ts:38](https://github.com/Xunnamius/api-utils/blob/4b9cf49c1b8ec6d8960c6a16e9e497be226b121a/packages/api-strategy/src/auth/db.ts#L38)
 
 Return the well-known "auth" collection after calling getDb on the
 `'root'` database.
