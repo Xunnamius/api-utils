@@ -10,7 +10,7 @@
 
 > **deleteTokens**(`options`): `Promise`\<`number`\>
 
-Defined in: [packages/api-strategy/src/auth.ts:319](https://github.com/Xunnamius/api-utils/blob/4b9cf49c1b8ec6d8960c6a16e9e497be226b121a/packages/api-strategy/src/auth.ts#L319)
+Defined in: [packages/api-strategy/src/auth.ts:330](https://github.com/Xunnamius/api-utils/blob/c4e96008fb8e0dd5fdfbead84f2e3657f2f0352f/packages/api-strategy/src/auth.ts#L330)
 
 Deletes entries corresponding to the given `_id`s (`auth_ids`) in the
 well-known "auth" MongoDB collection.
@@ -39,7 +39,7 @@ collection.
 
 > **deleteTokens**(`options`): `Promise`\<`number`\>
 
-Defined in: [packages/api-strategy/src/auth.ts:335](https://github.com/Xunnamius/api-utils/blob/4b9cf49c1b8ec6d8960c6a16e9e497be226b121a/packages/api-strategy/src/auth.ts#L335)
+Defined in: [packages/api-strategy/src/auth.ts:346](https://github.com/Xunnamius/api-utils/blob/c4e96008fb8e0dd5fdfbead84f2e3657f2f0352f/packages/api-strategy/src/auth.ts#L346)
 
 Deletes entries matching the given `filter` in the well-known "auth" MongoDB
 collection.

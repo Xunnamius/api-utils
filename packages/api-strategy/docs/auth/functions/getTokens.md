@@ -10,7 +10,7 @@
 
 > **getTokens**(`options`): `Promise`\<[`PublicAuthEntry`](../types/type-aliases/PublicAuthEntry.md)[]\>
 
-Defined in: [packages/api-strategy/src/auth.ts:181](https://github.com/Xunnamius/api-utils/blob/4b9cf49c1b8ec6d8960c6a16e9e497be226b121a/packages/api-strategy/src/auth.ts#L181)
+Defined in: [packages/api-strategy/src/auth.ts:181](https://github.com/Xunnamius/api-utils/blob/c4e96008fb8e0dd5fdfbead84f2e3657f2f0352f/packages/api-strategy/src/auth.ts#L181)
 
 Returns entries corresponding to the given `_id`s (`auth_ids`) in the
 well-known "auth" MongoDB collection.
@@ -36,7 +36,7 @@ collection.
 
 > **getTokens**(`options`): `Promise`\<[`PublicAuthEntry`](../types/type-aliases/PublicAuthEntry.md)[]\>
 
-Defined in: [packages/api-strategy/src/auth.ts:194](https://github.com/Xunnamius/api-utils/blob/4b9cf49c1b8ec6d8960c6a16e9e497be226b121a/packages/api-strategy/src/auth.ts#L194)
+Defined in: [packages/api-strategy/src/auth.ts:194](https://github.com/Xunnamius/api-utils/blob/c4e96008fb8e0dd5fdfbead84f2e3657f2f0352f/packages/api-strategy/src/auth.ts#L194)
 
 Returns entries matching the given `filter` in the well-known "auth" MongoDB
 collection.
@@ -46,6 +46,13 @@ Throws on invalid input.
 ### Parameters
 
 #### options
+
+##### after_id?
+
+[`MaybeAuthId`](../types/type-aliases/MaybeAuthId.md)
+
+Only return tokens with ids that occur "after" (i.e. are less than)
+`after_id`.
 
 ##### filter
 

@@ -8,7 +8,7 @@
 
 > `const` **BANNED\_BEARER\_TOKEN**: `"banned-h54e-6rt7-gctfh-hrftdygct0"` = `'banned-h54e-6rt7-gctfh-hrftdygct0'`
 
-Defined in: [packages/api-strategy/src/auth/well-known-tokens.ts:23](https://github.com/Xunnamius/api-utils/blob/4b9cf49c1b8ec6d8960c6a16e9e497be226b121a/packages/api-strategy/src/auth/well-known-tokens.ts#L23)
+Defined in: [packages/api-strategy/src/auth/well-known-tokens.ts:23](https://github.com/Xunnamius/api-utils/blob/c4e96008fb8e0dd5fdfbead84f2e3657f2f0352f/packages/api-strategy/src/auth/well-known-tokens.ts#L23)
 
 This string is guaranteed to be rate limited when running in a test
 environment (i.e. `NODE_ENV=test`). This string cannot be used for

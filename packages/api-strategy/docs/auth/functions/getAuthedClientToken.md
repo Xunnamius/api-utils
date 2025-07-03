@@ -10,7 +10,7 @@
 
 > **getAuthedClientToken**(`req`, `options?`): `Promise`\<`undefined` \| [`SafePublicAuthEntry`](../types/type-aliases/SafePublicAuthEntry.md)\>
 
-Defined in: [packages/api-strategy/src/auth.ts:81](https://github.com/Xunnamius/api-utils/blob/4b9cf49c1b8ec6d8960c6a16e9e497be226b121a/packages/api-strategy/src/auth.ts#L81)
+Defined in: [packages/api-strategy/src/auth.ts:81](https://github.com/Xunnamius/api-utils/blob/c4e96008fb8e0dd5fdfbead84f2e3657f2f0352f/packages/api-strategy/src/auth.ts#L81)
 
 Authenticates a client (via bearer token) to continue past the point where
 this function was invoked. Additional authorization can be performed via the
@@ -43,7 +43,7 @@ WARNING: this function **DOES NOT** throw on auth failure (by default)!
 
 > **getAuthedClientToken**(`request`, `options?`): `Promise`\<`undefined` \| [`SafePublicAuthEntry`](../types/type-aliases/SafePublicAuthEntry.md)\>
 
-Defined in: [packages/api-strategy/src/auth.ts:85](https://github.com/Xunnamius/api-utils/blob/4b9cf49c1b8ec6d8960c6a16e9e497be226b121a/packages/api-strategy/src/auth.ts#L85)
+Defined in: [packages/api-strategy/src/auth.ts:85](https://github.com/Xunnamius/api-utils/blob/c4e96008fb8e0dd5fdfbead84f2e3657f2f0352f/packages/api-strategy/src/auth.ts#L85)
 
 Authenticates a client (via bearer token) to continue past the point where
 this function was invoked. Additional authorization can be performed via the
@@ -76,7 +76,7 @@ WARNING: this function **DOES NOT** throw on auth failure (by default)!
 
 > **getAuthedClientToken**(`authorizationHeader`, `options?`): `Promise`\<`undefined` \| [`SafePublicAuthEntry`](../types/type-aliases/SafePublicAuthEntry.md)\>
 
-Defined in: [packages/api-strategy/src/auth.ts:89](https://github.com/Xunnamius/api-utils/blob/4b9cf49c1b8ec6d8960c6a16e9e497be226b121a/packages/api-strategy/src/auth.ts#L89)
+Defined in: [packages/api-strategy/src/auth.ts:89](https://github.com/Xunnamius/api-utils/blob/c4e96008fb8e0dd5fdfbead84f2e3657f2f0352f/packages/api-strategy/src/auth.ts#L89)
 
 Authenticates a client (via bearer token) to continue past the point where
 this function was invoked. Additional authorization can be performed via the
@@ -109,7 +109,7 @@ WARNING: this function **DOES NOT** throw on auth failure (by default)!
 
 > **getAuthedClientToken**(`client`, `options?`): `Promise`\<`undefined` \| [`SafePublicAuthEntry`](../types/type-aliases/SafePublicAuthEntry.md)\>
 
-Defined in: [packages/api-strategy/src/auth.ts:93](https://github.com/Xunnamius/api-utils/blob/4b9cf49c1b8ec6d8960c6a16e9e497be226b121a/packages/api-strategy/src/auth.ts#L93)
+Defined in: [packages/api-strategy/src/auth.ts:93](https://github.com/Xunnamius/api-utils/blob/c4e96008fb8e0dd5fdfbead84f2e3657f2f0352f/packages/api-strategy/src/auth.ts#L93)
 
 Authenticates a client (via bearer token) to continue past the point where
 this function was invoked. Additional authorization can be performed via the

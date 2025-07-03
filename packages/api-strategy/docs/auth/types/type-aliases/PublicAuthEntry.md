@@ -8,7 +8,7 @@
 
 > **PublicAuthEntry** = `Pick`\<[`InternalAuthEntry`](InternalAuthEntry.md), `"attributes"` \| `"token"`\> & `object`
 
-Defined in: [packages/api-strategy/src/auth/types.ts:152](https://github.com/Xunnamius/api-utils/blob/4b9cf49c1b8ec6d8960c6a16e9e497be226b121a/packages/api-strategy/src/auth/types.ts#L152)
+Defined in: [packages/api-strategy/src/auth/types.ts:152](https://github.com/Xunnamius/api-utils/blob/c4e96008fb8e0dd5fdfbead84f2e3657f2f0352f/packages/api-strategy/src/auth/types.ts#L152)
 
 The public base shape derived from an entry in the well-known "auth"
 collection.
