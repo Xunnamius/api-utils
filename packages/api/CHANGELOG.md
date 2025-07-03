@@ -31,11 +31,19 @@ this project adheres to [Semantic Versioning][2].
 
 <br />
 
-### 🏗️ Patch @-xun/api[@1.0.1][16] (2025-07-03)
+### 🏗️ Patch @-xun/api[@1.0.2][16] (2025-07-03)
 
 #### ⚙️ Build System
 
-- **deps:** bump internal monorepo interdependencies to latest versions ([d599bd6][17])
+- **deps:** bump internal monorepo interdependencies to latest versions ([9cd1af5][17])
+
+<br />
+
+### 🏗️ Patch @-xun/api[@1.0.1][18] (2025-07-03)
+
+#### ⚙️ Build System
+
+- **deps:** bump internal monorepo interdependencies to latest versions ([d599bd6][19])
 
 [1]: https://conventionalcommits.org
 [2]: https://semver.org
@@ -52,5 +60,7 @@ this project adheres to [Semantic Versioning][2].
 [13]: https://github.com/Xunnamius/api-utils/commit/89abbe6937ec39fc9d2eb19430d0e8d5b1321810
 [14]: https://github.com/Xunnamius/api-utils/commit/604757a04c1246bf80c15a6caaa0e98300681eba
 [15]: https://github.com/Xunnamius/api-utils/commit/71b4768957b597ca1b5c617189c9042977d621ab
-[16]: https://github.com/Xunnamius/api-utils/compare/@-xun/api@1.0.0...@-xun/api@1.0.1
-[17]: https://github.com/Xunnamius/api-utils/commit/d599bd64b164b6e85a698e3eb503c87928b45e16
+[16]: https://github.com/Xunnamius/api-utils/compare/@-xun/api@1.0.1...@-xun/api@1.0.2
+[17]: https://github.com/Xunnamius/api-utils/commit/9cd1af53c9f08bf74ac71b1f8924f654c5cc5c2f
+[18]: https://github.com/Xunnamius/api-utils/compare/@-xun/api@1.0.0...@-xun/api@1.0.1
+[19]: https://github.com/Xunnamius/api-utils/commit/d599bd64b164b6e85a698e3eb503c87928b45e16

@@ -8,7 +8,7 @@
 
 > **LegacyApiHandlerWithHeap**\<`Heap`\> = (`req`, `res`, `handlerContext`) => `Promisable`\<`unknown`\>
 
-Defined in: [packages/api/src/types.ts:71](https://github.com/Xunnamius/api-utils/blob/1f0c4ddbfee87314a3a69fe0605abddd045878f2/packages/api/src/types.ts#L71)
+Defined in: [packages/api/src/types.ts:71](https://github.com/Xunnamius/api-utils/blob/2e0fabcd55b7c3db9985d1dbdad536d0a6ac1016/packages/api/src/types.ts#L71)
 
 The shape of a legacy fetch request handler.
 
