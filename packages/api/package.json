@@ -91,7 +91,7 @@
     "vary": "^1.1.2"
   },
   "devDependencies": {
-    "@-xun/fs": "^1.0.0",
+    "@-xun/fs": "^2.0.0",
     "next-test-api-route-handler": "^4.0.16",
     "random-case": "^1.0.0"
   },
