@@ -2,31 +2,21 @@
 
 ***
 
-[@-xun/api-strategy](../../README.md) / [error](../README.md) / ApiError
+[@-xun/api-strategy](../../README.md) / [error](../README.md) / ForbiddenError
 
-# Class: ApiError
+# Class: ForbiddenError
 
-Defined in: [packages/api-strategy/src/error.ts:38](https://github.com/Xunnamius/api-utils/blob/51ed4560620e631b81b4890e48c56dab5e8d6449/packages/api-strategy/src/error.ts#L38)
+Defined in: [packages/api-strategy/src/error.ts:43](https://github.com/Xunnamius/api-utils/blob/51ed4560620e631b81b4890e48c56dab5e8d6449/packages/api-strategy/src/error.ts#L43)
 
 ## Extends
 
-- `Error`
-
-## Extended by
-
-- [`SanityError`](SanityError.md)
-- [`ClientValidationError`](ClientValidationError.md)
-- [`ServerValidationError`](ServerValidationError.md)
-- [`AuthError`](AuthError.md)
-- [`ForbiddenError`](ForbiddenError.md)
-- [`NotFoundError`](NotFoundError.md)
-- [`NotImplementedError`](NotImplementedError.md)
+- [`ApiError`](ApiError.md)
 
 ## Constructors
 
 ### Constructor
 
-> **new ApiError**(`message?`): `ApiError`
+> **new ForbiddenError**(`message?`): `ForbiddenError`
 
 Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1082
 
@@ -38,15 +28,15 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1082
 
 #### Returns
 
-`ApiError`
+`ForbiddenError`
 
 #### Inherited from
 
-`Error.constructor`
+[`ApiError`](ApiError.md).[`constructor`](ApiError.md#constructor)
 
 ### Constructor
 
-> **new ApiError**(`message?`, `options?`): `ApiError`
+> **new ForbiddenError**(`message?`, `options?`): `ForbiddenError`
 
 Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1082
 
@@ -62,11 +52,11 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1082
 
 #### Returns
 
-`ApiError`
+`ForbiddenError`
 
 #### Inherited from
 
-`Error.constructor`
+[`ApiError`](ApiError.md).[`constructor`](ApiError.md#constructor)
 
 ## Properties
 
@@ -78,7 +68,7 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 
 #### Inherited from
 
-`Error.cause`
+[`ApiError`](ApiError.md).[`cause`](ApiError.md#cause)
 
 ***
 
@@ -90,7 +80,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
 
 #### Inherited from
 
-`Error.message`
+[`ApiError`](ApiError.md).[`message`](ApiError.md#message)
 
 ***
 
@@ -102,7 +92,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 #### Inherited from
 
-`Error.name`
+[`ApiError`](ApiError.md).[`name`](ApiError.md#name)
 
 ***
 
@@ -114,7 +104,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 #### Inherited from
 
-`Error.stack`
+[`ApiError`](ApiError.md).[`stack`](ApiError.md#stack)
 
 ***
 
@@ -136,7 +126,7 @@ not capture any frames.
 
 #### Inherited from
 
-`Error.stackTraceLimit`
+[`ApiError`](ApiError.md).[`stackTraceLimit`](ApiError.md#stacktracelimit)
 
 ## Methods
 
@@ -206,7 +196,7 @@ a();
 
 #### Inherited from
 
-`Error.captureStackTrace`
+[`ApiError`](ApiError.md).[`captureStackTrace`](ApiError.md#capturestacktrace)
 
 ***
 
@@ -236,4 +226,4 @@ https://v8.dev/docs/stack-trace-api#customizing-stack-traces
 
 #### Inherited from
 
-`Error.prepareStackTrace`
+[`ApiError`](ApiError.md).[`prepareStackTrace`](ApiError.md#preparestacktrace)

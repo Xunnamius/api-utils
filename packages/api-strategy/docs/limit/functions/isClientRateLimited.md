@@ -10,7 +10,7 @@
 
 > **isClientRateLimited**(`request`): `Promise`\<[`IsClientRateLimitedReturnType`](../type-aliases/IsClientRateLimitedReturnType.md)\>
 
-Defined in: [packages/api-strategy/src/limit.ts:50](https://github.com/Xunnamius/api-utils/blob/2999e4472bea4c5a8ecd8f7c7fbf77e6b4bc26db/packages/api-strategy/src/limit.ts#L50)
+Defined in: [packages/api-strategy/src/limit.ts:50](https://github.com/Xunnamius/api-utils/blob/51ed4560620e631b81b4890e48c56dab5e8d6449/packages/api-strategy/src/limit.ts#L50)
 
 Returns an object with two keys: `isLimited` and `retryAfter`. If `isLimited`
 is true, then the request should be rejected. The client should be instructed
@@ -30,7 +30,7 @@ to retry their request after `retryAfter` milliseconds have passed.
 
 > **isClientRateLimited**(`req`): `Promise`\<[`IsClientRateLimitedReturnType`](../type-aliases/IsClientRateLimitedReturnType.md)\>
 
-Defined in: [packages/api-strategy/src/limit.ts:53](https://github.com/Xunnamius/api-utils/blob/2999e4472bea4c5a8ecd8f7c7fbf77e6b4bc26db/packages/api-strategy/src/limit.ts#L53)
+Defined in: [packages/api-strategy/src/limit.ts:53](https://github.com/Xunnamius/api-utils/blob/51ed4560620e631b81b4890e48c56dab5e8d6449/packages/api-strategy/src/limit.ts#L53)
 
 Returns an object with two keys: `isLimited` and `retryAfter`. If `isLimited`
 is true, then the request should be rejected. The client should be instructed
@@ -50,7 +50,7 @@ to retry their request after `retryAfter` milliseconds have passed.
 
 > **isClientRateLimited**(`reqOrRequest`): `Promise`\<[`IsClientRateLimitedReturnType`](../type-aliases/IsClientRateLimitedReturnType.md)\>
 
-Defined in: [packages/api-strategy/src/limit.ts:56](https://github.com/Xunnamius/api-utils/blob/2999e4472bea4c5a8ecd8f7c7fbf77e6b4bc26db/packages/api-strategy/src/limit.ts#L56)
+Defined in: [packages/api-strategy/src/limit.ts:56](https://github.com/Xunnamius/api-utils/blob/51ed4560620e631b81b4890e48c56dab5e8d6449/packages/api-strategy/src/limit.ts#L56)
 
 Returns an object with two keys: `isLimited` and `retryAfter`. If `isLimited`
 is true, then the request should be rejected. The client should be instructed
