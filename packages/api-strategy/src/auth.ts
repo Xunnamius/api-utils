@@ -196,6 +196,11 @@ export async function getTokens(options: {
    * Only those tokens that satisfy {@link TokenAttributesFilter} are returned.
    */
   filter: LiteralUnknownUnion<TokenAttributesFilter>;
+  /**
+   * Only return tokens with ids that occur "after" (i.e. are less than)
+   * `after_id`.
+   */
+  after_id?: MaybeAuthId;
 }): Promise<PublicAuthEntry[]>;
 export async function getTokens(
   options:
@@ -204,6 +209,7 @@ export async function getTokens(
       }
     | {
         filter: LiteralUnknownUnion<TokenAttributesFilter>;
+        after_id?: MaybeAuthId;
       }
 ): Promise<PublicAuthEntry[]> {
   const db = await getAuthDb();
@@ -222,7 +228,12 @@ export async function getTokens(
 
   const entries = await db
     .find<PublicAuthEntry>(
-      tokenAttributesFilterToMongoFilter(TokenAttributesFilter.assert(options.filter)),
+      {
+        ...(options.after_id ? { _id: { $lt: itemToObjectId(options.after_id) } } : {}),
+        ...tokenAttributesFilterToMongoFilter(
+          TokenAttributesFilter.assert(options.filter)
+        )
+      },
       {
         projection: publicAuthEntryProjection,
         limit: MAX_RESULTS_PER_PAGE
