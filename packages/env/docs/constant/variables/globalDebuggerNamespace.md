@@ -8,6 +8,6 @@
 
 > `const` **globalDebuggerNamespace**: `"xenv"` = `'xenv'`
 
-Defined in: [constant.ts:6](https://github.com/Xunnamius/api-utils/blob/2999e4472bea4c5a8ecd8f7c7fbf77e6b4bc26db/packages/env/src/constant.ts#L6)
+Defined in: [constant.ts:6](https://github.com/Xunnamius/api-utils/blob/6c4d0a6c6dd75cf70a61cf5e13f3a0671a3583aa/packages/env/src/constant.ts#L6)
 
 The project-wide namespace that appears in debugger output.
