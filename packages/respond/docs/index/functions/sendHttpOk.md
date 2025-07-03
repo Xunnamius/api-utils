@@ -10,7 +10,7 @@
 
 > **sendHttpOk**(...`args`): `Response`
 
-Defined in: [index.ts:141](https://github.com/Xunnamius/api-utils/blob/2999e4472bea4c5a8ecd8f7c7fbf77e6b4bc26db/packages/respond/src/index.ts#L141)
+Defined in: [index.ts:141](https://github.com/Xunnamius/api-utils/blob/dc547be746591c271280b9971411391f9b2053f2/packages/respond/src/index.ts#L141)
 
 Sends an HTTP 200 "ok" response with optional JSON data.
 
@@ -28,7 +28,7 @@ Sends an HTTP 200 "ok" response with optional JSON data.
 
 > **sendHttpOk**(...`args`): `void`
 
-Defined in: [index.ts:142](https://github.com/Xunnamius/api-utils/blob/2999e4472bea4c5a8ecd8f7c7fbf77e6b4bc26db/packages/respond/src/index.ts#L142)
+Defined in: [index.ts:142](https://github.com/Xunnamius/api-utils/blob/dc547be746591c271280b9971411391f9b2053f2/packages/respond/src/index.ts#L142)
 
 Sends an HTTP 200 "ok" response with optional JSON data.
 
@@ -46,7 +46,7 @@ Sends an HTTP 200 "ok" response with optional JSON data.
 
 > **sendHttpOk**(...`args`): `void` \| `Response`
 
-Defined in: [index.ts:143](https://github.com/Xunnamius/api-utils/blob/2999e4472bea4c5a8ecd8f7c7fbf77e6b4bc26db/packages/respond/src/index.ts#L143)
+Defined in: [index.ts:143](https://github.com/Xunnamius/api-utils/blob/dc547be746591c271280b9971411391f9b2053f2/packages/respond/src/index.ts#L143)
 
 Sends an HTTP 200 "ok" response with optional JSON data.
 
