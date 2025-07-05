@@ -8,7 +8,7 @@
 
 > **SafePublicAuthEntry** = `Omit`\<[`PublicAuthEntry`](PublicAuthEntry.md), `"token"`\>
 
-Defined in: [packages/api-strategy/src/auth/types.ts:163](https://github.com/Xunnamius/api-utils/blob/c4e96008fb8e0dd5fdfbead84f2e3657f2f0352f/packages/api-strategy/src/auth/types.ts#L163)
+Defined in: [packages/api-strategy/src/auth/types.ts:159](https://github.com/Xunnamius/api-utils/blob/d69fc4b10948b0fd555b5e8b1869b9e8266c0fb8/packages/api-strategy/src/auth/types.ts#L159)
 
 A version of  that excludes `token`, making it "safe" to reveal this
 data structure publicly (e.g. in logs and other output).

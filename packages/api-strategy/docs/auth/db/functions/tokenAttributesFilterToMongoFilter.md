@@ -8,7 +8,7 @@
 
 > **tokenAttributesFilterToMongoFilter**(`filter`): `object`
 
-Defined in: [packages/api-strategy/src/auth/db.ts:79](https://github.com/Xunnamius/api-utils/blob/c4e96008fb8e0dd5fdfbead84f2e3657f2f0352f/packages/api-strategy/src/auth/db.ts#L79)
+Defined in: [packages/api-strategy/src/auth/db.ts:79](https://github.com/Xunnamius/api-utils/blob/d69fc4b10948b0fd555b5e8b1869b9e8266c0fb8/packages/api-strategy/src/auth/db.ts#L79)
 
 Transforms `filter`, the token attributes filter, into a MongoDb update
 filter with equivalent meaning.

@@ -6,26 +6,65 @@
 
 # Function: createToken()
 
-> **createToken**(`__namedParameters`): `Promise`\<[`PublicAuthEntry`](../types/type-aliases/PublicAuthEntry.md)\>
+## Call Signature
 
-Defined in: [packages/api-strategy/src/auth.ts:144](https://github.com/Xunnamius/api-utils/blob/c4e96008fb8e0dd5fdfbead84f2e3657f2f0352f/packages/api-strategy/src/auth.ts#L144)
+> **createToken**(`options`): `Promise`\<[`PublicAuthEntry`](../types/type-aliases/PublicAuthEntry.md)\>
+
+Defined in: [packages/api-strategy/src/auth.ts:161](https://github.com/Xunnamius/api-utils/blob/d69fc4b10948b0fd555b5e8b1869b9e8266c0fb8/packages/api-strategy/src/auth.ts#L161)
 
 Generates a new bearer token and auth entry in the well-known "auth" MongoDB
 collection.
 
 Throws on invalid input.
 
-## Parameters
+### Parameters
 
-### \_\_namedParameters
+#### options
 
-#### data
+`CreateTokenOptions` & `object`
 
-`LiteralUnknownUnion`\<[`NewAuthEntry`](../types/type-aliases/NewAuthEntry.md)\>
-
-Data used to generate a new "auth" entry in the well-known "auth" MongoDB
-collection
-
-## Returns
+### Returns
 
 `Promise`\<[`PublicAuthEntry`](../types/type-aliases/PublicAuthEntry.md)\>
+
+## Call Signature
+
+> **createToken**(`options`): `Promise`\<[`SafePublicAuthEntry`](../types/type-aliases/SafePublicAuthEntry.md)\>
+
+Defined in: [packages/api-strategy/src/auth.ts:164](https://github.com/Xunnamius/api-utils/blob/d69fc4b10948b0fd555b5e8b1869b9e8266c0fb8/packages/api-strategy/src/auth.ts#L164)
+
+Generates a new bearer token and auth entry in the well-known "auth" MongoDB
+collection.
+
+Throws on invalid input.
+
+### Parameters
+
+#### options
+
+`CreateTokenOptions` & `object`
+
+### Returns
+
+`Promise`\<[`SafePublicAuthEntry`](../types/type-aliases/SafePublicAuthEntry.md)\>
+
+## Call Signature
+
+> **createToken**(`options`): `Promise`\<[`PublicAuthEntry`](../types/type-aliases/PublicAuthEntry.md) \| [`SafePublicAuthEntry`](../types/type-aliases/SafePublicAuthEntry.md)\>
+
+Defined in: [packages/api-strategy/src/auth.ts:167](https://github.com/Xunnamius/api-utils/blob/d69fc4b10948b0fd555b5e8b1869b9e8266c0fb8/packages/api-strategy/src/auth.ts#L167)
+
+Generates a new bearer token and auth entry in the well-known "auth" MongoDB
+collection.
+
+Throws on invalid input.
+
+### Parameters
+
+#### options
+
+`CreateTokenOptions`
+
+### Returns
+
+`Promise`\<[`PublicAuthEntry`](../types/type-aliases/PublicAuthEntry.md) \| [`SafePublicAuthEntry`](../types/type-aliases/SafePublicAuthEntry.md)\>
