@@ -1,6 +1,7 @@
 import { testApiHandler } from 'next-test-api-route-handler';
 
 import { withMiddleware } from 'universe+api';
+import { ErrorMessage } from 'universe+api:error.ts';
 import { makeMiddleware } from 'universe+api:middleware/add-raw-body.ts';
 
 import {
@@ -231,6 +232,34 @@ describe('<legacy mode>', () => {
       });
 
       expect(errorSpy).toHaveBeenCalledTimes(1);
+    });
+  });
+});
+
+describe('<modern mode>', () => {
+  it('throws when invoked', async () => {
+    expect.hasAssertions();
+
+    await withMockedOutput(async ({ errorSpy }) => {
+      await expect(
+        testApiHandler({
+          rejectOnHandlerError: true,
+          appHandler: {
+            GET: withMiddleware<Options, Context>(
+              () => {
+                expect(false).toBe('should never reach this point');
+              },
+              {
+                descriptor: '/fake',
+                use: [makeMiddleware()]
+              }
+            )
+          },
+          test: async ({ fetch }) => void (await fetch())
+        })
+      ).rejects.toThrow(ErrorMessage.ModernMiddlewareApiNotSupported());
+
+      expect(errorSpy).toHaveBeenCalledOnce();
     });
   });
 });

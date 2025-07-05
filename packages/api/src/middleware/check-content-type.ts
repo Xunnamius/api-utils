@@ -86,16 +86,6 @@ export function makeMiddleware() {
         : (reqOrRequest as Request).headers.get('content-type')
     )?.toLowerCase();
 
-    const configToLowercase = function (
-      allowedContentTypesConfig: AllowedContentTypesConfig
-    ): AllowedContentTypesConfig {
-      return typeof allowedContentTypesConfig === 'string'
-        ? (allowedContentTypesConfig.toLowerCase() as typeof allowedContentTypesConfig)
-        : Array.isArray(allowedContentTypesConfig)
-          ? allowedContentTypesConfig.map((s) => s.toLowerCase())
-          : toss(new Error(ErrorMessage.InvalidAllowedContentTypes()));
-    };
-
     // ? Ensure everything is lowercased before we begin
     const allowed = parseRawAllowedContentTypes();
 
@@ -206,4 +196,14 @@ export function makeMiddleware() {
       }
     }
   } satisfies ExportedMiddleware<Options, Context>;
+}
+
+function configToLowercase(
+  allowedContentTypesConfig: AllowedContentTypesConfig
+): AllowedContentTypesConfig {
+  return typeof allowedContentTypesConfig === 'string'
+    ? (allowedContentTypesConfig.toLowerCase() as typeof allowedContentTypesConfig)
+    : Array.isArray(allowedContentTypesConfig)
+      ? allowedContentTypesConfig.map((s) => s.toLowerCase())
+      : toss(new Error(ErrorMessage.InvalidAllowedContentTypes()));
 }

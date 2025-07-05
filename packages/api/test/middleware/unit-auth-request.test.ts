@@ -11,6 +11,7 @@ import { makeMiddleware } from 'universe+api:middleware/auth-request.ts';
 import {
   asMocked,
   legacyNoopHandler,
+  modernNoopHandler,
   withLegacyConfig,
   withMockedOutput
 } from 'testverse:util.ts';
@@ -77,6 +78,62 @@ describe('<legacy mode>', () => {
         testApiHandler({
           rejectOnHandlerError: true,
           pagesHandler,
+          test: async ({ fetch }) => void (await fetch())
+        })
+      ).rejects.toThrow('good badness');
+
+      expect(errorSpy).toHaveBeenCalled();
+    });
+  });
+});
+
+describe('<modern mode>', () => {
+  it('does nothing if request is authed', async () => {
+    expect.hasAssertions();
+
+    const authTarget = dummyRootData.auth[1]!;
+    mockGetAuthedClientToken.mockReturnValue(
+      Promise.resolve({
+        auth_id: authTarget._id.toString(),
+        attributes: authTarget.attributes
+      })
+    );
+
+    const appHandler = {
+      GET: withMiddleware<Options, Context>(modernNoopHandler, {
+        descriptor: '/fake',
+        use: [makeMiddleware()],
+        options: { requiresAuth: true }
+      })
+    };
+
+    await testApiHandler({
+      rejectOnHandlerError: true,
+      appHandler,
+      test: async ({ fetch }) => expect((await fetch()).status).toBe(200)
+    });
+  });
+
+  it('throws if request is not authed', async () => {
+    expect.hasAssertions();
+
+    await withMockedOutput(async ({ errorSpy }) => {
+      const appHandler = {
+        GET: withMiddleware<Options, Context>(modernNoopHandler, {
+          descriptor: '/fake',
+          use: [makeMiddleware()],
+          options: { requiresAuth: true }
+        })
+      };
+
+      mockGetAuthedClientToken.mockImplementation(() =>
+        toss(new AuthError('good badness'))
+      );
+
+      await expect(
+        testApiHandler({
+          rejectOnHandlerError: true,
+          appHandler,
           test: async ({ fetch }) => void (await fetch())
         })
       ).rejects.toThrow('good badness');

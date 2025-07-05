@@ -1,16 +1,21 @@
 import { getEnv } from '@-xun/env';
 import { sendHttpBadMethod } from '@-xun/respond';
 
+import {
+  isNextApiRequestLike,
+  isNextApiResponseLike
+} from 'multiverse+shared:next-like.ts';
+
 import { globalDebugLogger } from 'universe+api:constant.ts';
+import { ErrorMessage } from 'universe+api:error.ts';
 
 import type { ValidHttpMethod } from '@-xun/types';
 import type { EmptyObject } from 'type-fest';
-import type { NextApiResponseLike } from 'multiverse+shared:next-like.ts';
 
 import type {
   ExportedMiddleware,
-  MiddlewareContext,
-  ModernOrLegacyMiddleware
+  LegacyMiddleware,
+  MiddlewareContext
 } from 'universe+api:types.ts';
 
 const debug = globalDebugLogger.extend('check-method');
@@ -27,15 +32,28 @@ export type Context = EmptyObject;
 /**
  * Rejects requests that are either using a disallowed method or not using an
  * allowed method.
+ *
+ * Note that this middleware is only for legacy applications that are relying on
+ * `IncomingMessage` and `NextApiRequestLike` instead of a more modern
+ * {@link Request}-based approach.
  */
 export function makeMiddleware() {
   return async function (reqOrRequest, resOrModernContext, maybeLegacyContext) {
-    const isInLegacyMode = !!maybeLegacyContext;
-    debug('entered middleware runtime (mode: %O)', isInLegacyMode ? 'LEGACY' : 'MODERN');
+    debug('entered middleware runtime (mode: %O)', 'LEGACY-ONLY');
 
-    const context = (
-      isInLegacyMode ? maybeLegacyContext : resOrModernContext
-    ) as MiddlewareContext<Options, Context, ModernOrLegacyMiddleware<Options, Context>>;
+    if (
+      !isNextApiRequestLike(reqOrRequest) ||
+      !isNextApiResponseLike(resOrModernContext) ||
+      !maybeLegacyContext
+    ) {
+      throw new TypeError(ErrorMessage.ModernMiddlewareApiNotSupported());
+    }
+
+    const context = maybeLegacyContext as MiddlewareContext<
+      Options,
+      Context,
+      LegacyMiddleware<Options, Context>
+    >;
 
     const method = reqOrRequest.method?.toUpperCase();
 
@@ -57,13 +75,8 @@ export function makeMiddleware() {
 
       const allowHeaderValue = allowedMethods?.join(',') || '';
 
-      if (isInLegacyMode) {
-        const res = resOrModernContext as NextApiResponseLike;
-        res.setHeader('Allow', allowHeaderValue);
-        sendHttpBadMethod(res);
-      } else {
-        return sendHttpBadMethod({}, { headers: [['Allow', allowHeaderValue]] });
-      }
+      resOrModernContext.setHeader('Allow', allowHeaderValue);
+      sendHttpBadMethod(resOrModernContext);
     } else {
       debug(`method check succeeded: method "${method}" is allowed`);
     }

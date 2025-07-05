@@ -5,7 +5,13 @@ import { toss } from 'toss-expression';
 import { withMiddleware } from 'universe+api';
 import { makeMiddleware } from 'universe+api:middleware/log-request.ts';
 
-import { asMocked, legacyNoopHandler, withLegacyConfig } from 'testverse:util.ts';
+import {
+  asMocked,
+  legacyNoopHandler,
+  modernNoopHandler,
+  withLegacyConfig,
+  withMockedOutput
+} from 'testverse:util.ts';
 
 jest.mock('@-xun/api-strategy/log');
 
@@ -22,13 +28,11 @@ describe('<legacy mode>', () => {
     await testApiHandler({
       rejectOnHandlerError: true,
       pagesHandler: withLegacyConfig(
-        withLegacyConfig(
-          withMiddleware(async (_req, res) => res.status(404).send({}), {
-            descriptor: '/fake',
-            use: [makeMiddleware()],
-            options: { legacyMode: true }
-          })
-        )
+        withMiddleware(async (_req, res) => res.status(404).send({}), {
+          descriptor: '/fake',
+          use: [makeMiddleware()],
+          options: { legacyMode: true, awaitTasksAfterSent: true }
+        })
       ),
       test: async ({ fetch }) => {
         await Promise.all([fetch(), fetch(), fetch()]);
@@ -43,13 +47,11 @@ describe('<legacy mode>', () => {
     await testApiHandler({
       rejectOnHandlerError: true,
       pagesHandler: withLegacyConfig(
-        withLegacyConfig(
-          withMiddleware(async (_req, res) => void res.status(404).end(), {
-            descriptor: '/fake',
-            use: [makeMiddleware()],
-            options: { legacyMode: true }
-          })
-        )
+        withMiddleware(async (_req, res) => void res.status(404).end(), {
+          descriptor: '/fake',
+          use: [makeMiddleware()],
+          options: { legacyMode: true, awaitTasksAfterSent: true }
+        })
       ),
       test: async ({ fetch }) => {
         await Promise.all([fetch(), fetch(), fetch()]);
@@ -64,18 +66,16 @@ describe('<legacy mode>', () => {
     await testApiHandler({
       rejectOnHandlerError: true,
       pagesHandler: withLegacyConfig(
-        withLegacyConfig(
-          withMiddleware(
-            async (_req, res) => {
-              res.status(404).end();
-              res.end();
-            },
-            {
-              descriptor: '/fake',
-              use: [makeMiddleware()],
-              options: { legacyMode: true }
-            }
-          )
+        withMiddleware(
+          async (_req, res) => {
+            res.status(404).end();
+            res.end();
+          },
+          {
+            descriptor: '/fake',
+            use: [makeMiddleware()],
+            options: { legacyMode: true, awaitTasksAfterSent: true }
+          }
         )
       ),
       test: async ({ fetch }) => {
@@ -90,18 +90,86 @@ describe('<legacy mode>', () => {
 
     mockAddToRequestLog.mockImplementation(() => toss(new Error('fake error')));
 
+    await withMockedOutput(async ({ errorSpy }) => {
+      await testApiHandler({
+        pagesHandler: withLegacyConfig(
+          withMiddleware(legacyNoopHandler, {
+            descriptor: '/fake',
+            use: [makeMiddleware()],
+            useOnError: [],
+            options: { legacyMode: true, awaitTasksAfterSent: true }
+          })
+        ),
+        test: async ({ fetch }) => {
+          expect((await fetch()).status).toBe(200);
+        }
+      });
+
+      expect(errorSpy).toHaveBeenCalled();
+    });
+  });
+});
+
+describe('<modern mode>', () => {
+  it('logs request after returning Response', async () => {
+    expect.hasAssertions();
+
     await testApiHandler({
-      pagesHandler: withLegacyConfig(
-        withMiddleware(legacyNoopHandler, {
+      rejectOnHandlerError: true,
+      appHandler: {
+        GET: withMiddleware(async () => Response.json({}, { status: 404 }), {
           descriptor: '/fake',
           use: [makeMiddleware()],
-          useOnError: [],
-          options: { legacyMode: true }
+          options: { awaitTasksAfterSent: true }
         })
-      ),
+      },
       test: async ({ fetch }) => {
-        expect((await fetch()).status).toBe(200);
+        await Promise.all([fetch(), fetch(), fetch()]);
+        expect(mockAddToRequestLog).toHaveBeenCalledTimes(3);
       }
+    });
+  });
+
+  it('logs request after handling error', async () => {
+    expect.hasAssertions();
+
+    await testApiHandler({
+      rejectOnHandlerError: true,
+      appHandler: {
+        GET: withMiddleware(async () => Response.json({}, { status: 404 }), {
+          descriptor: '/fake',
+          use: [makeMiddleware()],
+          options: { awaitTasksAfterSent: true }
+        })
+      },
+      test: async ({ fetch }) => {
+        await Promise.all([fetch(), fetch(), fetch()]);
+        expect(mockAddToRequestLog).toHaveBeenCalledTimes(3);
+      }
+    });
+  });
+
+  it('does not trouble client with errors', async () => {
+    expect.hasAssertions();
+
+    mockAddToRequestLog.mockImplementation(() => toss(new Error('fake error')));
+
+    await withMockedOutput(async ({ errorSpy }) => {
+      await testApiHandler({
+        appHandler: {
+          GET: withMiddleware(modernNoopHandler, {
+            descriptor: '/fake',
+            use: [makeMiddleware()],
+            useOnError: [],
+            options: { awaitTasksAfterSent: true }
+          })
+        },
+        test: async ({ fetch }) => {
+          expect((await fetch()).status).toBe(200);
+        }
+      });
+
+      expect(errorSpy).toHaveBeenCalled();
     });
   });
 });

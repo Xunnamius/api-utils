@@ -59,3 +59,47 @@ describe('<legacy mode>', () => {
     });
   });
 });
+
+describe.skip('<modern mode>', () => {
+  it('does not inject contrived errors by default', async () => {
+    expect.hasAssertions();
+
+    await testApiHandler({
+      rejectOnHandlerError: true,
+      pagesHandler: withLegacyConfig(
+        withMiddleware<Options, Context>(legacyNoopHandler, {
+          descriptor: '/fake',
+          use: [makeMiddleware()],
+          options: { legacyMode: true }
+        })
+      ),
+      test: async ({ fetch }) => {
+        mockIsDueForContrivedError.mockReturnValue(Promise.resolve(true));
+        await expect(fetch().then((r) => r.status)).resolves.toBe(200);
+      }
+    });
+  });
+
+  it('injects contrived errors when due if enabled', async () => {
+    expect.hasAssertions();
+
+    await testApiHandler({
+      rejectOnHandlerError: true,
+      pagesHandler: withLegacyConfig(
+        withMiddleware<Options, Context>(legacyNoopHandler, {
+          descriptor: '/fake',
+          use: [makeMiddleware()],
+          options: { legacyMode: true, enableContrivedErrors: true }
+        })
+      ),
+      test: async ({ fetch }) => {
+        mockIsDueForContrivedError.mockReturnValue(Promise.resolve(false));
+        await expect(fetch().then((r) => r.status)).resolves.toBe(200);
+        mockIsDueForContrivedError.mockReturnValue(Promise.resolve(true));
+        await expect(fetch().then((r) => r.status)).resolves.toBe(555);
+        mockIsDueForContrivedError.mockReturnValue(Promise.resolve(false));
+        await expect(fetch().then((r) => r.status)).resolves.toBe(200);
+      }
+    });
+  });
+});

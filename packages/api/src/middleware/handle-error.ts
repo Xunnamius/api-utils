@@ -234,11 +234,11 @@ export function makeMiddleware() {
       return respondWith(sendNotImplemented, {});
     } else if (handleAs instanceof ApiError) {
       // eslint-disable-next-line no-console
-      console.error(`error - named exception on request: ${url}\n`, error);
+      console.error(`named exception on request: ${url}\n`, error);
       return respondWith(sendHttpUnspecifiedError, errorJson);
     } else {
       // eslint-disable-next-line no-console
-      console.error(`error - unnamed exception on request: ${url}\n`, error);
+      console.error(`unnamed exception on request: ${url}\n`, error);
       return respondWith(sendHttpUnspecifiedError, {});
     }
 
