@@ -10,17 +10,24 @@
 
 > **withMiddleware**\<`Options`, `Heap`\>(`handler`, `options`): [`ModernApiHandler`](../../types/type-aliases/ModernApiHandler.md)
 
-Defined in: [packages/api/src/index.ts:71](https://github.com/Xunnamius/api-utils/blob/2e0fabcd55b7c3db9985d1dbdad536d0a6ac1016/packages/api/src/index.ts#L71)
+Defined in: [packages/api/src/index.ts:79](https://github.com/Xunnamius/api-utils/blob/f86b6da3746432264ea1e1b00e1751b0fe171fe2/packages/api/src/index.ts#L79)
 
 This function decorates a Request handler, returning a generic
 Response-returning middleware runner function compatible with tools
 like Cloudflare Workers.
 
 The returned function additionally exposes HTTP method properties (e.g.
-`GET`, `POST`) compatible with the Next.js App Router.
+`GET`, `POST`) compatible with the Next.js App Router. Which methods are
+exposed depends on the `allowedMethods` option. Omitting this option, or
+providing an empty array, means this endpoint will serve all methods
+supported by the current framework/runtime.
 
-Passing `undefined` as `handler`, or not returning a Response from
-one of your middlewares/handler, will trigger an `HTTP 501 Not Implemented`
+Returning a response from a middleware, or a handler, will cause that
+response to be sent to the client immediately (after any `doAfterX` tasks are
+run), meaning no other middleware nor the primary handler will run.
+
+Passing `undefined` as `handler`, or never returning a Response from
+any of your middlewares/handler, will trigger an `HTTP 501 Not Implemented`
 response. This can be used to to stub out endpoints and their middleware for
 later implementation.
 
@@ -52,7 +59,7 @@ later implementation.
 
 > **withMiddleware**\<`Options`, `Heap`\>(`handler`, `options`): [`LegacyApiHandler`](../../types/type-aliases/LegacyApiHandler.md)
 
-Defined in: [packages/api/src/index.ts:88](https://github.com/Xunnamius/api-utils/blob/2e0fabcd55b7c3db9985d1dbdad536d0a6ac1016/packages/api/src/index.ts#L88)
+Defined in: [packages/api/src/index.ts:96](https://github.com/Xunnamius/api-utils/blob/f86b6da3746432264ea1e1b00e1751b0fe171fe2/packages/api/src/index.ts#L96)
 
 This function decorates a [LegacyApiHandlerWithHeap](../../types/type-aliases/LegacyApiHandlerWithHeap.md), returning a
 middleware runner compatible with legacy middleware like Express or the

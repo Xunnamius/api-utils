@@ -8,6 +8,7 @@
 
 ## Type Aliases
 
+- [AsSyncLegacyTask](type-aliases/AsSyncLegacyTask.md)
 - [ExportedMiddleware](type-aliases/ExportedMiddleware.md)
 - [FactoriedMiddlewareOptions](type-aliases/FactoriedMiddlewareOptions.md)
 - [LegacyApiHandler](type-aliases/LegacyApiHandler.md)

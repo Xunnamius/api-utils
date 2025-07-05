@@ -8,13 +8,18 @@
 
 > **ModernApiHandlerWithHeap**\<`Heap`\> = (`request`, `handlerContext`) => `Promisable`\<`Response` \| `undefined` \| `void`\>
 
-Defined in: [packages/api/src/types.ts:36](https://github.com/Xunnamius/api-utils/blob/2e0fabcd55b7c3db9985d1dbdad536d0a6ac1016/packages/api/src/types.ts#L36)
+Defined in: [packages/api/src/types.ts:47](https://github.com/Xunnamius/api-utils/blob/f86b6da3746432264ea1e1b00e1751b0fe171fe2/packages/api/src/types.ts#L47)
 
 The shape of a modern fetch request handler + an additional context
 parameter.
 
-Note that this type of handler is not necessarily consumable by third parties
-(see [ModernApiHandler](ModernApiHandler.md)).
+Note that returning a Response instance will immediately send a
+response and end the middleware execution chain. To prevent the chain from
+ending, do not return a Response. To edit the current response in
+passing, see the `runtime.response` property of [MiddlewareContext](MiddlewareContext.md).
+
+Also note that this type of handler is not necessarily consumable by third
+parties (see [ModernApiHandler](ModernApiHandler.md) for that).
 
 ## Type Parameters
 

@@ -8,7 +8,7 @@
 
 > `const` **ErrorMessage**: `object`
 
-Defined in: [packages/api/src/error.ts:5](https://github.com/Xunnamius/api-utils/blob/2e0fabcd55b7c3db9985d1dbdad536d0a6ac1016/packages/api/src/error.ts#L5)
+Defined in: [packages/api/src/error.ts:5](https://github.com/Xunnamius/api-utils/blob/f86b6da3746432264ea1e1b00e1751b0fe171fe2/packages/api/src/error.ts#L5)
 
 A collection of possible error and warning messages.
 
@@ -110,9 +110,33 @@ A collection of possible error and warning messages.
 
 `string`
 
+### RuntimeDoAfterHandledCalledTooLate()
+
+> **RuntimeDoAfterHandledCalledTooLate**(): `string`
+
+#### Returns
+
+`string`
+
+### RuntimeDoAfterSentCalledTooLate()
+
+> **RuntimeDoAfterSentCalledTooLate**(): `string`
+
+#### Returns
+
+`string`
+
 ### RuntimeDoneCalledTooEarly()
 
 > **RuntimeDoneCalledTooEarly**(): `string`
+
+#### Returns
+
+`string`
+
+### RuntimeDoneCalledTooLate()
+
+> **RuntimeDoneCalledTooLate**(): `string`
 
 #### Returns
 

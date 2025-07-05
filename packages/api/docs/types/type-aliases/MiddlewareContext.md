@@ -8,7 +8,7 @@
 
 > **MiddlewareContext**\<`Options`, `Heap`, `Middleware`, `PartialOptions`\> = `object`
 
-Defined in: [packages/api/src/types.ts:123](https://github.com/Xunnamius/api-utils/blob/2e0fabcd55b7c3db9985d1dbdad536d0a6ac1016/packages/api/src/types.ts#L123)
+Defined in: [packages/api/src/types.ts:140](https://github.com/Xunnamius/api-utils/blob/f86b6da3746432264ea1e1b00e1751b0fe171fe2/packages/api/src/types.ts#L140)
 
 The shape of a middleware context object, potentially customized with
 additional middleware-specific options.
@@ -41,7 +41,7 @@ handler executes respectively) changes.
 
 > **heap**: `Heap`
 
-Defined in: [packages/api/src/types.ts:213](https://github.com/Xunnamius/api-utils/blob/2e0fabcd55b7c3db9985d1dbdad536d0a6ac1016/packages/api/src/types.ts#L213)
+Defined in: [packages/api/src/types.ts:269](https://github.com/Xunnamius/api-utils/blob/f86b6da3746432264ea1e1b00e1751b0fe171fe2/packages/api/src/types.ts#L269)
 
 A context object meant to be written to and read by any middleware.
 
@@ -53,9 +53,9 @@ share data.
 
 ### options
 
-> **options**: `Options` & `"partial"` *extends* `PartialOptions` ? `Partial`\<`BaseOptions`\> : `BaseOptions`
+> **options**: `Options` & `"partial"` *extends* `PartialOptions` ? `Partial`\<`BaseOptions`\> : `BaseOptions` & `Middleware` *extends* [`WithModernTag`](WithModernTag.md)\<`unknown`\> ? `object` : `object`
 
-Defined in: [packages/api/src/types.ts:217](https://github.com/Xunnamius/api-utils/blob/2e0fabcd55b7c3db9985d1dbdad536d0a6ac1016/packages/api/src/types.ts#L217)
+Defined in: [packages/api/src/types.ts:273](https://github.com/Xunnamius/api-utils/blob/f86b6da3746432264ea1e1b00e1751b0fe171fe2/packages/api/src/types.ts#L273)
 
 Options expected by middleware functions at runtime.
 
@@ -65,39 +65,35 @@ Options expected by middleware functions at runtime.
 
 > **runtime**: `object`
 
-Defined in: [packages/api/src/types.ts:132](https://github.com/Xunnamius/api-utils/blob/2e0fabcd55b7c3db9985d1dbdad536d0a6ac1016/packages/api/src/types.ts#L132)
+Defined in: [packages/api/src/types.ts:149](https://github.com/Xunnamius/api-utils/blob/f86b6da3746432264ea1e1b00e1751b0fe171fe2/packages/api/src/types.ts#L149)
 
 Contains middleware use chain control functions and various metadata.
 
-#### doAfterHandled()
+#### doAfterHandled
 
-> `readonly` **doAfterHandled**: (`middleware`) => `void`
+> `readonly` **doAfterHandled**: `Middleware` *extends* [`WithModernTag`](WithModernTag.md)\<`unknown`\> ? (`middleware`) => `void` : `undefined`
 
 Appends `middleware` to list of special internal middlewares that are
 added and removed only by other middleware; they are not end-user facing.
 
-Middleware with tasks that need to execute after the handler completes
-successfully _but before the response is sent_ (e.g. cors) should add
-those tasks via this function.
+Modern middleware with tasks that need to execute after the handler
+completes successfully _but before the response is sent_ (e.g. cors)
+should add those tasks via this function.
+
+This method is only available when using modern middleware. When using
+legacy middleware, handle any "post-handler" tasks using the `res`
+parameter instead.
 
 Tasks are always executed in order after the `use` middleware chain, the
 handler, and/or the `useOnError` chain (when applicable) all execute
-successfully.
+successfully. And, though they have access to the same middleware context
+as actual middleware, the `runtime.done`, `runtime.doAfterHandled`, and
+`runtime.doAfterSent` methods are unavailable to tasks.
 
 **Unlike with `doAfterSent`, these internal middleware will ALWAYS delay
 the server from responding to a request.**
 
 Note that errors thrown by middleware added by this function are ignored.
-
-##### Parameters
-
-###### middleware
-
-`UnwrapTagged`\<`Middleware`\>
-
-##### Returns
-
-`void`
 
 #### doAfterSent()
 
@@ -112,10 +108,13 @@ those tasks via this function.
 
 Tasks are always executed in order after the `use` middleware chain, the
 handler, and/or the `useOnError` chain (when applicable) all execute
-successfully.
+successfully. And, though they have access to the same middleware context
+as actual middleware, the `runtime.done`, `runtime.doAfterHandled`, and
+`runtime.doAfterSent` methods are unavailable to tasks.
 
-**Unlike with `doAfterHandled`, these internal middleware will NEVER
-delay the server from responding to a request.**
+**Unlike with `doAfterHandled`, these internal middleware will (1) always
+run asynchronously regardless of legacy/modern and (2) NEVER delay the
+server from responding to a request.**
 
 Note that errors thrown by middleware added by this function are ignored.
 
@@ -134,10 +133,15 @@ Note that errors thrown by middleware added by this function are ignored.
 > `readonly` **done**: () => `void`
 
 Stop calling middleware functions, effectively aborting execution of the
-use chain. If a Response has not yet been returned (or
+current chain. If a Response has not yet been returned (or
 `response.end` hasn't been called if in legacy mode) before calling this
 function, it will be called automatically. On abort, the handler will
-also be skipped.
+also be skipped, but any registered tasks will _not_ be skipped.
+
+Note that, though they have access to the same middleware context as
+actual middleware, the `runtime.done`, `runtime.doAfterHandled`, and
+`runtime.doAfterSent` methods are unavailable to tasks (which are added
+via `doAfterHandled`/`doAfterSent`).
 
 ##### Returns
 
@@ -167,13 +171,36 @@ property will contain the thrown error object.
 
 #### response
 
-> `readonly` **response**: `Middleware` *extends* [`WithModernTag`](WithModernTag.md)\<`unknown`\> ? `Response` : `undefined`
+> **response**: `Middleware` *extends* [`WithModernTag`](WithModernTag.md)\<`unknown`\> ? `Response` : `undefined`
 
 For modern non-legacy middleware, this property contains the latest
 Response instance returned by some earlier middleware or handler.
 
-Once all middleware and handlers finish running, `response` is passed to
-the server for final processing.
+To modify the current response without sending it to the client
+immediately (which is what happens when you return a Response
+from some middleware or handler), mutate this property.
 
-Note that mutating `response` in middleware added via `doAfterSent` will
-have no effect.
+Do note that this property is backed by a setter function that will
+**merge the modified Response on top of the current
+Response**. This is also true of Responses that are
+returned normally.
+
+To overwrite an existing response body, use `''` instead of `null`, with
+the latter being ignored in favor of existing content. To overwrite an
+existing response status, pass it to the Response constructor as
+normal. However, note that once a status >=400 is set, requests with
+statuses <400 will have their statuses ignored when merged. Pass your
+Response with status set to `0` to always use the existing
+Response's status when merging.
+
+To dangerously _completely_ overwrite the current `runtime.response`
+property, first set it to `null`, which will cause it to reset to its
+default initial value (i.e. `new Response()`). This is not recommended
+(nor supported by intellisense), since middleware can be invoked in any
+order and modify the response in various unpredictable ways.
+
+Once all middleware and handlers finish running, this property is passed
+directly to the server for final processing.
+
+Also note that mutating this property in middleware added via
+`doAfterSent` will have no effect.

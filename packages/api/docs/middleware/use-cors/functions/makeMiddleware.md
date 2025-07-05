@@ -8,17 +8,16 @@
 
 > **makeMiddleware**(): (`reqOrRequest`, `resOrModernContext`, `maybeLegacyContext`) => `Promise`\<`undefined` \| `Response`\>
 
-Defined in: [packages/api/src/middleware/use-cors.ts:43](https://github.com/Xunnamius/api-utils/blob/2e0fabcd55b7c3db9985d1dbdad536d0a6ac1016/packages/api/src/middleware/use-cors.ts#L43)
+Defined in: [packages/api/src/middleware/use-cors.ts:58](https://github.com/Xunnamius/api-utils/blob/f86b6da3746432264ea1e1b00e1751b0fe171fe2/packages/api/src/middleware/use-cors.ts#L58)
 
-Allows _cross-origin_ requests for the most popular request types. **Note
-that this can be dangerous (huge security hole) and should only be used for
-public APIs**.
+Allows _cross-origin_ requests. Note that this can be dangerous (huge
+security hole) and should only be used for public APIs.
 
-When present, this should be among the very first middleware in the
-before-handler use chain (certainly before the `check-method` middleware).
+When present, this should be among if not the **very first** middleware in
+the use chain!
 
-By default, allowed CORS methods are: `GET`, `HEAD`, `PUT`, `PATCH`, `POST`,
-and `DELETE`.
+**NOTE: this middleware is not needed if using a framework like Next.js (App
+Router) that handles CORS headers for you.**
 
 ## Returns
 
@@ -41,3 +40,7 @@ and `DELETE`.
 ### Returns
 
 `Promise`\<`undefined` \| `Response`\>
+
+## See
+
+[defaultAllowedCorsMethods](../variables/defaultAllowedCorsMethods.md)

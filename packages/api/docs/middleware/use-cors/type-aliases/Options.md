@@ -8,7 +8,7 @@
 
 > **Options** = `object`
 
-Defined in: [packages/api/src/middleware/use-cors.ts:23](https://github.com/Xunnamius/api-utils/blob/2e0fabcd55b7c3db9985d1dbdad536d0a6ac1016/packages/api/src/middleware/use-cors.ts#L23)
+Defined in: [packages/api/src/middleware/use-cors.ts:24](https://github.com/Xunnamius/api-utils/blob/f86b6da3746432264ea1e1b00e1751b0fe171fe2/packages/api/src/middleware/use-cors.ts#L24)
 
 ## Properties
 
@@ -16,10 +16,14 @@ Defined in: [packages/api/src/middleware/use-cors.ts:23](https://github.com/Xunn
 
 > `optional` **allowedMethods**: [`Options`](../../check-method/type-aliases/Options.md)\[`"allowedMethods"`\]
 
-Defined in: [packages/api/src/middleware/use-cors.ts:27](https://github.com/Xunnamius/api-utils/blob/2e0fabcd55b7c3db9985d1dbdad536d0a6ac1016/packages/api/src/middleware/use-cors.ts#L27)
+Defined in: [packages/api/src/middleware/use-cors.ts:29](https://github.com/Xunnamius/api-utils/blob/f86b6da3746432264ea1e1b00e1751b0fe171fe2/packages/api/src/middleware/use-cors.ts#L29)
 
 #### Default
 
 ```ts
-['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE']
+['DELETE', 'GET', 'HEAD', 'PATCH', 'POST', 'PUT']
 ```
+
+#### See
+
+[defaultAllowedCorsMethods](../variables/defaultAllowedCorsMethods.md)
