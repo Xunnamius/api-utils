@@ -11,7 +11,8 @@ import {
   safePublicAuthEntryProjection,
   tokenAttributesFilterToMongoFilter,
   tokenAttributesUpdateToMongoUpdate,
-  toPublicAuthEntry
+  toPublicAuthEntry,
+  toSafePublicAuthEntry
 } from 'universe+api-strategy:auth/db.ts';
 
 import { getValidators } from 'universe+api-strategy:auth/types.ts';
@@ -51,6 +52,8 @@ export type GetAuthedClientTokenOptions = Partial<{
   /**
    * Additionally authenticate a client by narrowing matching to only those
    * tokens that satisfy `filter`.
+   *
+   * An empty `filter` object will return all tokens.
    *
    * @default undefined
    */
@@ -135,21 +138,39 @@ export async function getAuthedClientToken(
   return undefined;
 }
 
+type CreateTokenOptions = {
+  /**
+   * Data used to generate a new "auth" entry in the well-known "auth" MongoDB
+   * collection
+   */
+  data: LiteralUnknownUnion<NewAuthEntry>;
+  /**
+   * If `true`, `token` will be included in the returned object.
+   *
+   * @default true
+   */
+  includeToken?: boolean;
+};
+
 /**
  * Generates a new bearer token and auth entry in the well-known "auth" MongoDB
  * collection.
  *
  * Throws on invalid input.
  */
+export async function createToken(
+  options: CreateTokenOptions & { includeToken: true }
+): Promise<PublicAuthEntry>;
+export async function createToken(
+  options: CreateTokenOptions & { includeToken?: false }
+): Promise<SafePublicAuthEntry>;
+export async function createToken(
+  options: CreateTokenOptions
+): Promise<PublicAuthEntry | SafePublicAuthEntry>;
 export async function createToken({
-  data
-}: {
-  /**
-   * Data used to generate a new "auth" entry in the well-known "auth" MongoDB
-   * collection
-   */
-  data: LiteralUnknownUnion<NewAuthEntry>;
-}): Promise<PublicAuthEntry> {
+  data,
+  includeToken = true
+}: CreateTokenOptions): Promise<PublicAuthEntry | SafePublicAuthEntry> {
   const { NewAuthEntry } = await getValidators();
   const entry = NewAuthEntry.assert(data);
 
@@ -169,7 +190,9 @@ export async function createToken({
       : error;
   }
 
-  return toPublicAuthEntry(draftToken);
+  return includeToken
+    ? toPublicAuthEntry(draftToken)
+    : toSafePublicAuthEntry(draftToken);
 }
 
 /**
