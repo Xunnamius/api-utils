@@ -1,3 +1,4 @@
+import { ErrorMessage } from 'universe+api-strategy:error.ts';
 import { getCommonDummyData } from 'universe+api-strategy:mongo/dummy.ts';
 import { getCommonSchemaConfig } from 'universe+api-strategy:mongo/index.ts';
 
@@ -17,6 +18,19 @@ describe('::getCommonSchemaConfig', () => {
       },
       aliases: {}
     });
+
+    expect(
+      getCommonSchemaConfig({
+        databases: { someDb: { collections: [] } },
+        aliases: { 'my-alias': 'someDb' }
+      })
+    ).toStrictEqual({
+      databases: {
+        root: expect.toBeObject(),
+        someDb: expect.toBeObject()
+      },
+      aliases: { 'my-alias': 'someDb' }
+    });
   });
 
   it('throws if an alias references a non-existent database name', async () => {
@@ -27,7 +41,9 @@ describe('::getCommonSchemaConfig', () => {
         databases: { someDb: { collections: [] } },
         aliases: { app: 'badDb' }
       })
-    ).toThrow(/aliased database "badDb" \(referred to by alias "app"\) does not exist/);
+    ).toThrow(
+      ErrorMessage.AliasedDatabaseNotAliasable('badDb', 'app', ['root', 'someDb'])
+    );
   });
 
   it('throws if an alias itself conflicts with a database name', async () => {
@@ -38,9 +54,7 @@ describe('::getCommonSchemaConfig', () => {
         databases: { someDb: { collections: [] } },
         aliases: { someDb: 'root' }
       })
-    ).toThrow(
-      /database alias "someDb" \(referring to actual database "root"\) is invalid/
-    );
+    ).toThrow(ErrorMessage.InvalidDatabaseAlias('root', 'someDb'));
   });
 });
 

@@ -145,6 +145,83 @@ describe('::isClientRateLimited', () => {
       retryAfter: 0
     });
   });
+
+  it('works with modern Request objects', async () => {
+    expect.hasAssertions();
+
+    const req1 = await isClientRateLimited(
+      new Request('fake://localhost/api/route/path1', {
+        headers: new Headers({ 'x-forwarded-for': '1.2.3.4' }),
+        method: 'POST'
+      })
+    );
+
+    const req2 = await isClientRateLimited(
+      new Request('fake://localhost/api/route/path2', {
+        headers: {
+          'x-forwarded-for': '8.8.8.8',
+          // ? Should work with different cases too
+          authorization: `BEARER ${BANNED_BEARER_TOKEN}`
+        },
+        method: 'GET'
+      })
+    );
+
+    const req3 = await isClientRateLimited(
+      new Request('fake://localhost/api/route/path1', {
+        headers: new Headers({
+          'x-forwarded-for': '1.2.3.4',
+          authorization: 'bearer fake-header'
+        }),
+        method: 'POST'
+      })
+    );
+
+    const req4 = await isClientRateLimited(
+      new Request('fake://localhost/api/route/path1', {
+        headers: {
+          'x-forwarded-for': '5.6.7.8'
+        },
+        method: 'POST'
+      })
+    );
+
+    const req5 = await isClientRateLimited(
+      new Request('fake://localhost/api/route/path1', {
+        headers: new Headers({
+          'x-forwarded-for': '1.2.3.4',
+          authorization: `bearer ${BANNED_BEARER_TOKEN}`
+        }),
+        method: 'PUT'
+      })
+    );
+
+    const req6 = await isClientRateLimited(
+      new Request('fake://localhost/api/route/path1', {
+        headers: {
+          // ? Should work with different cases too
+          authorization: `bEaReR ${BANNED_BEARER_TOKEN}`
+        },
+        method: 'PATCH'
+      })
+    );
+
+    expect(req1.isLimited).toBeTrue();
+    expect(req2.isLimited).toBeTrue();
+    expect(req3.isLimited).toBeTrue();
+    expect(req4.isLimited).toBeTrue();
+    expect(req5.isLimited).toBeTrue();
+    expect(req6.isLimited).toBeTrue();
+
+    const minToMs = (minutes: number) => 1000 * 60 * minutes;
+    expect(req1.retryAfter).toBeWithin(minToMs(15) - 1000, minToMs(15) + 1000);
+    expect(req2.retryAfter).toBeWithin(minToMs(60) - 1000, minToMs(60) + 1000);
+    expect(req3.retryAfter).toBeWithin(minToMs(15) - 1000, minToMs(15) + 1000);
+    expect(req4.retryAfter).toBeWithin(minToMs(15) - 1000, minToMs(15) + 1000);
+    // ? Should return greater of the two ban times (header time > ip time)
+    expect(req5.retryAfter).toBeWithin(minToMs(60) - 1000, minToMs(60) + 1000);
+    expect(req6.retryAfter).toBeWithin(minToMs(60) - 1000, minToMs(60) + 1000);
+  });
 });
 
 describe('::removeRateLimit', () => {

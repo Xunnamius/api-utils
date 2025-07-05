@@ -1,6 +1,7 @@
 /* eslint-disable unicorn/prevent-abbreviations */
 import { randomUUID } from 'node:crypto';
 
+import { toss } from '@-xun/js';
 import { ErrorMessage as MongoItemErrorMessage } from '@-xun/mongo-item/error';
 import { setupMemoryServerOverride } from '@-xun/mongo-test';
 import { ObjectId } from 'mongodb';
@@ -28,7 +29,14 @@ import {
   useMockDateNow
 } from 'testverse:util.ts';
 
-import type { PublicAuthEntry } from 'universe+api-strategy:auth.ts';
+import type { Collection } from 'mongodb';
+
+import type {
+  InternalAuthEntry,
+  PublicAuthEntry,
+  SafePublicAuthEntry
+} from 'universe+api-strategy:auth.ts';
+
 import type { ExpectExceptionsWithMatchingErrorsSpec as Spec } from 'testverse:util.ts';
 
 useMockDateNow();
@@ -160,12 +168,18 @@ describe('::getAuthedClientToken', () => {
     }
   });
 
-  it('returns (across call sigs) undefined if bearer token does not exist', async () => {
+  it('returns (across call sigs) undefined if bearer token does not exist and "errorBehavior" is set to default', async () => {
     expect.hasAssertions();
 
     // * Header string call sig
     await expect(
       getAuthedClientToken(`bearer ${NULL_BEARER_TOKEN}`)
+    ).resolves.toBeUndefined();
+
+    await expect(
+      getAuthedClientToken(`bearer ${NULL_BEARER_TOKEN}`, {
+        errorBehavior: 'return-undefined'
+      })
     ).resolves.toBeUndefined();
 
     // * Legacy Next-like call sig
@@ -181,6 +195,20 @@ describe('::getAuthedClientToken', () => {
       test: async ({ fetch }) => void (await fetch())
     });
 
+    await testApiHandler({
+      rejectOnHandlerError: true,
+      requestPatcher(req) {
+        req.headers.authorization = `bearer ${NULL_BEARER_TOKEN}`;
+      },
+      async pagesHandler(req, res) {
+        await expect(
+          getAuthedClientToken(req, { errorBehavior: 'return-undefined' })
+        ).resolves.toBeUndefined();
+        res.status(200).send('OK');
+      },
+      test: async ({ fetch }) => void (await fetch())
+    });
+
     // * Modern web API call sig
     await testApiHandler({
       rejectOnHandlerError: true,
@@ -190,6 +218,40 @@ describe('::getAuthedClientToken', () => {
       appHandler: {
         async GET(request) {
           await expect(getAuthedClientToken(request)).resolves.toBeUndefined();
+          return new Response('OK');
+        }
+      },
+      test: async ({ fetch }) => void (await fetch())
+    });
+
+    await testApiHandler({
+      rejectOnHandlerError: true,
+      requestPatcher(request) {
+        request.headers.set('authorization', `bearer ${NULL_BEARER_TOKEN}`);
+      },
+      appHandler: {
+        async GET(request) {
+          await expect(
+            getAuthedClientToken(request, { errorBehavior: 'return-undefined' })
+          ).resolves.toBeUndefined();
+          return new Response('OK');
+        }
+      },
+      test: async ({ fetch }) => void (await fetch())
+    });
+
+    // * (special) When an error occurs
+    await testApiHandler({
+      rejectOnHandlerError: true,
+      requestPatcher(request) {
+        request.headers.set('authorization', `bearer ${NULL_BEARER_TOKEN}`);
+      },
+      appHandler: {
+        async GET(request) {
+          await expect(
+            // * Triggers ArkType error
+            getAuthedClientToken(request, { filter: { owner: 5 as unknown as string } })
+          ).resolves.toBeUndefined();
           return new Response('OK');
         }
       },
@@ -230,6 +292,27 @@ describe('::getAuthedClientToken', () => {
         async GET(request) {
           await expect(
             getAuthedClientToken(request, { errorBehavior: 'reject' })
+          ).rejects.toThrow(ErrorMessage.AuthAttemptFailed());
+          return new Response('OK');
+        }
+      },
+      test: async ({ fetch }) => void (await fetch())
+    });
+
+    // * (special) When an error occurs
+    await testApiHandler({
+      rejectOnHandlerError: true,
+      requestPatcher(request) {
+        request.headers.set('authorization', `bearer ${NULL_BEARER_TOKEN}`);
+      },
+      appHandler: {
+        async GET(request) {
+          await expect(
+            // * Triggers ArkType error
+            getAuthedClientToken(request, {
+              filter: { owner: 5 as unknown as string },
+              errorBehavior: 'reject'
+            })
           ).rejects.toThrow(ErrorMessage.AuthAttemptFailed());
           return new Response('OK');
         }
@@ -436,6 +519,35 @@ describe('::createToken', () => {
     ).resolves.toBe(2);
   });
 
+  it('does not return "token" when includeToken=false', async () => {
+    expect.hasAssertions();
+
+    const authDb = await getAuthDb();
+    const crypto = jest.requireActual('node:crypto');
+
+    mockRandomUUID.mockReturnValueOnce(crypto.randomUUID());
+    mockRandomUUID.mockReturnValueOnce(crypto.randomUUID());
+
+    await expect(
+      authDb.countDocuments({ 'attributes.owner': 'new-owner' })
+    ).resolves.toBe(0);
+
+    await expect(
+      createToken({ data: { attributes: { owner: 'new-owner' } }, includeToken: true })
+    ).resolves.toStrictEqual<PublicAuthEntry>({
+      auth_id: expect.any(String),
+      attributes: { owner: 'new-owner' },
+      token: expect.any(String)
+    });
+
+    await expect(
+      createToken({ data: { attributes: { owner: 'new-owner' } }, includeToken: false })
+    ).resolves.toStrictEqual<SafePublicAuthEntry>({
+      auth_id: expect.any(String),
+      attributes: { owner: 'new-owner' }
+    });
+  });
+
   it('rejects if a duplicate token is accidentally generated', async () => {
     expect.hasAssertions();
 
@@ -450,13 +562,21 @@ describe('::createToken', () => {
     });
   });
 
-  it('rejects if a duplicate token is accidentally generated even if original is deleted', async () => {
+  it('re-throws error if it is not a token collision', async () => {
     expect.hasAssertions();
+
+    const db: typeof import('universe+api-strategy:auth/db.ts') = require('universe+api-strategy:auth/db.ts');
+
+    jest.spyOn(db, 'getAuthDb').mockImplementation(async () => {
+      return {
+        insertOne: () => toss(new Error('something bad happened!'))
+      } as unknown as Collection<InternalAuthEntry>;
+    });
 
     await expect(
       createToken({ data: { attributes: { owner: 'new-owner' } } })
     ).rejects.toMatchObject({
-      message: expect.stringContaining('token collision')
+      message: expect.stringContaining('something bad happened!')
     });
   });
 
@@ -642,6 +762,74 @@ describe('::getTokens', () => {
         token: bannedToken
       }
     ]);
+  });
+
+  it('returns all entries if filter is empty', async () => {
+    expect.hasAssertions();
+
+    await expect(
+      getTokens({
+        filter: {}
+      })
+    ).resolves.toStrictEqual<PublicAuthEntry[]>([
+      {
+        auth_id: expect.any(String),
+        attributes: devAttributes,
+        token: devToken
+      },
+      {
+        auth_id: expect.any(String),
+        attributes: normieAttributes,
+        token: normieToken
+      },
+      {
+        auth_id: expect.any(String),
+        attributes: bannedAttributes,
+        token: bannedToken
+      }
+    ]);
+  });
+
+  it('returns many entries that satisfy filter with ids older than after_id', async () => {
+    expect.hasAssertions();
+
+    await expect(
+      getTokens({
+        filter: {},
+        after_id: dummyRootData.auth.at(-1)!._id
+      })
+    ).resolves.toStrictEqual<PublicAuthEntry[]>([
+      {
+        auth_id: expect.any(String),
+        attributes: devAttributes,
+        token: devToken
+      },
+      {
+        auth_id: expect.any(String),
+        attributes: normieAttributes,
+        token: normieToken
+      }
+    ]);
+
+    await expect(
+      getTokens({
+        filter: {},
+        after_id: dummyRootData.auth.at(-2)!._id
+      })
+    ).resolves.toStrictEqual<PublicAuthEntry[]>([
+      {
+        auth_id: expect.any(String),
+        attributes: devAttributes,
+        token: devToken
+      }
+    ]);
+
+    await expect(
+      getTokens({
+        filter: {},
+        after_id: dummyRootData.auth.at(-3)!._id
+      })
+    ).resolves.toStrictEqual<PublicAuthEntry[]>([]);
   });
 
   it('returns empty array if auth_ids do not exist', async () => {
