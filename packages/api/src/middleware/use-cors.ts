@@ -8,6 +8,7 @@ import type { EmptyObject } from 'type-fest';
 import type {
   MiddlewareContext,
   ModernMiddlewareContext,
+  NextApiRequestLike,
   NextApiResponseLike
 } from 'universe+api';
 
@@ -22,7 +23,8 @@ const debug = globalDebugLogger.extend('use-cors');
 
 export type Options = {
   /**
-   * @default ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE']
+   * @default ['DELETE', 'GET', 'HEAD', 'PATCH', 'POST', 'PUT']
+   * @see {@link defaultAllowedCorsMethods}
    */
   allowedMethods?: CheckMethodOptions['allowedMethods'];
 };
@@ -30,15 +32,28 @@ export type Options = {
 export type Context = EmptyObject;
 
 /**
- * Allows _cross-origin_ requests for the most popular request types. **Note
- * that this can be dangerous (huge security hole) and should only be used for
- * public APIs**.
+ * @see {@link Options}
+ */
+export const defaultAllowedCorsMethods = [
+  'DELETE',
+  'GET',
+  'HEAD',
+  'PATCH',
+  'POST',
+  'PUT'
+];
+
+/**
+ * Allows _cross-origin_ requests. Note that this can be dangerous (huge
+ * security hole) and should only be used for public APIs.
  *
- * When present, this should be among the very first middleware in the
- * before-handler use chain (certainly before the `check-method` middleware).
+ * When present, this should be among if not the **very first** middleware in
+ * the use chain!
  *
- * By default, allowed CORS methods are: `GET`, `HEAD`, `PUT`, `PATCH`, `POST`,
- * and `DELETE`.
+ * **NOTE: this middleware is not needed if using a framework like Next.js (App
+ * Router) that handles CORS headers for you.**
+ *
+ * @see {@link defaultAllowedCorsMethods}
  */
 export function makeMiddleware() {
   return async function (reqOrRequest, resOrModernContext, maybeLegacyContext) {
@@ -59,55 +74,100 @@ export function makeMiddleware() {
       >;
 
       if (isInLegacyMode) {
+        const req = reqOrRequest as NextApiRequestLike;
         const res = resOrModernContext as NextApiResponseLike;
         const rawHeaders = Object.entries(res.getHeaders()).map(
+          /* istanbul ignore next */
           ([k, v]) => [k, v?.toString() || ''] as [string, string]
         );
 
-        res.statusCode = 200; //204
-        res.setHeaders(getPreflightHeaders(new Headers(rawHeaders), allowedMethods));
+        res.statusCode = 204;
+        res.setHeader('Content-Length', '0');
+
+        res.setHeaders(
+          getPreflightResponseHeaders(
+            new Headers(rawHeaders),
+            allowedMethods,
+            // TODO: maybe provide allowed headers instead of reflecting request
+            req.headers['access-control-request-headers']
+          )
+        );
+
+        handleVaryHeader();
+        res.end();
       } else {
+        const request = reqOrRequest as Request;
+        const context = resOrModernContext as ModernMiddlewareContext<Options, Context>;
+
         const {
           runtime: { response }
-        } = resOrModernContext as ModernMiddlewareContext<Options, Context>;
+        } = context;
 
-        return new Response('OK', {
-          status: 200, //204
-          headers: getPreflightHeaders(response.headers, allowedMethods)
+        // @ts-expect-error: using escape hatch to "dangerously" reset response
+        context.runtime.response = null;
+
+        const outgoingResponse = new Response(null, {
+          status: 204,
+          headers: getPreflightResponseHeaders(
+            response.headers,
+            allowedMethods,
+            // TODO: maybe provide allowed headers instead of reflecting request
+            request.headers.get('Access-Control-Request-Headers')
+          )
         });
+
+        handleVaryHeader(outgoingResponse);
+        return outgoingResponse;
       }
     } else {
       if (isInLegacyMode) {
-        maybeLegacyContext.runtime.doAfterHandled((_req, res) => {
-          res.setHeaders(getStandardHeaders());
-
-          const varyHeader = res.getHeader('Vary');
-
-          if (varyHeader) {
-            vary(res, varyHeader.toString());
-          }
-        });
+        const res = resOrModernContext as NextApiResponseLike;
+        res.setHeaders(getStandardResponseHeaders());
       } else {
         const context = resOrModernContext as ModernMiddlewareContext<Options, Context>;
         context.runtime.doAfterHandled((_request, { runtime: { response } }) => {
-          getStandardHeaders().forEach((value, key) => response.headers.set(key, value));
-
-          const varyHeader = response.headers.get('Vary');
-
-          if (varyHeader) {
-            const resAdapter = {
-              getHeader(name) {
-                return response.headers.get(name) ?? undefined;
-              },
-              setHeader(name, value) {
-                response.headers.set(name, value.toString());
-                return resAdapter;
-              }
-            } as ServerResponse;
-
-            vary(resAdapter, varyHeader.toString());
-          }
+          getStandardResponseHeaders().forEach((value, key) =>
+            response.headers.set(key, value)
+          );
         });
+      }
+
+      handleVaryHeader();
+    }
+
+    function handleVaryHeader(overrideResponse?: Response) {
+      if (isInLegacyMode) {
+        const res = resOrModernContext as NextApiResponseLike;
+        res.setHeaders(getStandardResponseHeaders());
+
+        const varyHeader = res.getHeader('Vary');
+
+        if (varyHeader) {
+          vary(res, varyHeader.toString());
+        }
+      } else {
+        const {
+          runtime: { response }
+        } = overrideResponse
+          ? { runtime: { response: overrideResponse } }
+          : (resOrModernContext as ModernMiddlewareContext<Options, Context>);
+
+        const varyHeader = response.headers.get('Vary');
+
+        if (varyHeader) {
+          const resAdapter = {
+            getHeader(name) {
+              /* istanbul ignore next */
+              return response.headers.get(name) ?? undefined;
+            },
+            setHeader(name, value) {
+              response.headers.set(name, value.toString());
+              return resAdapter;
+            }
+          } as ServerResponse;
+
+          vary(resAdapter, varyHeader.toString());
+        }
       }
     }
 
@@ -115,50 +175,53 @@ export function makeMiddleware() {
      * @see https://www.npmjs.com/package/cors?activeTab=code
      * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS
      */
-    function getStandardHeaders() {
-      return new Headers({
+    function getStandardResponseHeaders() {
+      const headers = new Headers({
         'Access-Control-Allow-Origin': '*'
         // Access-Control-Allow-Credentials
         // Access-Control-Expose-Headers
       });
+
+      // If Access-Control-Allow-Origin is ever not "*"...
+      //headers.append('Vary', 'Origin');
+      return headers;
     }
 
     /**
      * @see https://www.npmjs.com/package/cors?activeTab=code
      * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS
      */
-    function getPreflightHeaders(
-      incomingHeaders: Headers,
-      allowedMethods: Options['allowedMethods']
+    function getPreflightResponseHeaders(
+      responseHeaders: Headers,
+      allowedMethods: Options['allowedMethods'],
+      acRequestHeaders: string | null | undefined
     ) {
       // Access-Control-Allow-Origin
       // Access-Control-Allow-Credentials
       // Access-Control-Expose-Headers
-      getStandardHeaders().forEach((value, key) => incomingHeaders.set(key, value));
+      getStandardResponseHeaders().forEach((value, key) =>
+        responseHeaders.set(key, value)
+      );
 
       // Access-Control-Allow-Methods
-      incomingHeaders.set(
+      responseHeaders.set(
         'Access-Control-Allow-Methods',
-        allowedMethods?.toString() || 'GET,HEAD,PUT,PATCH,POST,DELETE'
+        (allowedMethods || defaultAllowedCorsMethods)
+          .filter((m) => m !== 'OPTIONS')
+          .join(',')
       );
 
       // Access-Control-Allow-Headers
 
-      incomingHeaders.append('Vary', 'Access-Control-Request-Headers');
-
-      const acRequestHeaders = incomingHeaders.get('Access-Control-Request-Headers');
+      responseHeaders.append('Vary', 'Access-Control-Request-Headers');
 
       if (acRequestHeaders) {
-        incomingHeaders.set(
-          'Access-Control-Allow-Headers',
-          // TODO: provide allowed headers instead of reflecting request's
-          acRequestHeaders
-        );
+        responseHeaders.set('Access-Control-Allow-Headers', acRequestHeaders);
       }
 
       // Access-Control-Max-Age
 
-      return incomingHeaders;
+      return responseHeaders;
     }
   } satisfies ExportedMiddleware<Options, Context>;
 }
