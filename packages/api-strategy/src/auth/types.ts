@@ -46,11 +46,7 @@ export async function getValidators() {
       return $.type({
         owner: 'NonEmptyLimitedString | NonEmptyLimitedString[]',
         isGlobalAdmin: 'boolean'
-      })
-        .partial()
-        .narrow(function (filter, ctx) {
-          return !!Object.keys(filter).length || ctx.mustBe('a non-empty object');
-        });
+      }).partial();
     }
   });
 
