@@ -75,7 +75,10 @@ export async function addToRequestLog(
   const isInLegacyMode = !('request' in options);
   const reqOrRequest = isInLegacyMode ? options.req : options.request;
 
-  const url = reqOrRequest.url?.toString() || null;
+  const url =
+    reqOrRequest.url && URL.canParse(reqOrRequest.url)
+      ? new URL(reqOrRequest.url).pathname
+      : reqOrRequest.url || null;
 
   if (!endpoint) {
     // eslint-disable-next-line no-console

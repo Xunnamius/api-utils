@@ -44,8 +44,8 @@ describe('::addToRequestLog', () => {
       url: '/api/route/path2'
     } as unknown as NextApiRequestLike;
 
-    const res1 = { statusCode: 1111 } as NextApiResponseLike;
-    const res2 = { statusCode: 2222 } as NextApiResponseLike;
+    const res1 = { statusCode: 211 } as NextApiResponseLike;
+    const res2 = { statusCode: 222 } as NextApiResponseLike;
 
     await addToRequestLog({
       req: req1,
@@ -66,7 +66,7 @@ describe('::addToRequestLog', () => {
     );
 
     await expect(
-      reqlog.findOne({ resStatusCode: 1111 as HttpStatusCode })
+      reqlog.findOne({ resStatusCode: 211 as HttpStatusCode })
     ).resolves.toStrictEqual({
       _id: expect.anything(),
       ip: '9.9.9.9',
@@ -75,12 +75,12 @@ describe('::addToRequestLog', () => {
       endpoint: '/fake',
       method: 'POST',
       createdAt: mockDateNowMs,
-      resStatusCode: 1111,
+      resStatusCode: 211,
       durationMs: mockPerfNow
     });
 
     await expect(
-      reqlog.findOne({ resStatusCode: 2222 as HttpStatusCode })
+      reqlog.findOne({ resStatusCode: 222 as HttpStatusCode })
     ).resolves.toStrictEqual({
       _id: expect.anything(),
       ip: '8.8.8.8',
@@ -89,7 +89,7 @@ describe('::addToRequestLog', () => {
       endpoint: '/fake',
       method: 'GET',
       createdAt: mockDateNowMs,
-      resStatusCode: 2222,
+      resStatusCode: 222,
       durationMs: mockPerfNow
     });
   });
@@ -112,8 +112,8 @@ describe('::addToRequestLog', () => {
       url: null
     } as unknown as NextApiRequestLike;
 
-    const res1 = { statusCode: 1111 } as NextApiResponseLike;
-    const res2 = { statusCode: 2222 } as NextApiResponseLike;
+    const res1 = { statusCode: 211 } as NextApiResponseLike;
+    const res2 = { statusCode: 222 } as NextApiResponseLike;
 
     await addToRequestLog({
       req: req1,
@@ -134,7 +134,7 @@ describe('::addToRequestLog', () => {
     );
 
     await expect(
-      reqlog.findOne({ resStatusCode: 1111 as HttpStatusCode })
+      reqlog.findOne({ resStatusCode: 211 as HttpStatusCode })
     ).resolves.toStrictEqual({
       _id: expect.anything(),
       ip: '9.9.9.9',
@@ -143,12 +143,12 @@ describe('::addToRequestLog', () => {
       endpoint: '/fake',
       method: null,
       createdAt: mockDateNowMs,
-      resStatusCode: 1111,
+      resStatusCode: 211,
       durationMs: mockPerfNow
     });
 
     await expect(
-      reqlog.findOne({ resStatusCode: 2222 as HttpStatusCode })
+      reqlog.findOne({ resStatusCode: 222 as HttpStatusCode })
     ).resolves.toStrictEqual({
       _id: expect.anything(),
       ip: '8.8.8.8',
@@ -157,7 +157,7 @@ describe('::addToRequestLog', () => {
       endpoint: '/fake',
       method: 'GET',
       createdAt: mockDateNowMs,
-      resStatusCode: 2222,
+      resStatusCode: 222,
       durationMs: mockPerfNow
     });
   });
@@ -177,9 +177,9 @@ describe('::addToRequestLog', () => {
       url: null
     } as unknown as NextApiRequestLike;
 
-    const res1 = { statusCode: 1111 } as NextApiResponseLike;
-    const res2 = { statusCode: 2222 } as NextApiResponseLike;
-    const res3 = { statusCode: 3333 } as NextApiResponseLike;
+    const res1 = { statusCode: 211 } as NextApiResponseLike;
+    const res2 = { statusCode: 222 } as NextApiResponseLike;
+    const res3 = { statusCode: 333 } as NextApiResponseLike;
 
     const reqlog = (await getDb({ name: 'root' })).collection<InternalRequestLogEntry>(
       'request-log'
@@ -198,7 +198,7 @@ describe('::addToRequestLog', () => {
       );
 
       await expect(
-        reqlog.findOne({ resStatusCode: 1111 as HttpStatusCode })
+        reqlog.findOne({ resStatusCode: 211 as HttpStatusCode })
       ).resolves.toStrictEqual(
         expect.objectContaining({
           endpoint: null
@@ -215,7 +215,7 @@ describe('::addToRequestLog', () => {
       expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('at url: null'));
 
       await expect(
-        reqlog.findOne({ resStatusCode: 2222 as HttpStatusCode })
+        reqlog.findOne({ resStatusCode: 222 as HttpStatusCode })
       ).resolves.toStrictEqual(
         expect.objectContaining({
           endpoint: null
@@ -228,7 +228,7 @@ describe('::addToRequestLog', () => {
       expect(warnSpy).toHaveBeenCalledTimes(3);
 
       await expect(
-        reqlog.findOne({ resStatusCode: 3333 as HttpStatusCode })
+        reqlog.findOne({ resStatusCode: 333 as HttpStatusCode })
       ).resolves.toStrictEqual(
         expect.objectContaining({
           endpoint: null
@@ -243,6 +243,72 @@ describe('::addToRequestLog', () => {
       });
 
       expect(warnSpy).toHaveBeenCalledTimes(3);
+    });
+  });
+
+  it('works with modern Request objects', async () => {
+    expect.hasAssertions();
+
+    const request1 = new Request('http://localhost/api/route/path1', {
+      headers: new Headers({ 'x-forwarded-for': '9.9.9.9' }),
+      method: 'POST'
+    });
+
+    const request2 = new Request('http://localhost/api/route/path2', {
+      headers: {
+        'x-forwarded-for': '8.8.8.8',
+        authorization: `bearer ${BANNED_BEARER_TOKEN}`
+      },
+      method: 'GET'
+    });
+
+    const response1 = new Response(null, { status: 211 });
+    const response2 = new Response('OK', { status: 222 });
+
+    await addToRequestLog({
+      request: request1,
+      response: response1,
+      endpoint: '/fake',
+      durationMs: 1234
+    });
+
+    await addToRequestLog({
+      request: request2,
+      response: response2,
+      endpoint: '/fake',
+      durationMs: 1234
+    });
+
+    const reqlog = (await getDb({ name: 'root' })).collection<InternalRequestLogEntry>(
+      'request-log'
+    );
+
+    await expect(
+      reqlog.findOne({ resStatusCode: 211 as HttpStatusCode })
+    ).resolves.toStrictEqual({
+      _id: expect.anything(),
+      ip: '9.9.9.9',
+      header: null,
+      route: '/api/route/path1',
+      endpoint: '/fake',
+      method: 'POST',
+      createdAt: mockDateNowMs,
+      resStatusCode: 211,
+      durationMs: mockPerfNow
+    });
+
+    await expect(
+      reqlog.findOne({ resStatusCode: 222 as HttpStatusCode })
+    ).resolves.toStrictEqual({
+      _id: expect.anything(),
+      ip: '8.8.8.8',
+      header: `bearer ${BANNED_BEARER_TOKEN}`,
+      route: '/api/route/path2',
+      endpoint: '/fake',
+      method: 'GET',
+      createdAt: mockDateNowMs,
+      resStatusCode: 222,
+      durationMs: mockPerfNow
     });
   });
 });
