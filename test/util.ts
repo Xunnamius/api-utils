@@ -8,8 +8,9 @@ import { disableLoggers, enableLoggers, LoggerType } from 'rejoinder';
 import { defaultLegacyPageConfig } from 'universe+api';
 
 import type { withMockedEnv } from '@-xun/jest';
+import type { ValidHttpMethod } from '@-xun/types';
 import type { WithId } from 'mongodb';
-import type { LegacyApiHandler } from 'universe+api';
+import type { LegacyApiHandler, ModernApiHandler } from 'universe+api';
 
 import type {
   NextApiRequestLike,
@@ -71,29 +72,40 @@ export async function withDebugEnabled(fn: Parameters<typeof withMockedEnv>[0]) 
  * A mock legacy Next.js API handler that sends a `ServerResponse` with an empty
  * object body and 200 status code.
  */
-export const legacyNoopHandler = async (
+export async function legacyNoopHandler(
   _req: NextApiRequestLike,
   res: NextApiResponseLike
-) => {
+) {
   res.status(200).send({});
-};
+}
 
 /**
  * A mock modern handler that sends a {@link Reponse} with an empty object body
  * and 200 status code.
  */
-export const modernNoopHandler = async (_request: Request) => {
+export async function modernNoopHandler(_request: Request) {
   return Response.json({}, { status: 200 });
-};
+}
 
 /**
  * This function wraps a legacy or modern handler function so that it provides
  * the default (or a custom) API configuration object along with its
  * implementation.
  */
-export const withLegacyConfig = (handler: LegacyApiHandler, config?: PageConfigLike) => {
+export function withLegacyConfig(handler: LegacyApiHandler, config?: PageConfigLike) {
   const api: LegacyApiHandler & { config: PageConfigLike } = (...args) =>
     handler(...args);
+
   api.config = config || defaultLegacyPageConfig;
   return api;
-};
+}
+
+/**
+ * Return `handler` keyed to various request `method`s (e.g. GET, PUT)
+ */
+export function spreadHandlerAcrossMethods(
+  handler: ModernApiHandler,
+  methods: ValidHttpMethod[]
+) {
+  return Object.fromEntries(methods.map((method) => [method, handler]));
+}
