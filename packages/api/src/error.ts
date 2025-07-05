@@ -18,6 +18,15 @@ export const ErrorMessage = {
   RuntimeDoneCalledTooEarly() {
     return 'runtime.done was called too early';
   },
+  RuntimeDoAfterHandledCalledTooLate() {
+    return 'runtime.doAfterHandled was called after primary and error-handling middleware already ran, which is too late';
+  },
+  RuntimeDoAfterSentCalledTooLate() {
+    return 'runtime.doAfterSent was called after primary and error-handling middleware already ran, which is too late';
+  },
+  RuntimeDoneCalledTooLate() {
+    return 'runtime.done was called after primary and error-handling middleware already ran, which is too late';
+  },
   InvalidOptionInMiddlewareConfig(option: string) {
     return `a valid "${option}" option is missing from middleware configuration`;
   },

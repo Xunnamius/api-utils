@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 import { getEnv } from '@-xun/env';
-import { sendHttpUnspecifiedError, sendNotImplemented } from '@-xun/respond';
+import { sendNotImplemented } from '@-xun/respond';
 import { toss } from 'toss-expression';
 
 import { globalDebugLogger as debug } from 'universe+api:constant.ts';
@@ -18,6 +18,7 @@ import type {
 } from 'multiverse+shared:next-like.ts';
 
 import type {
+  AsSyncLegacyTask,
   LegacyApiHandler,
   LegacyApiHandlerWithHeap,
   LegacyMiddleware,
@@ -61,10 +62,17 @@ export type {
  * like Cloudflare Workers.
  *
  * The returned function additionally exposes HTTP method properties (e.g.
- * `GET`, `POST`) compatible with the Next.js App Router.
+ * `GET`, `POST`) compatible with the Next.js App Router. Which methods are
+ * exposed depends on the `allowedMethods` option. Omitting this option, or
+ * providing an empty array, means this endpoint will serve all methods
+ * supported by the current framework/runtime.
  *
- * Passing `undefined` as `handler`, or not returning a {@link Response} from
- * one of your middlewares/handler, will trigger an `HTTP 501 Not Implemented`
+ * Returning a response from a middleware, or a handler, will cause that
+ * response to be sent to the client immediately (after any `doAfterX` tasks are
+ * run), meaning no other middleware nor the primary handler will run.
+ *
+ * Passing `undefined` as `handler`, or never returning a {@link Response} from
+ * any of your middlewares/handler, will trigger an `HTTP 501 Not Implemented`
  * response. This can be used to to stub out endpoints and their middleware for
  * later implementation.
  */
@@ -114,9 +122,14 @@ export function withMiddleware<
 
     debug('-- begin (%O mode) --', isInLegacyMode ? 'LEGACY' : 'MODERN');
 
-    const doMiddlewareAfterHandled = [] as ModernOrLegacyMiddleware<Options, Heap>[];
-    const doMiddlewareAfterSent = [] as ModernOrLegacyMiddleware<Options, Heap>[];
+    const tasksToDoAfterHandled = [] as ModernOrLegacyMiddleware<Options, Heap>[];
+    const tasksToDoAfterSent = [] as ModernOrLegacyMiddleware<Options, Heap>[];
     let $response_ = new Response();
+
+    const {
+      promise: legacyTasksPromiseAwaitedAfterSend,
+      resolve: resolveLegacyTasksPromiseAwaitedAfterSend
+    } = Promise.withResolvers();
 
     const middlewareContext: MiddlewareContext<
       Options,
@@ -130,34 +143,42 @@ export function withMiddleware<
         done: () => toss(new Error(ErrorMessage.RuntimeDoneCalledTooEarly())),
         error: undefined,
         doAfterHandled(middleware) {
-          doMiddlewareAfterHandled.push(
+          tasksToDoAfterHandled.push(
             middleware as ModernOrLegacyMiddleware<Options, Heap>
           );
         },
         doAfterSent(middleware) {
-          doMiddlewareAfterSent.push(
-            middleware as ModernOrLegacyMiddleware<Options, Heap>
-          );
+          tasksToDoAfterSent.push(middleware as ModernOrLegacyMiddleware<Options, Heap>);
         },
         get response() {
           return $response_;
         },
         // ? Setting a new response must augment, not replace, the old one!
         set response(value: Response) {
+          if (value === $response_) {
+            debug.message('ignored attempt to set context.runtime.response to itself');
+            return;
+          }
+
+          // ? Adds support for a special escape hatched described in docs
+          if ((value as typeof value | null) === null) {
+            $response_ = new Response();
+            return;
+          }
+
           // ? Technically, value could be "void" (i.e. undefined)
           if (value instanceof Response) {
-            const draftBody = value.bodyUsed ? undefined : value.body;
-            const currentBody = $response_.bodyUsed ? undefined : $response_.body;
-            const body = draftBody === undefined ? currentBody : draftBody;
+            const draftBody = value.bodyUsed ? null : value.body;
+            const currentBody = $response_.bodyUsed ? null : $response_.body;
+            const body = draftBody === null ? currentBody : draftBody;
 
-            if (body === undefined) {
-              debug.warn(
-                'draft response body set to null: neither current nor updated Response has a usable body'
-              );
-            }
-
-            const draftResponse = new Response(body || null, {
-              status: value.status || $response_.status,
+            const draftResponse = new Response(body, {
+              status:
+                $response_.status >= 400
+                  ? value.status >= 400
+                    ? value.status
+                    : $response_.status
+                  : value.status || $response_.status,
               statusText: value.statusText || $response_.statusText
             });
 
@@ -190,6 +211,27 @@ export function withMiddleware<
     const writableContextRuntime = middlewareContext.runtime as Writable<
       typeof middlewareContext.runtime
     >;
+
+    if (isInLegacyMode) {
+      const res = resOrUndefined as NextApiResponseLike;
+      let ranDoAfterSent = false;
+
+      const sendActual = res.end.bind(res);
+      res.end = ((...args: Parameters<typeof res.end>) => {
+        sendActual(...args);
+
+        if (!ranDoAfterSent) {
+          ranDoAfterSent = true;
+
+          debug('running doAfterSent tasks after first call to res.end');
+
+          restrictMiddlewareContext();
+          resolveLegacyTasksPromiseAwaitedAfterSend(runTasksAfterSent());
+        }
+
+        return res;
+      }) as typeof res.end;
+    }
 
     try {
       let primaryChainWasAborted = false;
@@ -273,98 +315,169 @@ export function withMiddleware<
       }
     }
 
-    await runMiddlewareAfterHandled().catch((error: unknown) => {
-      debug.error(
-        'a middleware task added via doAfterHandled failed (which was ignored): %O',
-        error
-      );
-    });
-
-    const promisedMiddlewareAfterSent = runMiddlewareAfterSent().catch(
-      (error: unknown) => {
-        debug.error(
-          'a middleware task added via doAfterSent failed (which was ignored): %O',
-          error
-        );
-      }
-    );
-
-    if (options?.awaitMiddlewareAfterSent) {
-      await promisedMiddlewareAfterSent;
-    }
+    restrictMiddlewareContext();
 
     if (isInLegacyMode) {
       const res = resOrUndefined as NextApiResponseLike;
 
       if (res.writableEnded && !res.headersSent) {
-        sendHttpUnspecifiedError(res);
         throw new Error(ErrorMessage.ReachedEndOfRuntime());
       }
+
+      if (options.awaitTasksAfterSent) {
+        debug('awaiting middleware after sent...');
+        await legacyTasksPromiseAwaitedAfterSend;
+      }
+
+      return undefined;
     }
 
-    return isInLegacyMode ? undefined : middlewareContext.runtime.response;
+    // ? Just in case something weird happened...
+    resolveLegacyTasksPromiseAwaitedAfterSend(undefined);
 
-    async function runMiddlewareAfterHandled() {
-      for (const middleware of doMiddlewareAfterHandled) {
-        if (isInLegacyMode) {
-          const typedMiddleware = middleware as LegacyMiddleware<Options, Heap>;
+    // ? Returns a promise when in modern mode
+    await runTasksAfterHandled();
+    const promisedMiddlewareAfterSent = runTasksAfterSent();
 
-          const [req, res] = [
-            reqOrRequest as NextApiRequestLike,
-            resOrUndefined as NextApiResponseLike
-          ];
+    if (options?.awaitTasksAfterSent) {
+      await promisedMiddlewareAfterSent;
+    }
 
-          await typedMiddleware(
-            req,
-            res,
-            middlewareContext as MiddlewareContext<Options, Heap, typeof typedMiddleware>
-          );
-        } else {
-          const request = reqOrRequest as Request;
-          const typedMiddleware = middleware as ModernMiddleware<Options, Heap>;
+    return middlewareContext.runtime.response;
 
-          writableContextRuntime.response =
-            (await typedMiddleware(
-              request,
-              middlewareContext as MiddlewareContext<
-                Options,
-                Heap,
-                typeof typedMiddleware
-              >
-            )) || writableContextRuntime.response;
+    function restrictMiddlewareContext() {
+      writableContextRuntime.doAfterHandled = () =>
+        toss(new Error(ErrorMessage.RuntimeDoAfterHandledCalledTooLate()));
+      writableContextRuntime.doAfterSent = () =>
+        toss(new Error(ErrorMessage.RuntimeDoAfterSentCalledTooLate()));
+      writableContextRuntime.done = () =>
+        toss(new Error(ErrorMessage.RuntimeDoneCalledTooLate()));
+    }
+
+    function runTasksAfterHandled() {
+      if (isInLegacyMode) {
+        try {
+          for (const middleware of tasksToDoAfterHandled) {
+            try {
+              const typedMiddleware = middleware as AsSyncLegacyTask<
+                LegacyMiddleware<Options, Heap>
+              >;
+
+              const [req, res] = [
+                reqOrRequest as NextApiRequestLike,
+                resOrUndefined as NextApiResponseLike
+              ];
+
+              typedMiddleware(
+                req,
+                res,
+                middlewareContext as MiddlewareContext<
+                  Options,
+                  Heap,
+                  LegacyMiddleware<Options, Heap>
+                >
+              );
+            } catch (error) {
+              // eslint-disable-next-line no-console
+              console.error(
+                'a middleware task added via doAfterHandled failed (which was ignored): %O',
+                error
+              );
+            }
+          }
+        } finally {
+          debug('-- sync doAfterHandled tasks done --');
         }
+      } else {
+        const request = reqOrRequest as Request;
+        return Promise.resolve().then(async function () {
+          try {
+            for (const middleware of tasksToDoAfterHandled) {
+              try {
+                const typedMiddleware = middleware as ModernMiddleware<Options, Heap>;
+
+                const returnValue =
+                  (await typedMiddleware(
+                    request,
+                    middlewareContext as MiddlewareContext<
+                      Options,
+                      Heap,
+                      typeof typedMiddleware
+                    >
+                  )) || writableContextRuntime.response;
+
+                const shouldShortCircuit =
+                  returnValue !== writableContextRuntime.response;
+
+                writableContextRuntime.response = returnValue;
+
+                if (shouldShortCircuit) {
+                  debug.message(
+                    'a task added via doAfterHandled returned a Reponse, which will be sent immediately (other doAfterHandled tasks will be skipped)'
+                  );
+
+                  break;
+                }
+              } catch (error) {
+                // eslint-disable-next-line no-console
+                console.error(
+                  'a task added via doAfterHandled failed (which was ignored): %O',
+                  error
+                );
+              }
+            }
+          } finally {
+            debug('-- async doAfterHandled tasks done --');
+          }
+        });
       }
     }
 
-    async function runMiddlewareAfterSent() {
-      for (const middleware of doMiddlewareAfterSent) {
-        if (isInLegacyMode) {
-          const typedMiddleware = middleware as LegacyMiddleware<Options, Heap>;
+    async function runTasksAfterSent() {
+      try {
+        for (const middleware of tasksToDoAfterSent) {
+          try {
+            if (isInLegacyMode) {
+              const typedMiddleware = middleware as LegacyMiddleware<Options, Heap>;
 
-          const [req, res] = [
-            reqOrRequest as NextApiRequestLike,
-            resOrUndefined as NextApiResponseLike
-          ];
+              const [req, res] = [
+                reqOrRequest as NextApiRequestLike,
+                resOrUndefined as NextApiResponseLike
+              ];
 
-          await typedMiddleware(
-            req,
-            res,
-            middlewareContext as MiddlewareContext<Options, Heap, typeof typedMiddleware>
-          );
-        } else {
-          const request = reqOrRequest as Request;
-          const typedMiddleware = middleware as ModernMiddleware<Options, Heap>;
+              await typedMiddleware(
+                req,
+                res,
+                middlewareContext as MiddlewareContext<
+                  Options,
+                  Heap,
+                  typeof typedMiddleware
+                >
+              );
+            } else {
+              const request = reqOrRequest as Request;
+              const typedMiddleware = middleware as ModernMiddleware<Options, Heap>;
 
-          writableContextRuntime.response =
-            (await typedMiddleware(
-              request,
-              middlewareContext as MiddlewareContext<
-                Options,
-                Heap,
-                typeof typedMiddleware
-              >
-            )) || writableContextRuntime.response;
+              writableContextRuntime.response =
+                (await typedMiddleware(
+                  request,
+                  middlewareContext as MiddlewareContext<
+                    Options,
+                    Heap,
+                    typeof typedMiddleware
+                  >
+                )) || writableContextRuntime.response;
+            }
+          } catch (error) {
+            // eslint-disable-next-line no-console
+            console.error(
+              'a middleware task added via doAfterSent failed (which was ignored): %O',
+              error
+            );
+          }
         }
+      } finally {
+        debug('-- doAfterSent tasks done --');
       }
     }
 
@@ -391,22 +504,20 @@ export function withMiddleware<
             'chain will automatically call runtime.done after first call to res.end'
           );
 
-          // eslint-disable-next-line @typescript-eslint/unbound-method
-          const sendActual = res.end;
+          const sendActual = res.end.bind(res);
           res.end = ((...args: Parameters<typeof res.end>) => {
-            const sent = res.writableEnded || res.headersSent;
-            sendActual(...args);
-
-            if (!sent) {
+            if (!res.writableEnded && !res.headersSent) {
               if (!executionWasAborted && !executionCompleted) {
                 localDebug('calling runtime.done after first call to res.end');
                 middlewareContext.runtime.done();
               } else {
                 localDebug(
-                  'NOTICE: skipped calling runtime.done since chain already finished executing'
+                  'skipped calling runtime.done since chain already finished executing'
                 );
               }
             }
+
+            sendActual(...args);
           }) as typeof res.end;
         } else {
           localDebug('chain will NOT automatically call runtime.done');
@@ -476,7 +587,7 @@ export function withMiddleware<
               const typedCurrentMiddleware =
                 currentMiddleware as unknown as ModernMiddleware<Options, Heap>;
 
-              writableContextRuntime.response =
+              const returnValue =
                 (await typedCurrentMiddleware(
                   request,
                   middlewareContext as MiddlewareContext<
@@ -485,6 +596,18 @@ export function withMiddleware<
                     typeof typedCurrentMiddleware
                   >
                 )) || writableContextRuntime.response;
+
+              const shouldShortCircuit = returnValue !== writableContextRuntime.response;
+
+              writableContextRuntime.response = returnValue;
+
+              if (shouldShortCircuit) {
+                localDebug(
+                  'calling runtime.done after pullChain completed since a Response was returned'
+                );
+
+                middlewareContext.runtime.done();
+              }
             }
 
             ranAtLeastOneMiddleware = true;
@@ -497,20 +620,6 @@ export function withMiddleware<
           } else {
             localDebug('selecting next middleware in chain');
             await pullChain();
-          }
-
-          if (!isInLegacyMode) {
-            if (!executionWasAborted && !executionCompleted) {
-              localDebug(
-                'calling runtime.done after pullChain completed since a Response was returned'
-              );
-
-              middlewareContext.runtime.done();
-            } else {
-              localDebug(
-                'NOTICE: skipped calling runtime.done since chain already finished executing'
-              );
-            }
           }
         } else {
           localDebug('no more middleware to execute');

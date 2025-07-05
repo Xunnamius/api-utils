@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
-import type { Merge, Promisable, Tagged, UnwrapTagged } from 'type-fest';
+import type { ValidHttpMethod } from '@-xun/types';
+import type { Merge, Promisable, SetReturnType, Tagged, UnwrapTagged } from 'type-fest';
 
 import type {
   NextApiRequestLike,
@@ -21,6 +22,11 @@ export type WithLegacyTag<T> = Tagged<T, 'legacy'>;
 
 /**
  * The shape of a modern fetch request handler.
+ *
+ * Note that returning a {@link Response} instance will immediately send a
+ * response and end the middleware execution chain. To prevent the chain from
+ * ending, do not return a {@link Response}. To edit the current response in
+ * passing, see the `runtime.response` property of {@link MiddlewareContext}.
  */
 export type ModernApiHandler = (
   request: Request
@@ -30,8 +36,13 @@ export type ModernApiHandler = (
  * The shape of a modern fetch request handler + an additional context
  * parameter.
  *
- * Note that this type of handler is not necessarily consumable by third parties
- * (see {@link ModernApiHandler}).
+ * Note that returning a {@link Response} instance will immediately send a
+ * response and end the middleware execution chain. To prevent the chain from
+ * ending, do not return a {@link Response}. To edit the current response in
+ * passing, see the `runtime.response` property of {@link MiddlewareContext}.
+ *
+ * Also note that this type of handler is not necessarily consumable by third
+ * parties (see {@link ModernApiHandler} for that).
  */
 export type ModernApiHandlerWithHeap<Heap extends Record<PropertyKey, unknown>> = (
   request: Request,
@@ -89,6 +100,12 @@ export type LegacyMiddleware<
 >;
 
 /**
+ * This type exists for the benefit of legacy middleware.
+ */
+export type AsSyncLegacyTask<Middleware extends LegacyMiddleware<any, any>> =
+  SetReturnType<UnwrapTagged<Middleware>, Awaited<ReturnType<Middleware>>>;
+
+/**
  * The union of {@link ModernMiddleware} and {@link LegacyMiddleware}.
  */
 export type ModernOrLegacyMiddleware<
@@ -144,10 +161,15 @@ export type MiddlewareContext<
     };
     /**
      * Stop calling middleware functions, effectively aborting execution of the
-     * use chain. If a {@link Response} has not yet been returned (or
+     * current chain. If a {@link Response} has not yet been returned (or
      * `response.end` hasn't been called if in legacy mode) before calling this
      * function, it will be called automatically. On abort, the handler will
-     * also be skipped.
+     * also be skipped, but any registered tasks will _not_ be skipped.
+     *
+     * Note that, though they have access to the same middleware context as
+     * actual middleware, the `runtime.done`, `runtime.doAfterHandled`, and
+     * `runtime.doAfterSent` methods are unavailable to tasks (which are added
+     * via `doAfterHandled`/`doAfterSent`).
      */
     readonly done: () => void;
     /**
@@ -159,20 +181,28 @@ export type MiddlewareContext<
      * Appends `middleware` to list of special internal middlewares that are
      * added and removed only by other middleware; they are not end-user facing.
      *
-     * Middleware with tasks that need to execute after the handler completes
-     * successfully _but before the response is sent_ (e.g. cors) should add
-     * those tasks via this function.
+     * Modern middleware with tasks that need to execute after the handler
+     * completes successfully _but before the response is sent_ (e.g. cors)
+     * should add those tasks via this function.
+     *
+     * This method is only available when using modern middleware. When using
+     * legacy middleware, handle any "post-handler" tasks using the `res`
+     * parameter instead.
      *
      * Tasks are always executed in order after the `use` middleware chain, the
      * handler, and/or the `useOnError` chain (when applicable) all execute
-     * successfully.
+     * successfully. And, though they have access to the same middleware context
+     * as actual middleware, the `runtime.done`, `runtime.doAfterHandled`, and
+     * `runtime.doAfterSent` methods are unavailable to tasks.
      *
      * **Unlike with `doAfterSent`, these internal middleware will ALWAYS delay
      * the server from responding to a request.**
      *
      * Note that errors thrown by middleware added by this function are ignored.
      */
-    readonly doAfterHandled: (middleware: UnwrapTagged<Middleware>) => void;
+    readonly doAfterHandled: Middleware extends WithModernTag<unknown>
+      ? (middleware: UnwrapTagged<Middleware>) => void
+      : undefined;
     /**
      * Appends `middleware` to list of special internal middlewares that are
      * added and removed only by other middleware; they are not end-user facing.
@@ -183,10 +213,13 @@ export type MiddlewareContext<
      *
      * Tasks are always executed in order after the `use` middleware chain, the
      * handler, and/or the `useOnError` chain (when applicable) all execute
-     * successfully.
+     * successfully. And, though they have access to the same middleware context
+     * as actual middleware, the `runtime.done`, `runtime.doAfterHandled`, and
+     * `runtime.doAfterSent` methods are unavailable to tasks.
      *
-     * **Unlike with `doAfterHandled`, these internal middleware will NEVER
-     * delay the server from responding to a request.**
+     * **Unlike with `doAfterHandled`, these internal middleware will (1) always
+     * run asynchronously regardless of legacy/modern and (2) NEVER delay the
+     * server from responding to a request.**
      *
      * Note that errors thrown by middleware added by this function are ignored.
      */
@@ -195,13 +228,36 @@ export type MiddlewareContext<
      * For modern non-legacy middleware, this property contains the latest
      * {@link Response} instance returned by some earlier middleware or handler.
      *
-     * Once all middleware and handlers finish running, `response` is passed to
-     * the server for final processing.
+     * To modify the current response without sending it to the client
+     * immediately (which is what happens when you return a {@link Response}
+     * from some middleware or handler), mutate this property.
      *
-     * Note that mutating `response` in middleware added via `doAfterSent` will
-     * have no effect.
+     * Do note that this property is backed by a setter function that will
+     * **merge the modified {@link Response} on top of the current
+     * {@link Response}**. This is also true of {@link Response}s that are
+     * returned normally.
+     *
+     * To overwrite an existing response body, use `''` instead of `null`, with
+     * the latter being ignored in favor of existing content. To overwrite an
+     * existing response status, pass it to the {@link Response} constructor as
+     * normal. However, note that once a status >=400 is set, requests with
+     * statuses <400 will have their statuses ignored when merged. Pass your
+     * {@link Response} with status set to `0` to always use the existing
+     * {@link Response}'s status when merging.
+     *
+     * To dangerously _completely_ overwrite the current `runtime.response`
+     * property, first set it to `null`, which will cause it to reset to its
+     * default initial value (i.e. `new Response()`). This is not recommended
+     * (nor supported by intellisense), since middleware can be invoked in any
+     * order and modify the response in various unpredictable ways.
+     *
+     * Once all middleware and handlers finish running, this property is passed
+     * directly to the server for final processing.
+     *
+     * Also note that mutating this property in middleware added via
+     * `doAfterSent` will have no effect.
      */
-    readonly response: Middleware extends WithModernTag<unknown> ? Response : undefined;
+    response: Middleware extends WithModernTag<unknown> ? Response : undefined;
   };
   /**
    * A context object meant to be written to and read by any middleware.
@@ -215,18 +271,30 @@ export type MiddlewareContext<
    * Options expected by middleware functions at runtime.
    */
   options: Options &
-    ('partial' extends PartialOptions ? Partial<BaseOptions> : BaseOptions);
+    ('partial' extends PartialOptions ? Partial<BaseOptions> : BaseOptions) &
+    (Middleware extends WithModernTag<unknown>
+      ? {
+          /**
+           * An array of HTTP methods this endpoint is allowed to serve.
+           *
+           * Omitting this option, or providing an empty array, means this
+           * endpoint will serve all methods supported by the current
+           * framework/runtime.
+           */
+          allowedMethods?: ValidHttpMethod[];
+        }
+      : object);
 };
 
 type BaseOptions = {
   /**
-   * If `true` and `legacyMode` is also `true`, `context.runtime.done` is
-   * called whenever `res.end()` is called before the middleware chain
-   * completes execution.
+   * If `true` and `legacyMode` is also `true`, `context.runtime.done` is called
+   * whenever `res.end()` is called before the middleware chain completes
+   * execution.
    *
    * If `false` (or if `legacyMode` is `false`), the entire primary middleware
-   * chain will always run to completion, even if the response has already
-   * been sent before it completes.
+   * chain will always run to completion, even if the response has already been
+   * sent before it completes.
    *
    * @default true
    */
@@ -240,20 +308,19 @@ type BaseOptions = {
    */
   legacyMode: boolean;
   /**
-   * By default, modern usage of `withMiddleware` will return a
-   * {@link Response} as soon as possible by _not_ awaiting the promises
-   * generated by calling `doAfterSent()`.
+   * By default, both modern and legacy usage of `withMiddleware` will return a
+   * response as soon as possible by _not_ awaiting the promises generated by
+   * calling `doAfterSent()`.
    *
    * To make testing easier, `withMiddleware` can be configured to await said
    * promises instead; when `true`, the `doAfterSent` middleware promises will
-   * complete before the {@link Response} is returned or "sent" by this
-   * function.
+   * complete before the response is returned or "sent" by this function.
    *
    * Do not enable this in production.
    *
    * @default false
    */
-  awaitMiddlewareAfterSent: boolean;
+  awaitTasksAfterSent: boolean;
 };
 
 /**
