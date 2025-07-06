@@ -31,7 +31,7 @@ describe('<legacy mode>', () => {
         withMiddleware(async (_req, res) => res.status(404).send({}), {
           descriptor: '/fake',
           use: [makeMiddleware()],
-          options: { legacyMode: true, awaitTasksAfterSent: true }
+          options: { legacyMode: true }
         })
       ),
       test: async ({ fetch }) => {
@@ -50,7 +50,7 @@ describe('<legacy mode>', () => {
         withMiddleware(async (_req, res) => void res.status(404).end(), {
           descriptor: '/fake',
           use: [makeMiddleware()],
-          options: { legacyMode: true, awaitTasksAfterSent: true }
+          options: { legacyMode: true }
         })
       ),
       test: async ({ fetch }) => {
@@ -74,7 +74,7 @@ describe('<legacy mode>', () => {
           {
             descriptor: '/fake',
             use: [makeMiddleware()],
-            options: { legacyMode: true, awaitTasksAfterSent: true }
+            options: { legacyMode: true }
           }
         )
       ),
@@ -97,7 +97,7 @@ describe('<legacy mode>', () => {
             descriptor: '/fake',
             use: [makeMiddleware()],
             useOnError: [],
-            options: { legacyMode: true, awaitTasksAfterSent: true }
+            options: { legacyMode: true }
           })
         ),
         test: async ({ fetch }) => {
@@ -119,8 +119,7 @@ describe('<modern mode>', () => {
       appHandler: {
         GET: withMiddleware(async () => Response.json({}, { status: 404 }), {
           descriptor: '/fake',
-          use: [makeMiddleware()],
-          options: { awaitTasksAfterSent: true }
+          use: [makeMiddleware()]
         })
       },
       test: async ({ fetch }) => {
@@ -138,8 +137,7 @@ describe('<modern mode>', () => {
       appHandler: {
         GET: withMiddleware(async () => Response.json({}, { status: 404 }), {
           descriptor: '/fake',
-          use: [makeMiddleware()],
-          options: { awaitTasksAfterSent: true }
+          use: [makeMiddleware()]
         })
       },
       test: async ({ fetch }) => {
@@ -160,8 +158,7 @@ describe('<modern mode>', () => {
           GET: withMiddleware(modernNoopHandler, {
             descriptor: '/fake',
             use: [makeMiddleware()],
-            useOnError: [],
-            options: { awaitTasksAfterSent: true }
+            useOnError: []
           })
         },
         test: async ({ fetch }) => {

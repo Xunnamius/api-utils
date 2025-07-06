@@ -3,7 +3,13 @@ import { testApiHandler } from 'next-test-api-route-handler';
 import { withMiddleware } from 'universe+api';
 import { makeMiddleware } from 'universe+api:middleware/check-version.ts';
 
-import { legacyNoopHandler, mockEnvFactory, withLegacyConfig } from 'testverse:util.ts';
+import {
+  legacyNoopHandler,
+  mockEnvFactory,
+  modernNoopHandler,
+  spreadHandlerAcrossMethods,
+  withLegacyConfig
+} from 'testverse:util.ts';
 
 import type { Context, Options } from 'universe+api:middleware/check-version.ts';
 
@@ -193,30 +199,31 @@ describe('<legacy mode>', () => {
   });
 });
 
-describe.skip('<modern mode>', () => {
+describe('<modern mode>', () => {
   it('is a noop by default', async () => {
     expect.hasAssertions();
 
     await testApiHandler({
       rejectOnHandlerError: true,
-      pagesHandler: withLegacyConfig(
-        withMiddleware<Options, Context>(legacyNoopHandler, {
+      appHandler: spreadHandlerAcrossMethods(
+        withMiddleware<Options, Context>(modernNoopHandler, {
           descriptor: '/fake',
-          use: [makeMiddleware()],
-          options: { legacyMode: true }
-        })
+          use: [makeMiddleware()]
+        }),
+        ['GET']
       ),
       test: async ({ fetch }) => expect((await fetch()).status).toBe(200)
     });
 
     await testApiHandler({
       rejectOnHandlerError: true,
-      pagesHandler: withLegacyConfig(
-        withMiddleware<Options, Context>(legacyNoopHandler, {
+      appHandler: spreadHandlerAcrossMethods(
+        withMiddleware<Options, Context>(modernNoopHandler, {
           descriptor: '/fake',
           use: [makeMiddleware()],
-          options: { legacyMode: true, apiVersion: 'one' }
-        })
+          options: { apiVersion: 'one' }
+        }),
+        ['GET']
       ),
       test: async ({ fetch }) => expect((await fetch()).status).toBe(200)
     });
@@ -227,12 +234,13 @@ describe.skip('<modern mode>', () => {
 
     await testApiHandler({
       rejectOnHandlerError: true,
-      pagesHandler: withLegacyConfig(
-        withMiddleware<Options, Context>(legacyNoopHandler, {
+      appHandler: spreadHandlerAcrossMethods(
+        withMiddleware<Options, Context>(modernNoopHandler, {
           descriptor: '/fake',
           use: [makeMiddleware()],
-          options: { legacyMode: true, apiVersion: '1' }
-        })
+          options: { apiVersion: '1' }
+        }),
+        ['GET']
       ),
       test: async ({ fetch }) => {
         await withMockedEnv(
@@ -269,72 +277,77 @@ describe.skip('<modern mode>', () => {
       async () => {
         await testApiHandler({
           rejectOnHandlerError: true,
-          pagesHandler: withLegacyConfig(
-            withMiddleware<Options, Context>(legacyNoopHandler, {
+          appHandler: spreadHandlerAcrossMethods(
+            withMiddleware<Options, Context>(modernNoopHandler, {
               descriptor: '/fake',
               use: [makeMiddleware()],
-              options: { legacyMode: true, apiVersion: '1' }
-            })
+              options: { apiVersion: '1' }
+            }),
+            ['GET']
           ),
           test: async ({ fetch }) => expect((await fetch()).status).toBe(200)
         });
 
         await testApiHandler({
           rejectOnHandlerError: true,
-          pagesHandler: withLegacyConfig(
-            withMiddleware<Options, Context>(legacyNoopHandler, {
+          appHandler: spreadHandlerAcrossMethods(
+            withMiddleware<Options, Context>(modernNoopHandler, {
               descriptor: '/fake',
               use: [makeMiddleware()],
-              options: { legacyMode: true, apiVersion: '2' }
-            })
+              options: { apiVersion: '2' }
+            }),
+            ['GET']
           ),
           test: async ({ fetch }) => expect((await fetch()).status).toBe(404)
         });
 
         await testApiHandler({
           rejectOnHandlerError: true,
-          pagesHandler: withLegacyConfig(
-            withMiddleware<Options, Context>(legacyNoopHandler, {
+          appHandler: spreadHandlerAcrossMethods(
+            withMiddleware<Options, Context>(modernNoopHandler, {
               descriptor: '/fake',
               use: [makeMiddleware()],
-              options: { legacyMode: true, apiVersion: 'three' }
-            })
+              options: { apiVersion: 'three' }
+            }),
+            ['GET']
           ),
           test: async ({ fetch }) => expect((await fetch()).status).toBe(404)
         });
 
         await testApiHandler({
           rejectOnHandlerError: true,
-          pagesHandler: withLegacyConfig(
-            withMiddleware<Options, Context>(legacyNoopHandler, {
+          appHandler: spreadHandlerAcrossMethods(
+            withMiddleware<Options, Context>(modernNoopHandler, {
               descriptor: '/fake',
               use: [makeMiddleware()],
-              options: { legacyMode: true, apiVersion: '4' }
-            })
+              options: { apiVersion: '4' }
+            }),
+            ['GET']
           ),
           test: async ({ fetch }) => expect((await fetch()).status).toBe(404)
         });
 
         await testApiHandler({
           rejectOnHandlerError: true,
-          pagesHandler: withLegacyConfig(
+          appHandler: spreadHandlerAcrossMethods(
             withMiddleware<Options, Context>(async () => undefined, {
               descriptor: '/fake',
               use: [makeMiddleware()],
-              options: { legacyMode: true, apiVersion: '4' }
-            })
+              options: { apiVersion: '4' }
+            }),
+            ['GET']
           ),
           test: async ({ fetch }) => expect((await fetch()).status).toBe(404)
         });
 
         await testApiHandler({
           rejectOnHandlerError: true,
-          pagesHandler: withLegacyConfig(
-            withMiddleware<Options, Context>(legacyNoopHandler, {
+          appHandler: spreadHandlerAcrossMethods(
+            withMiddleware<Options, Context>(modernNoopHandler, {
               descriptor: '/fake',
-              use: [makeMiddleware()],
-              options: { legacyMode: true }
-            })
+              use: [makeMiddleware()]
+            }),
+            ['GET']
           ),
           test: async ({ fetch }) => expect((await fetch()).status).toBe(200)
         });
@@ -350,24 +363,25 @@ describe.skip('<modern mode>', () => {
       async () => {
         await testApiHandler({
           rejectOnHandlerError: true,
-          pagesHandler: withLegacyConfig(
-            withMiddleware<Options, Context>(legacyNoopHandler, {
+          appHandler: spreadHandlerAcrossMethods(
+            withMiddleware<Options, Context>(modernNoopHandler, {
               descriptor: '/fake',
               use: [makeMiddleware()],
-              options: { legacyMode: true, apiVersion: '4' }
-            })
+              options: { apiVersion: '4' }
+            }),
+            ['GET']
           ),
           test: async ({ fetch }) => expect((await fetch()).status).toBe(200)
         });
 
         await testApiHandler({
           rejectOnHandlerError: true,
-          pagesHandler: withLegacyConfig(
-            withMiddleware<Options, Context>(legacyNoopHandler, {
+          appHandler: spreadHandlerAcrossMethods(
+            withMiddleware<Options, Context>(modernNoopHandler, {
               descriptor: '/fake',
-              use: [makeMiddleware()],
-              options: { legacyMode: true }
-            })
+              use: [makeMiddleware()]
+            }),
+            ['GET']
           ),
           test: async ({ fetch }) => expect((await fetch()).status).toBe(200)
         });

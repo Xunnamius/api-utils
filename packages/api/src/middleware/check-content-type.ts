@@ -92,6 +92,7 @@ export function makeMiddleware() {
     if (!method) {
       debug('content-type check failed: method is undefined');
 
+      /* istanbul ignore else */
       if (isInLegacyMode) {
         const res = resOrModernContext as NextApiResponseLike;
         sendHttpBadRequest(res, { error: ErrorMessage.MethodIsUndefined() });

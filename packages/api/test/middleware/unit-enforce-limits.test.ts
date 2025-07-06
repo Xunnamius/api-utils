@@ -8,6 +8,8 @@ import {
   asMocked,
   legacyNoopHandler,
   mockEnvFactory,
+  modernNoopHandler,
+  spreadHandlerAcrossMethods,
   withLegacyConfig
 } from 'testverse:util.ts';
 
@@ -173,18 +175,18 @@ describe('<legacy mode>', () => {
   });
 });
 
-describe.skip('<modern mode>', () => {
+describe('<modern mode>', () => {
   it('rate limits requests according to backend determination', async () => {
     expect.hasAssertions();
 
     await testApiHandler({
       rejectOnHandlerError: true,
-      pagesHandler: withLegacyConfig(
-        withMiddleware(legacyNoopHandler, {
+      appHandler: spreadHandlerAcrossMethods(
+        withMiddleware(modernNoopHandler, {
           descriptor: '/fake',
-          use: [makeMiddleware()],
-          options: { legacyMode: true }
-        })
+          use: [makeMiddleware()]
+        }),
+        ['GET']
       ),
       test: async ({ fetch }) => {
         await withMockedEnv(
@@ -221,12 +223,12 @@ describe.skip('<modern mode>', () => {
 
     await testApiHandler({
       rejectOnHandlerError: true,
-      pagesHandler: withLegacyConfig(
-        withMiddleware(legacyNoopHandler, {
+      appHandler: spreadHandlerAcrossMethods(
+        withMiddleware(modernNoopHandler, {
           descriptor: '/fake',
-          use: [makeMiddleware()],
-          options: { legacyMode: true }
-        })
+          use: [makeMiddleware()]
+        }),
+        ['GET']
       ),
       test: async ({ fetch }) => {
         await withMockedEnv(
@@ -258,12 +260,12 @@ describe.skip('<modern mode>', () => {
 
     await testApiHandler({
       rejectOnHandlerError: true,
-      pagesHandler: withLegacyConfig(
-        withMiddleware(legacyNoopHandler, {
+      appHandler: spreadHandlerAcrossMethods(
+        withMiddleware(modernNoopHandler, {
           descriptor: '/fake',
-          use: [makeMiddleware()],
-          options: { legacyMode: true }
-        })
+          use: [makeMiddleware()]
+        }),
+        ['GET']
       ),
       test: async ({ fetch }) => {
         await withMockedEnv(
@@ -288,12 +290,12 @@ describe.skip('<modern mode>', () => {
 
     await testApiHandler({
       rejectOnHandlerError: true,
-      pagesHandler: withLegacyConfig(
-        withMiddleware(legacyNoopHandler, {
+      appHandler: spreadHandlerAcrossMethods(
+        withMiddleware(modernNoopHandler, {
           descriptor: '/fake',
-          use: [makeMiddleware()],
-          options: { legacyMode: true }
-        })
+          use: [makeMiddleware()]
+        }),
+        ['GET']
       ),
       test: async ({ fetch }) => {
         await withMockedEnv(

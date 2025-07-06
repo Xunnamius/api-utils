@@ -12,6 +12,7 @@ import {
   asMocked,
   legacyNoopHandler,
   modernNoopHandler,
+  spreadHandlerAcrossMethods,
   withLegacyConfig,
   withMockedOutput
 } from 'testverse:util.ts';
@@ -56,6 +57,59 @@ describe('<legacy mode>', () => {
       pagesHandler,
       test: async ({ fetch }) => expect((await fetch()).status).toBe(200)
     });
+  });
+
+  it('does nothing if requiresAuth is false', async () => {
+    expect.hasAssertions();
+
+    mockGetAuthedClientToken.mockReturnValue(Promise.resolve(undefined));
+
+    const pagesHandler = withLegacyConfig(
+      withMiddleware<Options, Context>(legacyNoopHandler, {
+        descriptor: '/fake',
+        use: [makeMiddleware()],
+        options: { requiresAuth: false, legacyMode: true }
+      })
+    );
+
+    await testApiHandler({
+      rejectOnHandlerError: true,
+      pagesHandler,
+      test: async ({ fetch }) => expect((await fetch()).status).toBe(200)
+    });
+  });
+
+  it('accepts requiresAuth with a filter', async () => {
+    expect.hasAssertions();
+
+    const authTarget = dummyRootData.auth[1]!;
+    mockGetAuthedClientToken.mockReturnValue(
+      Promise.resolve({
+        auth_id: authTarget._id.toString(),
+        attributes: authTarget.attributes
+      })
+    );
+
+    const pagesHandler = withLegacyConfig(
+      withMiddleware<Options, Context>(legacyNoopHandler, {
+        descriptor: '/fake',
+        use: [makeMiddleware()],
+        options: { requiresAuth: { filter: { isGlobalAdmin: true } }, legacyMode: true }
+      })
+    );
+
+    await testApiHandler({
+      rejectOnHandlerError: true,
+      pagesHandler,
+      test: async ({ fetch }) => expect((await fetch()).status).toBe(200)
+    });
+
+    expect(mockGetAuthedClientToken).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        filter: { isGlobalAdmin: true }
+      })
+    );
   });
 
   it('throws if request is not authed', async () => {
@@ -112,6 +166,61 @@ describe('<modern mode>', () => {
       appHandler,
       test: async ({ fetch }) => expect((await fetch()).status).toBe(200)
     });
+  });
+
+  it('does nothing if requiresAuth is false', async () => {
+    expect.hasAssertions();
+
+    mockGetAuthedClientToken.mockReturnValue(Promise.resolve(undefined));
+
+    const appHandler = spreadHandlerAcrossMethods(
+      withMiddleware<Options, Context>(modernNoopHandler, {
+        descriptor: '/fake',
+        use: [makeMiddleware()],
+        options: { requiresAuth: false }
+      }),
+      ['GET']
+    );
+
+    await testApiHandler({
+      rejectOnHandlerError: true,
+      appHandler,
+      test: async ({ fetch }) => expect((await fetch()).status).toBe(200)
+    });
+  });
+
+  it('accepts requiresAuth with a filter', async () => {
+    expect.hasAssertions();
+
+    const authTarget = dummyRootData.auth[1]!;
+    mockGetAuthedClientToken.mockReturnValue(
+      Promise.resolve({
+        auth_id: authTarget._id.toString(),
+        attributes: authTarget.attributes
+      })
+    );
+
+    const appHandler = spreadHandlerAcrossMethods(
+      withMiddleware<Options, Context>(modernNoopHandler, {
+        descriptor: '/fake',
+        use: [makeMiddleware()],
+        options: { requiresAuth: { filter: { isGlobalAdmin: true } } }
+      }),
+      ['GET']
+    );
+
+    await testApiHandler({
+      rejectOnHandlerError: true,
+      appHandler,
+      test: async ({ fetch }) => expect((await fetch()).status).toBe(200)
+    });
+
+    expect(mockGetAuthedClientToken).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        filter: { isGlobalAdmin: true }
+      })
+    );
   });
 
   it('throws if request is not authed', async () => {

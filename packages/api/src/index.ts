@@ -1,7 +1,10 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
+import { setImmediate } from 'node:timers/promises';
+
 import { getEnv } from '@-xun/env';
 import { sendHttpUnspecifiedError, sendNotImplemented } from '@-xun/respond';
+import { validHttpMethods } from '@-xun/types';
 import { toss } from 'toss-expression';
 
 import { globalDebugLogger as debug } from 'universe+api:constant.ts';
@@ -65,16 +68,16 @@ export type {
  * `GET`, `POST`) compatible with the Next.js App Router. Which methods are
  * exposed depends on the `allowedMethods` option. Omitting this option, or
  * providing an empty array, means this endpoint will serve all methods
- * supported by the current framework/runtime.
+ * supported by the current framework/runtime (see {@link validHttpMethods}).
  *
  * Returning a response from a middleware, or a handler, will cause that
  * response to be sent to the client immediately (after any `doAfterX` tasks are
  * run), meaning no other middleware nor the primary handler will run.
  *
- * Passing `undefined` as `handler`, or never returning a {@link Response} from
- * any of your middlewares/handler, will trigger an `HTTP 501 Not Implemented`
- * response. This can be used to to stub out endpoints and their middleware for
- * later implementation.
+ * Passing `undefined` as `handler` _and_ never _returning_ a {@link Response}
+ * from _any_ of your middlewares/handler, will trigger an `HTTP 501 Not
+ * Implemented` response. This can be used to to stub out endpoints and their
+ * middleware for later implementation.
  */
 export function withMiddleware<
   Options extends Record<string, unknown> = Record<string, unknown>,
@@ -109,17 +112,17 @@ export function withMiddleware<
     descriptor,
     use,
     useOnError,
-    options
+    options: options_
   }:
     | WithMiddlewareOptions<Options, Heap, ModernMiddleware<Options, Heap>>
     | WithMiddlewareOptions<Options, Heap, LegacyMiddleware<Options, Heap>>
 ): ModernApiHandler | LegacyApiHandler {
-  return async function (
+  const isInLegacyMode = !!options_?.legacyMode;
+
+  const wrapper = async function (
     reqOrRequest: NextApiRequestLike | Request,
     resOrUndefined: NextApiResponseLike | Response
   ) {
-    const isInLegacyMode = !!options?.legacyMode;
-
     debug('-- begin (%O mode) --', isInLegacyMode ? 'LEGACY' : 'MODERN');
 
     const tasksToDoAfterHandled = [] as ModernOrLegacyMiddleware<Options, Heap>[];
@@ -140,7 +143,9 @@ export function withMiddleware<
         endpoint: {
           descriptor
         },
-        done: () => toss(new Error(ErrorMessage.RuntimeDoneCalledTooEarly())),
+
+        done: /* istanbul ignore next */ () =>
+          toss(new Error(ErrorMessage.RuntimeDoneCalledTooEarly())),
         error: undefined,
         doAfterHandled(middleware) {
           tasksToDoAfterHandled.push(
@@ -178,7 +183,7 @@ export function withMiddleware<
                   ? value.status >= 400
                     ? value.status
                     : $response_.status
-                  : value.status || $response_.status,
+                  : value.status,
               statusText: value.statusText || $response_.statusText
             });
 
@@ -201,7 +206,7 @@ export function withMiddleware<
         awaitTasksAfterSent: process.env.NODE_ENV === 'test',
         callDoneOnEnd: true,
         legacyMode: isInLegacyMode,
-        ...options
+        ...options_
       } as MiddlewareContext<
         Options,
         Heap,
@@ -227,7 +232,7 @@ export function withMiddleware<
           debug('running doAfterSent tasks after first call to res.end');
 
           restrictMiddlewareContext();
-          resolveLegacyTasksPromiseAwaitedAfterSend(runTasksAfterSent());
+          resolveLegacyTasksPromiseAwaitedAfterSend(setImmediate(runTasksAfterSent()));
         }
 
         return res;
@@ -245,10 +250,10 @@ export function withMiddleware<
         throw error;
       }
 
-      if (typeof handler === 'function') {
-        if (primaryChainWasAborted) {
-          debug('not executing handler since primary chain execution was aborted');
-        } else {
+      if (primaryChainWasAborted) {
+        debug('not executing handler since primary chain execution was aborted');
+      } else {
+        if (typeof handler === 'function') {
           debug('executing handler');
 
           writableContextRuntime.response = await Reflect.apply(handler, null, [
@@ -258,10 +263,10 @@ export function withMiddleware<
           ] as Parameters<typeof handler>);
 
           debug('finished executing handler');
+        } else {
+          debug('no handler function available');
+          writableContextRuntime.response = sendNotImplemented();
         }
-      } else {
-        debug('no handler function available');
-        writableContextRuntime.response = sendNotImplemented();
       }
 
       if (isInLegacyMode) {
@@ -325,12 +330,13 @@ export function withMiddleware<
     if (isInLegacyMode) {
       const res = resOrUndefined as NextApiResponseLike;
 
-      // ? Catch any unsent responses
-      if (res.writableEnded && !res.headersSent) {
+      // ? Sanity check that should never be satisfied
+      /* istanbul ignore next */
+      if (!res.writableEnded || !res.headersSent) {
         throw new Error(ErrorMessage.ReachedEndOfRuntime());
       }
 
-      if (options.awaitTasksAfterSent) {
+      if (middlewareContext.options.awaitTasksAfterSent) {
         debug('awaiting middleware after sent...');
         await legacyTasksPromiseAwaitedAfterSend;
       }
@@ -343,14 +349,15 @@ export function withMiddleware<
 
     // ? Returns a promise when in modern mode
     await runTasksAfterHandled();
-    const promisedMiddlewareAfterSent = runTasksAfterSent();
+    const promisedMiddlewareAfterSent = setImmediate(runTasksAfterSent());
 
-    if (options?.awaitTasksAfterSent) {
+    if (middlewareContext.options.awaitTasksAfterSent) {
       await promisedMiddlewareAfterSent;
     }
 
     return middlewareContext.runtime.response;
 
+    /* istanbul ignore next */
     function restrictMiddlewareContext() {
       writableContextRuntime.doAfterHandled = () =>
         toss(new Error(ErrorMessage.RuntimeDoAfterHandledCalledTooLate()));
@@ -641,6 +648,15 @@ export function withMiddleware<
       }
     }
   };
+
+  if (!isInLegacyMode) {
+    const modernWrapper = wrapper as unknown as ModernApiHandler;
+    (options_?.allowedMethods || validHttpMethods).forEach((method) => {
+      modernWrapper[method] = modernWrapper;
+    });
+  }
+
+  return wrapper;
 }
 
 /**

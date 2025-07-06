@@ -4,7 +4,13 @@ import { testApiHandler } from 'next-test-api-route-handler';
 import { withMiddleware } from 'universe+api';
 import { makeMiddleware } from 'universe+api:middleware/contrive-error.ts';
 
-import { asMocked, legacyNoopHandler, withLegacyConfig } from 'testverse:util.ts';
+import {
+  asMocked,
+  legacyNoopHandler,
+  modernNoopHandler,
+  spreadHandlerAcrossMethods,
+  withLegacyConfig
+} from 'testverse:util.ts';
 
 import type { Context, Options } from 'universe+api:middleware/contrive-error.ts';
 
@@ -60,18 +66,18 @@ describe('<legacy mode>', () => {
   });
 });
 
-describe.skip('<modern mode>', () => {
+describe('<modern mode>', () => {
   it('does not inject contrived errors by default', async () => {
     expect.hasAssertions();
 
     await testApiHandler({
       rejectOnHandlerError: true,
-      pagesHandler: withLegacyConfig(
-        withMiddleware<Options, Context>(legacyNoopHandler, {
+      appHandler: spreadHandlerAcrossMethods(
+        withMiddleware<Options, Context>(modernNoopHandler, {
           descriptor: '/fake',
-          use: [makeMiddleware()],
-          options: { legacyMode: true }
-        })
+          use: [makeMiddleware()]
+        }),
+        ['GET']
       ),
       test: async ({ fetch }) => {
         mockIsDueForContrivedError.mockReturnValue(Promise.resolve(true));
@@ -85,12 +91,13 @@ describe.skip('<modern mode>', () => {
 
     await testApiHandler({
       rejectOnHandlerError: true,
-      pagesHandler: withLegacyConfig(
-        withMiddleware<Options, Context>(legacyNoopHandler, {
+      appHandler: spreadHandlerAcrossMethods(
+        withMiddleware<Options, Context>(modernNoopHandler, {
           descriptor: '/fake',
           use: [makeMiddleware()],
-          options: { legacyMode: true, enableContrivedErrors: true }
-        })
+          options: { enableContrivedErrors: true }
+        }),
+        ['GET']
       ),
       test: async ({ fetch }) => {
         mockIsDueForContrivedError.mockReturnValue(Promise.resolve(false));

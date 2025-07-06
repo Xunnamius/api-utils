@@ -28,9 +28,13 @@ export type WithLegacyTag<T> = Tagged<T, 'legacy'>;
  * ending, do not return a {@link Response}. To edit the current response in
  * passing, see the `runtime.response` property of {@link MiddlewareContext}.
  */
-export type ModernApiHandler = (
+export type ModernApiHandler = ((
   request: Request
-) => Promisable<Response | undefined | void>;
+) => Promisable<Response | undefined | void>) & {
+  // ? Sugar for Next.js's app router
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+  [method in ValidHttpMethod]?: Extract<ModernApiHandler, Function>;
+};
 
 /**
  * The shape of a modern fetch request handler + an additional context
@@ -240,10 +244,12 @@ export type MiddlewareContext<
      * To overwrite an existing response body, use `''` instead of `null`, with
      * the latter being ignored in favor of existing content. To overwrite an
      * existing response status, pass it to the {@link Response} constructor as
-     * normal. However, note that once a status >=400 is set, requests with
-     * statuses <400 will have their statuses ignored when merged. Pass your
-     * {@link Response} with status set to `0` to always use the existing
-     * {@link Response}'s status when merging.
+     * normal. Note that (1) not passing a status to the {@link Response}
+     * constructor defaults it to `HTTP 200`, which will overwrite the current
+     * status and (2) once a status >=400 is set, requests with statuses <400
+     * will have their statuses ignored when merged. To preserve the current
+     * response status instead of overwriting it, pass in
+     * `runtime.response.status` when constructing the new {@link Response}.
      *
      * To dangerously _completely_ overwrite the current `runtime.response`
      * property, first set it to `null`, which will cause it to reset to its
