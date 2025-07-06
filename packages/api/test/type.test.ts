@@ -332,7 +332,7 @@ describe('::withMiddleware', () => {
           useOnError: [makeErrorHandlingMiddleware()],
           options: {
             requiresAuth: false,
-            errorHandlers: new Map([
+            errorHandlers: [
               [
                 TypeError,
                 (request, response, error, ctx) => {
@@ -346,7 +346,7 @@ describe('::withMiddleware', () => {
                   return Response.json(error, { status: 500 });
                 }
               ]
-            ])
+            ]
           }
         }
       );
@@ -363,7 +363,7 @@ describe('::withMiddleware', () => {
           descriptor: '',
           use: [],
           // ? Missing the required "requiresAuth" option!
-          options: { errorHandlers: new Map([]) }
+          options: { errorHandlers: [] }
         }
       ]);
     }
@@ -384,7 +384,7 @@ describe('::withMiddleware', () => {
           useOnError: [makeErrorHandlingMiddleware()],
           options: {
             legacyMode: true,
-            errorHandlers: new Map([
+            errorHandlers: [
               [
                 TypeError,
                 (req, res, error, ctx) => {
@@ -398,7 +398,7 @@ describe('::withMiddleware', () => {
                   res.status(500).send(error);
                 }
               ]
-            ])
+            ]
           }
         }
       );
@@ -419,7 +419,7 @@ describe('::withMiddleware', () => {
           descriptor: '',
           use: [],
           // ? Missing the required "legacyMode: true" option!
-          options: { errorHandlers: new Map([]) }
+          options: { errorHandlers: [] }
         }
       ]);
 
