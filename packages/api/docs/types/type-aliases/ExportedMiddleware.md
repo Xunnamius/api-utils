@@ -8,7 +8,7 @@
 
 > **ExportedMiddleware**\<`Options`, `Heap`\> = (`reqOrRequest`, `resOrModernContext`, `maybeLegacyContext?`) => `Promisable`\<`Response` \| `undefined` \| `void`\>
 
-Defined in: [packages/api/src/types.ts:123](https://github.com/Xunnamius/api-utils/blob/8b4c1ce3e472c5937dd3f59fd10531a01373b8ce/packages/api/src/types.ts#L123)
+Defined in: [packages/api/src/types.ts:127](https://github.com/Xunnamius/api-utils/blob/20b3c0a8fb0d738da534e0b5a18ecc7bfb431124/packages/api/src/types.ts#L127)
 
 The shape of the return type of a middleware function exported by a file
 under the `middleware/` directory. Supports both the legacy and modern

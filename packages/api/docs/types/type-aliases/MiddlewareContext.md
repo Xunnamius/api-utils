@@ -8,7 +8,7 @@
 
 > **MiddlewareContext**\<`Options`, `Heap`, `Middleware`, `PartialOptions`\> = `object`
 
-Defined in: [packages/api/src/types.ts:140](https://github.com/Xunnamius/api-utils/blob/8b4c1ce3e472c5937dd3f59fd10531a01373b8ce/packages/api/src/types.ts#L140)
+Defined in: [packages/api/src/types.ts:144](https://github.com/Xunnamius/api-utils/blob/20b3c0a8fb0d738da534e0b5a18ecc7bfb431124/packages/api/src/types.ts#L144)
 
 The shape of a middleware context object, potentially customized with
 additional middleware-specific options.
@@ -41,7 +41,7 @@ handler executes respectively) changes.
 
 > **heap**: `Heap`
 
-Defined in: [packages/api/src/types.ts:269](https://github.com/Xunnamius/api-utils/blob/8b4c1ce3e472c5937dd3f59fd10531a01373b8ce/packages/api/src/types.ts#L269)
+Defined in: [packages/api/src/types.ts:275](https://github.com/Xunnamius/api-utils/blob/20b3c0a8fb0d738da534e0b5a18ecc7bfb431124/packages/api/src/types.ts#L275)
 
 A context object meant to be written to and read by any middleware.
 
@@ -55,7 +55,7 @@ share data.
 
 > **options**: `Options` & `"partial"` *extends* `PartialOptions` ? `Partial`\<`BaseOptions`\> : `BaseOptions` & `Middleware` *extends* [`WithModernTag`](WithModernTag.md)\<`unknown`\> ? `object` : `object`
 
-Defined in: [packages/api/src/types.ts:273](https://github.com/Xunnamius/api-utils/blob/8b4c1ce3e472c5937dd3f59fd10531a01373b8ce/packages/api/src/types.ts#L273)
+Defined in: [packages/api/src/types.ts:279](https://github.com/Xunnamius/api-utils/blob/20b3c0a8fb0d738da534e0b5a18ecc7bfb431124/packages/api/src/types.ts#L279)
 
 Options expected by middleware functions at runtime.
 
@@ -65,7 +65,7 @@ Options expected by middleware functions at runtime.
 
 > **runtime**: `object`
 
-Defined in: [packages/api/src/types.ts:149](https://github.com/Xunnamius/api-utils/blob/8b4c1ce3e472c5937dd3f59fd10531a01373b8ce/packages/api/src/types.ts#L149)
+Defined in: [packages/api/src/types.ts:153](https://github.com/Xunnamius/api-utils/blob/20b3c0a8fb0d738da534e0b5a18ecc7bfb431124/packages/api/src/types.ts#L153)
 
 Contains middleware use chain control functions and various metadata.
 
@@ -188,10 +188,12 @@ returned normally.
 To overwrite an existing response body, use `''` instead of `null`, with
 the latter being ignored in favor of existing content. To overwrite an
 existing response status, pass it to the Response constructor as
-normal. However, note that once a status >=400 is set, requests with
-statuses <400 will have their statuses ignored when merged. Pass your
-Response with status set to `0` to always use the existing
-Response's status when merging.
+normal. Note that (1) not passing a status to the Response
+constructor defaults it to `HTTP 200`, which will overwrite the current
+status and (2) once a status >=400 is set, requests with statuses <400
+will have their statuses ignored when merged. To preserve the current
+response status instead of overwriting it, pass in
+`runtime.response.status` when constructing the new Response.
 
 To dangerously _completely_ overwrite the current `runtime.response`
 property, first set it to `null`, which will cause it to reset to its

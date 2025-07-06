@@ -8,7 +8,7 @@
 
 > **Context** = `object`
 
-Defined in: [packages/api/src/middleware/add-raw-body.ts:36](https://github.com/Xunnamius/api-utils/blob/8b4c1ce3e472c5937dd3f59fd10531a01373b8ce/packages/api/src/middleware/add-raw-body.ts#L36)
+Defined in: [packages/api/src/middleware/add-raw-body.ts:36](https://github.com/Xunnamius/api-utils/blob/20b3c0a8fb0d738da534e0b5a18ecc7bfb431124/packages/api/src/middleware/add-raw-body.ts#L36)
 
 ## Properties
 
@@ -16,7 +16,7 @@ Defined in: [packages/api/src/middleware/add-raw-body.ts:36](https://github.com/
 
 > **rawBody**: `string`
 
-Defined in: [packages/api/src/middleware/add-raw-body.ts:41](https://github.com/Xunnamius/api-utils/blob/8b4c1ce3e472c5937dd3f59fd10531a01373b8ce/packages/api/src/middleware/add-raw-body.ts#L41)
+Defined in: [packages/api/src/middleware/add-raw-body.ts:41](https://github.com/Xunnamius/api-utils/blob/20b3c0a8fb0d738da534e0b5a18ecc7bfb431124/packages/api/src/middleware/add-raw-body.ts#L41)
 
 The raw request body exactly as it was received (i.e. as a string parsed by
 `raw-body`).

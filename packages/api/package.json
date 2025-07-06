@@ -1,6 +1,6 @@
 {
   "name": "@-xun/api",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Simple locally-runnable middleware for API endpoints regardless of runtime",
   "keywords": [],
   "homepage": "https://github.com/Xunnamius/api-utils/tree/main/packages/api#readme",

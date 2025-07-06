@@ -31,40 +31,48 @@ this project adheres to [Semantic Versioning][2].
 
 <br />
 
-### 🏗️ Patch @-xun/api[@1.0.4][16] (2025-07-06)
+### 🏗️ Patch @-xun/api[@1.0.5][16] (2025-07-06)
 
 #### 🪄 Fixes
 
-- **packages/api:** improve error handling behavior ([4df5af9][17])
+- **packages/api:** fix several bugs; improve test coverage to 100% with 100% passing ([2e722d0][17])
 
 <br />
 
-### 🏗️ Patch @-xun/api[@1.0.3][18] (2025-07-05)
+### 🏗️ Patch @-xun/api[@1.0.4][18] (2025-07-06)
 
 #### 🪄 Fixes
 
-- **packages/api:** fix cors handling ([a43b07d][19])
-- **packages/api:** improve support for modern middleware ([d7c333f][20])
-
-#### ⚙️ Build System
-
-- **deps:** bump internal monorepo interdependencies to latest versions ([f86b6da][21])
+- **packages/api:** improve error handling behavior ([4df5af9][19])
 
 <br />
 
-### 🏗️ Patch @-xun/api[@1.0.2][22] (2025-07-03)
+### 🏗️ Patch @-xun/api[@1.0.3][20] (2025-07-05)
+
+#### 🪄 Fixes
+
+- **packages/api:** fix cors handling ([a43b07d][21])
+- **packages/api:** improve support for modern middleware ([d7c333f][22])
 
 #### ⚙️ Build System
 
-- **deps:** bump internal monorepo interdependencies to latest versions ([9cd1af5][23])
+- **deps:** bump internal monorepo interdependencies to latest versions ([f86b6da][23])
 
 <br />
 
-### 🏗️ Patch @-xun/api[@1.0.1][24] (2025-07-03)
+### 🏗️ Patch @-xun/api[@1.0.2][24] (2025-07-03)
 
 #### ⚙️ Build System
 
-- **deps:** bump internal monorepo interdependencies to latest versions ([d599bd6][25])
+- **deps:** bump internal monorepo interdependencies to latest versions ([9cd1af5][25])
+
+<br />
+
+### 🏗️ Patch @-xun/api[@1.0.1][26] (2025-07-03)
+
+#### ⚙️ Build System
+
+- **deps:** bump internal monorepo interdependencies to latest versions ([d599bd6][27])
 
 [1]: https://conventionalcommits.org
 [2]: https://semver.org
@@ -81,13 +89,15 @@ this project adheres to [Semantic Versioning][2].
 [13]: https://github.com/Xunnamius/api-utils/commit/89abbe6937ec39fc9d2eb19430d0e8d5b1321810
 [14]: https://github.com/Xunnamius/api-utils/commit/604757a04c1246bf80c15a6caaa0e98300681eba
 [15]: https://github.com/Xunnamius/api-utils/commit/71b4768957b597ca1b5c617189c9042977d621ab
-[16]: https://github.com/Xunnamius/api-utils/compare/@-xun/api@1.0.3...@-xun/api@1.0.4
-[17]: https://github.com/Xunnamius/api-utils/commit/4df5af90e8c8c183b6b76a3742f17a8028208836
-[18]: https://github.com/Xunnamius/api-utils/compare/@-xun/api@1.0.2...@-xun/api@1.0.3
-[19]: https://github.com/Xunnamius/api-utils/commit/a43b07d9c7bde1fd369f583f8592e9f5cbe4c101
-[20]: https://github.com/Xunnamius/api-utils/commit/d7c333f400df0a05008510842532ddd95e9fc938
-[21]: https://github.com/Xunnamius/api-utils/commit/f86b6da3746432264ea1e1b00e1751b0fe171fe2
-[22]: https://github.com/Xunnamius/api-utils/compare/@-xun/api@1.0.1...@-xun/api@1.0.2
-[23]: https://github.com/Xunnamius/api-utils/commit/9cd1af53c9f08bf74ac71b1f8924f654c5cc5c2f
-[24]: https://github.com/Xunnamius/api-utils/compare/@-xun/api@1.0.0...@-xun/api@1.0.1
-[25]: https://github.com/Xunnamius/api-utils/commit/d599bd64b164b6e85a698e3eb503c87928b45e16
+[16]: https://github.com/Xunnamius/api-utils/compare/@-xun/api@1.0.4...@-xun/api@1.0.5
+[17]: https://github.com/Xunnamius/api-utils/commit/2e722d034f9cb0ae52b9bcfca02dfa6ae9de0080
+[18]: https://github.com/Xunnamius/api-utils/compare/@-xun/api@1.0.3...@-xun/api@1.0.4
+[19]: https://github.com/Xunnamius/api-utils/commit/4df5af90e8c8c183b6b76a3742f17a8028208836
+[20]: https://github.com/Xunnamius/api-utils/compare/@-xun/api@1.0.2...@-xun/api@1.0.3
+[21]: https://github.com/Xunnamius/api-utils/commit/a43b07d9c7bde1fd369f583f8592e9f5cbe4c101
+[22]: https://github.com/Xunnamius/api-utils/commit/d7c333f400df0a05008510842532ddd95e9fc938
+[23]: https://github.com/Xunnamius/api-utils/commit/f86b6da3746432264ea1e1b00e1751b0fe171fe2
+[24]: https://github.com/Xunnamius/api-utils/compare/@-xun/api@1.0.1...@-xun/api@1.0.2
+[25]: https://github.com/Xunnamius/api-utils/commit/9cd1af53c9f08bf74ac71b1f8924f654c5cc5c2f
+[26]: https://github.com/Xunnamius/api-utils/compare/@-xun/api@1.0.0...@-xun/api@1.0.1
+[27]: https://github.com/Xunnamius/api-utils/commit/d599bd64b164b6e85a698e3eb503c87928b45e16

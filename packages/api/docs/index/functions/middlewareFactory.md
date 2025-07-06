@@ -10,7 +10,7 @@
 
 > **middlewareFactory**\<`Options`, `Heap`\>(`defaults`): [`MiddlewareFactorySignatureModern`](../../types/type-aliases/MiddlewareFactorySignatureModern.md)\<`Options`, `Heap`\>
 
-Defined in: [packages/api/src/index.ts:659](https://github.com/Xunnamius/api-utils/blob/8b4c1ce3e472c5937dd3f59fd10531a01373b8ce/packages/api/src/index.ts#L659)
+Defined in: [packages/api/src/index.ts:638](https://github.com/Xunnamius/api-utils/blob/20b3c0a8fb0d738da534e0b5a18ecc7bfb431124/packages/api/src/index.ts#L638)
 
 Returns a _modern_ [withMiddleware](withMiddleware.md) function decorated with a "default"
 configuration.
@@ -48,7 +48,7 @@ and list a bunch of middleware every time you want to call
 
 > **middlewareFactory**\<`Options`, `Heap`\>(`defaults`): [`MiddlewareFactorySignatureLegacy`](../../types/type-aliases/MiddlewareFactorySignatureLegacy.md)\<`Options`, `Heap`\>
 
-Defined in: [packages/api/src/index.ts:679](https://github.com/Xunnamius/api-utils/blob/8b4c1ce3e472c5937dd3f59fd10531a01373b8ce/packages/api/src/index.ts#L679)
+Defined in: [packages/api/src/index.ts:658](https://github.com/Xunnamius/api-utils/blob/20b3c0a8fb0d738da534e0b5a18ecc7bfb431124/packages/api/src/index.ts#L658)
 
 Returns a _legacy_ [withMiddleware](withMiddleware.md) function decorated with a "default"
 configuration.
