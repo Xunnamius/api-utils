@@ -2,12 +2,12 @@
 /* eslint-disable no-await-in-loop */
 import { setImmediate } from 'node:timers/promises';
 
+import { SanityError } from '@-xun/api-strategy/error';
 import { getEnv } from '@-xun/env';
 import { sendHttpUnspecifiedError, sendNotImplemented } from '@-xun/respond';
 import { validHttpMethods } from '@-xun/types';
 import { toss } from 'toss-expression';
 
-import { SanityError } from 'universe+api-strategy:error.ts';
 import { globalDebugLogger as debug } from 'universe+api:constant.ts';
 import { ErrorMessage } from 'universe+api:error.ts';
 
