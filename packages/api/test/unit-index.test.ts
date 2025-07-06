@@ -442,6 +442,104 @@ describe('::withMiddleware', () => {
 
       expect(counter).toBe(3);
     });
+
+    it('supports short-circuiting by returning a response from a runtime.doAfterHandled task', async () => {
+      expect.hasAssertions();
+
+      let counter = 0;
+
+      await testApiHandler({
+        rejectOnHandlerError: true,
+        appHandler: withMiddleware(
+          async () => {
+            expect(counter++).toBe(1);
+          },
+          {
+            descriptor: '/fake',
+            use: [
+              (_, ctx) => {
+                expect(counter++).toBe(0);
+
+                (ctx as ModernMiddlewareContext<any, any>).runtime.doAfterHandled(() => {
+                  expect(counter++).toBe(2);
+                });
+
+                (ctx as ModernMiddlewareContext<any, any>).runtime.doAfterHandled(() => {
+                  expect(counter++).toBe(3);
+                  return new Response(null, { status: 222 });
+                });
+
+                (ctx as ModernMiddlewareContext<any, any>).runtime.doAfterHandled(() => {
+                  counter++;
+                  expect(true).toBe('never reach this point');
+                });
+
+                (ctx as ModernMiddlewareContext<any, any>).runtime.doAfterHandled(() => {
+                  counter++;
+                  expect(true).toBe('never reach this point');
+                });
+              }
+            ]
+          }
+        ),
+        test: async ({ fetch }) => expect((await fetch()).status).toBe(222)
+      });
+
+      expect(counter).toBe(4);
+    });
+
+    it('ignores failing runtime.doAfterHandled tasks', async () => {
+      expect.hasAssertions();
+
+      let counter = 0;
+
+      await withMockedOutput(async ({ errorSpy }) => {
+        await testApiHandler({
+          rejectOnHandlerError: true,
+          appHandler: withMiddleware(
+            async () => {
+              expect(counter++).toBe(1);
+            },
+            {
+              descriptor: '/fake',
+              use: [
+                (_, ctx) => {
+                  expect(counter++).toBe(0);
+
+                  (ctx as ModernMiddlewareContext<any, any>).runtime.doAfterHandled(
+                    () => {
+                      expect(counter++).toBe(2);
+                    }
+                  );
+
+                  (ctx as ModernMiddlewareContext<any, any>).runtime.doAfterHandled(
+                    () => {
+                      throw new Error('bad bad not good');
+                    }
+                  );
+
+                  (ctx as ModernMiddlewareContext<any, any>).runtime.doAfterHandled(
+                    () => {
+                      expect(counter++).toBe(3);
+                    }
+                  );
+
+                  (ctx as ModernMiddlewareContext<any, any>).runtime.doAfterHandled(
+                    () => {
+                      throw new Error('bad bad not good');
+                    }
+                  );
+                }
+              ]
+            }
+          ),
+          test: async ({ fetch }) => expect((await fetch()).status).toBe(200)
+        });
+
+        expect(counter).toBe(4);
+        expect(errorSpy).toHaveBeenCalledTimes(2);
+      });
+    });
   });
 
   it('supports adding post-sent tasks via runtime.doAfterSent', async () => {
@@ -524,6 +622,54 @@ describe('::withMiddleware', () => {
       await promisedFinish;
       expect(counter).toBe(4);
     }
+  });
+
+  it('ignores failing runtime.doAfterSent tasks', async () => {
+    expect.hasAssertions();
+    const { promise: promisedFinish, resolve: resolveFinishPromise } =
+      Promise.withResolvers();
+    let counter = 0;
+
+    await withMockedOutput(async ({ errorSpy }) => {
+      await testApiHandler({
+        rejectOnHandlerError: true,
+        appHandler: withMiddleware(
+          async () => {
+            expect(counter++).toBe(1);
+          },
+          {
+            descriptor: '/fake',
+            use: [
+              (_, ctx) => {
+                expect(counter++).toBe(0);
+
+                (ctx as ModernMiddlewareContext<any, any>).runtime.doAfterSent(() => {
+                  expect(counter++).toBe(2);
+                });
+
+                (ctx as ModernMiddlewareContext<any, any>).runtime.doAfterSent(() => {
+                  throw new Error('bad bad not good');
+                });
+
+                (ctx as ModernMiddlewareContext<any, any>).runtime.doAfterSent(() => {
+                  expect(counter++).toBe(3);
+                });
+
+                (ctx as ModernMiddlewareContext<any, any>).runtime.doAfterSent(() => {
+                  resolveFinishPromise(undefined);
+                  throw new Error('bad bad not good');
+                });
+              }
+            ]
+          }
+        ),
+        test: async ({ fetch }) => expect((await fetch()).status).toBe(200)
+      });
+
+      await promisedFinish;
+      expect(counter).toBe(4);
+      expect(errorSpy).toHaveBeenCalledTimes(2);
+    });
   });
 
   it('lowercases headers automatically', async () => {

@@ -10,10 +10,10 @@ export const ErrorMessage = {
     return 'end of runtime reached but legacy response was not sent';
   },
   ModernMiddlewareApiNotSupported() {
-    return 'this middleware only supports the legacy interface';
+    return 'this middleware or feature only supports the legacy interface';
   },
   LegacyMiddlewareApiNotSupported() {
-    return 'this middleware only supports the modern interface';
+    return 'this middleware or feature only supports the modern interface';
   },
   RuntimeDoneCalledTooEarly() {
     return 'runtime.done was called too early';

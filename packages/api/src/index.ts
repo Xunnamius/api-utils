@@ -7,6 +7,7 @@ import { sendHttpUnspecifiedError, sendNotImplemented } from '@-xun/respond';
 import { validHttpMethods } from '@-xun/types';
 import { toss } from 'toss-expression';
 
+import { SanityError } from 'universe+api-strategy:error.ts';
 import { globalDebugLogger as debug } from 'universe+api:constant.ts';
 import { ErrorMessage } from 'universe+api:error.ts';
 
@@ -21,7 +22,6 @@ import type {
 } from 'multiverse+shared:next-like.ts';
 
 import type {
-  AsSyncLegacyTask,
   LegacyApiHandler,
   LegacyApiHandlerWithHeap,
   LegacyMiddleware,
@@ -333,7 +333,7 @@ export function withMiddleware<
       // ? Sanity check that should never be satisfied
       /* istanbul ignore next */
       if (!res.writableEnded || !res.headersSent) {
-        throw new Error(ErrorMessage.ReachedEndOfRuntime());
+        throw new SanityError(ErrorMessage.ReachedEndOfRuntime());
       }
 
       if (middlewareContext.options.awaitTasksAfterSent) {
@@ -368,82 +368,52 @@ export function withMiddleware<
     }
 
     function runTasksAfterHandled() {
+      // ? Sanity check that should never be satisfied
+      /* istanbul ignore next */
       if (isInLegacyMode) {
+        throw new SanityError(ErrorMessage.LegacyMiddlewareApiNotSupported());
+      }
+
+      const request = reqOrRequest as Request;
+      return Promise.resolve().then(async function () {
         try {
           for (const middleware of tasksToDoAfterHandled) {
             try {
-              const typedMiddleware = middleware as AsSyncLegacyTask<
-                LegacyMiddleware<Options, Heap>
-              >;
+              const typedMiddleware = middleware as ModernMiddleware<Options, Heap>;
 
-              const [req, res] = [
-                reqOrRequest as NextApiRequestLike,
-                resOrUndefined as NextApiResponseLike
-              ];
+              const returnValue =
+                (await typedMiddleware(
+                  request,
+                  middlewareContext as MiddlewareContext<
+                    Options,
+                    Heap,
+                    typeof typedMiddleware
+                  >
+                )) || writableContextRuntime.response;
 
-              typedMiddleware(
-                req,
-                res,
-                middlewareContext as MiddlewareContext<
-                  Options,
-                  Heap,
-                  LegacyMiddleware<Options, Heap>
-                >
-              );
+              const shouldShortCircuit = returnValue !== writableContextRuntime.response;
+
+              writableContextRuntime.response = returnValue;
+
+              if (shouldShortCircuit) {
+                debug.message(
+                  'a task added via doAfterHandled returned a Reponse, which will be sent immediately (other doAfterHandled tasks will be skipped)'
+                );
+
+                break;
+              }
             } catch (error) {
               // eslint-disable-next-line no-console
               console.error(
-                'a middleware task added via doAfterHandled failed (which was ignored): %O',
+                'a task added via doAfterHandled failed (which was ignored): %O',
                 error
               );
             }
           }
         } finally {
-          debug('-- sync doAfterHandled tasks done --');
+          debug('-- async doAfterHandled tasks done --');
         }
-      } else {
-        const request = reqOrRequest as Request;
-        return Promise.resolve().then(async function () {
-          try {
-            for (const middleware of tasksToDoAfterHandled) {
-              try {
-                const typedMiddleware = middleware as ModernMiddleware<Options, Heap>;
-
-                const returnValue =
-                  (await typedMiddleware(
-                    request,
-                    middlewareContext as MiddlewareContext<
-                      Options,
-                      Heap,
-                      typeof typedMiddleware
-                    >
-                  )) || writableContextRuntime.response;
-
-                const shouldShortCircuit =
-                  returnValue !== writableContextRuntime.response;
-
-                writableContextRuntime.response = returnValue;
-
-                if (shouldShortCircuit) {
-                  debug.message(
-                    'a task added via doAfterHandled returned a Reponse, which will be sent immediately (other doAfterHandled tasks will be skipped)'
-                  );
-
-                  break;
-                }
-              } catch (error) {
-                // eslint-disable-next-line no-console
-                console.error(
-                  'a task added via doAfterHandled failed (which was ignored): %O',
-                  error
-                );
-              }
-            }
-          } finally {
-            debug('-- async doAfterHandled tasks done --');
-          }
-        });
-      }
+      });
     }
 
     async function runTasksAfterSent() {
@@ -636,13 +606,6 @@ export function withMiddleware<
           }
         } else {
           localDebug('no more middleware to execute');
-
-          if (!executionCompleted) {
-            localDebug(
-              'deactivated runtime control functions (set executionCompleted=true)'
-            );
-          }
-
           executionCompleted = true;
         }
       }
