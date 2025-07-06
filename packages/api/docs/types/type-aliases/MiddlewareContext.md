@@ -8,7 +8,7 @@
 
 > **MiddlewareContext**\<`Options`, `Heap`, `Middleware`, `PartialOptions`\> = `object`
 
-Defined in: [packages/api/src/types.ts:140](https://github.com/Xunnamius/api-utils/blob/f86b6da3746432264ea1e1b00e1751b0fe171fe2/packages/api/src/types.ts#L140)
+Defined in: [packages/api/src/types.ts:140](https://github.com/Xunnamius/api-utils/blob/8b4c1ce3e472c5937dd3f59fd10531a01373b8ce/packages/api/src/types.ts#L140)
 
 The shape of a middleware context object, potentially customized with
 additional middleware-specific options.
@@ -41,7 +41,7 @@ handler executes respectively) changes.
 
 > **heap**: `Heap`
 
-Defined in: [packages/api/src/types.ts:269](https://github.com/Xunnamius/api-utils/blob/f86b6da3746432264ea1e1b00e1751b0fe171fe2/packages/api/src/types.ts#L269)
+Defined in: [packages/api/src/types.ts:269](https://github.com/Xunnamius/api-utils/blob/8b4c1ce3e472c5937dd3f59fd10531a01373b8ce/packages/api/src/types.ts#L269)
 
 A context object meant to be written to and read by any middleware.
 
@@ -55,7 +55,7 @@ share data.
 
 > **options**: `Options` & `"partial"` *extends* `PartialOptions` ? `Partial`\<`BaseOptions`\> : `BaseOptions` & `Middleware` *extends* [`WithModernTag`](WithModernTag.md)\<`unknown`\> ? `object` : `object`
 
-Defined in: [packages/api/src/types.ts:273](https://github.com/Xunnamius/api-utils/blob/f86b6da3746432264ea1e1b00e1751b0fe171fe2/packages/api/src/types.ts#L273)
+Defined in: [packages/api/src/types.ts:273](https://github.com/Xunnamius/api-utils/blob/8b4c1ce3e472c5937dd3f59fd10531a01373b8ce/packages/api/src/types.ts#L273)
 
 Options expected by middleware functions at runtime.
 
@@ -65,7 +65,7 @@ Options expected by middleware functions at runtime.
 
 > **runtime**: `object`
 
-Defined in: [packages/api/src/types.ts:149](https://github.com/Xunnamius/api-utils/blob/f86b6da3746432264ea1e1b00e1751b0fe171fe2/packages/api/src/types.ts#L149)
+Defined in: [packages/api/src/types.ts:149](https://github.com/Xunnamius/api-utils/blob/8b4c1ce3e472c5937dd3f59fd10531a01373b8ce/packages/api/src/types.ts#L149)
 
 Contains middleware use chain control functions and various metadata.
 
