@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import {
@@ -24,7 +25,7 @@ import { globalDebugLogger } from 'universe+api:constant.ts';
 import { ErrorMessage } from 'universe+api:error.ts';
 
 import type { JsonError } from '@-xun/respond';
-import type { EmptyObject, JsonObject, Promisable } from 'type-fest';
+import type { EmptyObject, JsonObject, Promisable, UnwrapTagged } from 'type-fest';
 
 import type {
   MiddlewareContext,
@@ -36,7 +37,9 @@ import type {
   ExportedMiddleware,
   LegacyMiddlewareContext,
   ModernMiddlewareContext,
-  ModernOrLegacyMiddleware
+  ModernOrLegacyMiddleware,
+  WithLegacyTag,
+  WithModernTag
 } from 'universe+api:types.ts';
 
 const debug = globalDebugLogger.extend('handle-error');
@@ -50,19 +53,23 @@ type ErrorLikeOrUndefined = { message: string } | undefined;
  * error classes from `@-xun/api-strategy/error`, return said class from this
  * function.
  *
- * Errors thrown from within this function are ignored.
+ * Note that (1) errors thrown from within this middleware are ignored and (2)
+ * if this middleware returns a response with a status `<400`, @-xun/api will
+ * assume the error was not handled and will re-throw it.
  *
  * @see {@link middleware}
  */
 export type ModernErrorHandler<
   Options extends Record<string, unknown>,
   Heap extends Record<PropertyKey, unknown>
-> = (
-  request: Request,
-  response: Response,
-  errorJson: Partial<JsonError>,
-  middlewareContext: ModernMiddlewareContext<Options, Heap>
-) => Promisable<Error | Response | undefined | void>;
+> = WithModernTag<
+  (
+    request: Request,
+    response: Response,
+    errorJson: Partial<JsonError>,
+    middlewareContext: ModernMiddlewareContext<Options, Heap>
+  ) => Promisable<Error | Response | undefined | void>
+>;
 
 /**
  * Special middleware used to handle custom errors.
@@ -78,32 +85,26 @@ export type ModernErrorHandler<
 export type LegacyErrorHandler<
   Options extends Record<string, unknown>,
   Heap extends Record<PropertyKey, unknown>
-> = (
-  req: NextApiRequestLike,
-  res: NextApiResponseLike,
-  errorJson: Partial<JsonError>,
-  middlewareContext: LegacyMiddlewareContext<Options, Heap>
-) => Promisable<Error | void>;
-
-/**
- * A Map of Error class constructors to the special middleware that handles
- * them.
- */
-export type ErrorHandlerMap<
-  ErrorHandler extends
-    | ModernErrorHandler<never, never>
-    | LegacyErrorHandler<never, never>
-> = Map<new (...args: never[]) => Error, ErrorHandler>;
+> = WithLegacyTag<
+  (
+    req: NextApiRequestLike,
+    res: NextApiResponseLike,
+    errorJson: Partial<JsonError>,
+    middlewareContext: LegacyMiddlewareContext<Options, Heap>
+  ) => Promisable<Error | void>
+>;
 
 export type Options<
-  ErrorHandler extends
-    | ModernErrorHandler<never, never>
-    | LegacyErrorHandler<never, never>
+  ErrorHandler extends ModernErrorHandler<any, any> | LegacyErrorHandler<any, any>
 > = {
   /**
-   * A mapping of Error classes and the functions that handle them.
+   * A map (in the form of a multidimensional array) of Error classes and the
+   * functions that handle them.
    */
-  errorHandlers?: ErrorHandlerMap<ErrorHandler>;
+  errorHandlers?: [
+    type: NoInfer<new (...args: any[]) => Error>,
+    handler: UnwrapTagged<NoInfer<ErrorHandler>>
+  ][];
 };
 
 export type Context = EmptyObject;
@@ -122,10 +123,10 @@ export function makeMiddleware() {
     const context = (
       isInLegacyMode ? maybeLegacyContext : resOrModernContext
     ) as MiddlewareContext<
-      Options<ModernErrorHandler<never, never> | LegacyErrorHandler<never, never>>,
+      Options<ModernErrorHandler<any, any> | LegacyErrorHandler<any, any>>,
       Context,
       ModernOrLegacyMiddleware<
-        Options<ModernErrorHandler<never, never> | LegacyErrorHandler<never, never>>,
+        Options<ModernErrorHandler<any, any> | LegacyErrorHandler<any, any>>,
         Context
       >
     >;
@@ -146,7 +147,7 @@ export function makeMiddleware() {
 
     const resOrResponse = isInLegacyMode
       ? (resOrModernContext as NextApiResponseLike)
-      : context.runtime.response || new Response();
+      : context.runtime.response!;
 
     const errorJson: Partial<JsonError> = (error as ErrorLikeOrUndefined)?.message
       ? { error: (error as NonNullable<ErrorLikeOrUndefined>).message }
@@ -163,21 +164,16 @@ export function makeMiddleware() {
             debug(`using custom error handler for type "${error.name}"`);
 
             // eslint-disable-next-line no-await-in-loop
-            const result = await Reflect.apply(errorHandler, null, [
+            handlerResult = await Reflect.apply(errorHandler, null, [
               reqOrRequest,
               resOrResponse,
               errorJson,
               context
             ] as Parameters<typeof errorHandler>);
-
-            if (!result) {
-              return;
-            } else {
-              handlerResult = result;
-            }
           }
         }
       } catch (error) {
+        /* istanbul ignore next */
         // eslint-disable-next-line no-console
         console.error(
           'custom error handler failed with error (will be ignored): %O',
@@ -187,7 +183,18 @@ export function makeMiddleware() {
     }
 
     if (handlerResult instanceof Response) {
+      // ? Request was already handled
       return handlerResult;
+    }
+
+    if (isInLegacyMode) {
+      const res = resOrModernContext as NextApiResponseLike;
+      const resSent = res.writableEnded || res.headersSent;
+
+      if (resSent) {
+        // ? Request was already handled
+        return undefined;
+      }
     }
 
     const handleAs = handlerResult ?? error;
@@ -258,7 +265,7 @@ export function makeMiddleware() {
       }
     }
   } satisfies ExportedMiddleware<
-    Options<ModernErrorHandler<never, never> | LegacyErrorHandler<never, never>>,
+    Options<ModernErrorHandler<any, any> | LegacyErrorHandler<any, any>>,
     Context
   >;
 }

@@ -318,7 +318,7 @@ type BaseOptions = {
    *
    * Do not enable this in production.
    *
-   * @default false
+   * @default process.env.NODE_ENV === 'test'
    */
   awaitTasksAfterSent: boolean;
 };

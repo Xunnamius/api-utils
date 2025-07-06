@@ -290,25 +290,26 @@ describe('::withMiddleware', () => {
     const error = new Error('bad stuff happened');
 
     await withMockedOutput(async ({ errorSpy }) => {
-      await expect(
-        testApiHandler({
-          rejectOnHandlerError: true,
-          pagesHandler: withMiddleware(legacyNoopHandler, {
-            descriptor: '/fake',
-            use: [
-              (_, __, context) => expect(context?.runtime.error).toBeUndefined(),
-              (_, __, context) => expect(context?.runtime.error).toBeUndefined(),
-              () => toss(error)
-            ],
-            useOnError: [
-              (_, __, context) => expect(context?.runtime.error).toBe(error),
-              (_, __, context) => expect(context?.runtime.error).toBe(error)
-            ],
-            options: { legacyMode: true }
-          }),
-          test: async ({ fetch }) => void (await fetch())
-        })
-      ).toReject();
+      await testApiHandler({
+        rejectOnHandlerError: true,
+        pagesHandler: withMiddleware(legacyNoopHandler, {
+          descriptor: '/fake',
+          use: [
+            (_, __, context) => expect(context?.runtime.error).toBeUndefined(),
+            (_, __, context) => expect(context?.runtime.error).toBeUndefined(),
+            () => toss(error)
+          ],
+          useOnError: [
+            (_, __, context) => expect(context?.runtime.error).toBe(error),
+            (_, __, context) => expect(context?.runtime.error).toBe(error)
+          ],
+          options: { legacyMode: true }
+        }),
+        test: async ({ fetch }) => {
+          const res = await fetch();
+          expect(res.status).toBe(500);
+        }
+      });
 
       // ? This is coming from within Next.js itself
       expect(errorSpy).toHaveBeenCalledTimes(1);
@@ -320,7 +321,7 @@ describe('::withMiddleware', () => {
 
     const middleware = jest.fn();
 
-    await withMockedOutput(async () => {
+    await withMockedOutput(async ({ errorSpy }) => {
       await testApiHandler({
         rejectOnHandlerError: true,
         pagesHandler: withMiddleware(legacyNoopHandler, {
@@ -334,6 +335,9 @@ describe('::withMiddleware', () => {
           expect(middleware).toHaveBeenCalledTimes(1);
         }
       });
+
+      // ? This is coming from within Next.js itself
+      expect(errorSpy).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -348,7 +352,7 @@ describe('::withMiddleware', () => {
       } as ExportedMiddleware<GenericRecord, GenericRecord>
     ];
 
-    await withMockedOutput(async () => {
+    await withMockedOutput(async ({ errorSpy }) => {
       await testApiHandler({
         rejectOnHandlerError: true,
         pagesHandler: withMiddleware(legacyNoopHandler, {
@@ -362,6 +366,9 @@ describe('::withMiddleware', () => {
           middleware.slice(0, -1).forEach((m) => expect(m).toHaveBeenCalledTimes(1));
         }
       });
+
+      // ? This is coming from within Next.js itself
+      expect(errorSpy).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -370,7 +377,7 @@ describe('::withMiddleware', () => {
 
     const middleware = jest.fn();
 
-    await withMockedOutput(async () => {
+    await withMockedOutput(async ({ errorSpy }) => {
       await testApiHandler({
         rejectOnHandlerError: true,
         pagesHandler: withMiddleware(() => toss(new Error('error')), {
@@ -384,6 +391,9 @@ describe('::withMiddleware', () => {
           expect(middleware).toHaveBeenCalledTimes(1);
         }
       });
+
+      // ? This is coming from within Next.js itself
+      expect(errorSpy).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -398,7 +408,7 @@ describe('::withMiddleware', () => {
       } as ExportedMiddleware<GenericRecord, GenericRecord>
     ];
 
-    await withMockedOutput(async () => {
+    await withMockedOutput(async ({ errorSpy }) => {
       await testApiHandler({
         rejectOnHandlerError: true,
         pagesHandler: withMiddleware(() => toss(new Error('error')), {
@@ -412,6 +422,9 @@ describe('::withMiddleware', () => {
           middleware.slice(0, -1).forEach((m) => expect(m).toHaveBeenCalledTimes(1));
         }
       });
+
+      // ? This is coming from within Next.js itself
+      expect(errorSpy).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -480,44 +493,47 @@ describe('::withMiddleware', () => {
     });
   });
 
-  it('throws on error in primary chain if no error handling middleware available', async () => {
+  it('responds with HTTP 500 if no error handling middleware available', async () => {
     expect.hasAssertions();
 
     await withMockedOutput(async ({ errorSpy }) => {
-      await expect(
-        testApiHandler({
-          rejectOnHandlerError: true,
-          pagesHandler: withMiddleware(undefined, {
-            descriptor: '/fake',
-            use: [() => toss(new Error('bad'))],
-            useOnError: [],
-            options: { legacyMode: true }
-          }),
-          test: async ({ fetch }) => void (await fetch())
-        })
-      ).rejects.toMatchObject({ message: 'bad' });
+      await testApiHandler({
+        rejectOnHandlerError: true,
+        pagesHandler: withMiddleware(undefined, {
+          descriptor: '/fake',
+          use: [() => toss(new Error('bad'))],
+          useOnError: [],
+          options: { legacyMode: true }
+        }),
+        test: async ({ fetch }) => {
+          const res = await fetch();
+          expect(res.status).toBe(500);
+        }
+      });
 
       // ? This is coming from within Next.js itself
       expect(errorSpy).toHaveBeenCalledTimes(1);
     });
   });
 
-  it('throws if res.end not called by the time error handling chain completes', async () => {
+  it('responds with HTTP 500 if res.end not called by the time error handling chain completes', async () => {
     expect.hasAssertions();
 
     await withMockedOutput(async ({ errorSpy }) => {
-      await expect(
-        testApiHandler({
-          rejectOnHandlerError: true,
-          pagesHandler: withMiddleware(undefined, {
-            descriptor: '/fake',
-            use: [() => toss(new Error('bad'))],
-            useOnError: [() => undefined],
-            options: { legacyMode: true }
-          }),
-          test: async ({ fetch }) => void (await fetch())
-        })
-      ).rejects.toMatchObject({ message: 'bad' });
+      await testApiHandler({
+        rejectOnHandlerError: true,
+        pagesHandler: withMiddleware(undefined, {
+          descriptor: '/fake',
+          use: [() => toss(new Error('bad'))],
+          useOnError: [() => undefined],
+          options: { legacyMode: true }
+        }),
+        test: async ({ fetch }) => {
+          const res = await fetch();
+          // ? No error handler handled the error, so Next.js will
+          expect(res.status).toBe(500);
+        }
+      });
 
       // ? This is coming from within Next.js itself
       expect(errorSpy).toHaveBeenCalledTimes(1);
@@ -534,7 +550,7 @@ describe('::withMiddleware', () => {
     let done: () => void;
 
     await withDebugEnabled(async () => {
-      await withMockedOutput(async ({ nodeErrorSpy }) => {
+      await withMockedOutput(async ({ nodeErrorSpy, errorSpy }) => {
         await testApiHandler({
           rejectOnHandlerError: true,
           pagesHandler: withMiddleware(
@@ -572,6 +588,7 @@ describe('::withMiddleware', () => {
 
             done();
             expect(nodeErrorSpy).toHaveBeenCalledWith(doneWarning);
+            expect(errorSpy).toHaveBeenCalled();
           }
         });
       });
@@ -895,12 +912,12 @@ describe('::middlewareFactory', () => {
       })(undefined, {
         descriptor: '/fake',
         prependUse: [() => toss(new Error('bad bad not good'))],
-        prependUseOnError: [(_, res) => void (res as NextApiResponseLike).status(203)],
+        prependUseOnError: [(_, res) => void (res as NextApiResponseLike).status(444)],
         appendUseOnError: [(_, res) => (res as NextApiResponseLike).send({ c: 1 })]
       }),
       test: async ({ fetch }) => {
         const res = await fetch();
-        expect(res.status).toBe(203);
+        expect(res.status).toBe(444);
         await expect(res.json()).resolves.toStrictEqual({ c: 1 });
       }
     });

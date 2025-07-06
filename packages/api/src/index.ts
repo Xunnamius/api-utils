@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 import { getEnv } from '@-xun/env';
-import { sendNotImplemented } from '@-xun/respond';
+import { sendHttpUnspecifiedError, sendNotImplemented } from '@-xun/respond';
 import { toss } from 'toss-expression';
 
 import { globalDebugLogger as debug } from 'universe+api:constant.ts';
@@ -198,6 +198,7 @@ export function withMiddleware<
       },
       heap: {} as Heap,
       options: {
+        awaitTasksAfterSent: process.env.NODE_ENV === 'test',
         callDoneOnEnd: true,
         legacyMode: isInLegacyMode,
         ...options
@@ -298,16 +299,20 @@ export function withMiddleware<
         if (isInLegacyMode) {
           const res = resOrUndefined as NextApiResponseLike;
 
-          // ? Unhandled error, kick it up to the caller
-          if (!res.writableEnded && !res.headersSent) {
-            debug.error('throwing unhandled error (res not sent)');
-            throw error;
+          const resSent = res.writableEnded || res.headersSent;
+          if (res.statusCode < 400 || !resSent) {
+            // eslint-disable-next-line no-console
+            console.error('unhandled error (error response not sent or status < 400)');
+
+            if (!resSent) {
+              sendHttpUnspecifiedError(res);
+            }
           }
         } else {
-          // ? Unhandled error, kick it up to the caller
           if (middlewareContext.runtime.response.status < 400) {
-            debug.error('throwing unhandled error (response status < 400)');
-            throw error;
+            // eslint-disable-next-line no-console
+            console.error('unhandled error (error response status < 400)');
+            middlewareContext.runtime.response = sendHttpUnspecifiedError();
           }
         }
       } finally {
@@ -320,6 +325,7 @@ export function withMiddleware<
     if (isInLegacyMode) {
       const res = resOrUndefined as NextApiResponseLike;
 
+      // ? Catch any unsent responses
       if (res.writableEnded && !res.headersSent) {
         throw new Error(ErrorMessage.ReachedEndOfRuntime());
       }
