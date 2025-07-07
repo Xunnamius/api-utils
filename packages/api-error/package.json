@@ -62,8 +62,8 @@
     "test:packages:all": "symbiote test --env NODE_NO_WARNINGS=1 --tests all-local --scope unlimited --coverage"
   },
   "devDependencies": {
-    "rejoinder": "^2.0.1",
-    "@-xun/fs": "^2.0.0"
+    "@-xun/fs": "^2.0.0",
+    "rejoinder": "^2.0.1"
   },
   "engines": {
     "node": "^20.18.0 || >=22.12.0"
