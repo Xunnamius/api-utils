@@ -6,7 +6,7 @@
 
 # Class: ServerValidationError
 
-Defined in: [packages/api-error/src/index.ts:6](https://github.com/Xunnamius/api-utils/blob/d729c69f1591624914665c734e90cf8094567d9d/packages/api-error/src/index.ts#L6)
+Defined in: [packages/api-error/src/index.ts:6](https://github.com/Xunnamius/api-utils/blob/9a9e36a1d316d4dc54a8d1547dbfc9a3f679c8bc/packages/api-error/src/index.ts#L6)
 
 ## Extends
 
