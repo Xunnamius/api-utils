@@ -173,10 +173,10 @@ export function sendHttpBadRequest(
 
   if (isNextApiResponseLike(arg0)) {
     const [res, json] = args as LegacySpecificParameters;
-    sendHttpErrorResponse(res, 400, { ...json, error });
+    sendHttpErrorResponse(res, 400, { error, ...json });
   } else {
     const [json, responseInit] = args as ModernSpecificParameters;
-    return sendHttpErrorResponse({ status: 400, ...responseInit }, { ...json, error });
+    return sendHttpErrorResponse({ status: 400, ...responseInit }, { error, ...json });
   }
 }
 
@@ -196,10 +196,10 @@ export function sendHttpUnauthenticated(
 
   if (isNextApiResponseLike(arg0)) {
     const [res, json] = args as LegacySpecificParameters;
-    sendHttpErrorResponse(res, 401, { ...json, error });
+    sendHttpErrorResponse(res, 401, { error, ...json });
   } else {
     const [json, responseInit] = args as ModernSpecificParameters;
-    return sendHttpErrorResponse({ status: 401, ...responseInit }, { ...json, error });
+    return sendHttpErrorResponse({ status: 401, ...responseInit }, { error, ...json });
   }
 }
 
@@ -220,10 +220,10 @@ export function sendHttpUnauthorized(
 
   if (isNextApiResponseLike(arg0)) {
     const [res, json] = args as LegacySpecificParameters;
-    sendHttpErrorResponse(res, 403, { ...json, error });
+    sendHttpErrorResponse(res, 403, { error, ...json });
   } else {
     const [json, responseInit] = args as ModernSpecificParameters;
-    return sendHttpErrorResponse({ status: 403, ...responseInit }, { ...json, error });
+    return sendHttpErrorResponse({ status: 403, ...responseInit }, { error, ...json });
   }
 }
 
@@ -243,10 +243,10 @@ export function sendHttpNotFound(
 
   if (isNextApiResponseLike(arg0)) {
     const [res, json] = args as LegacySpecificParameters;
-    sendHttpErrorResponse(res, 404, { ...json, error });
+    sendHttpErrorResponse(res, 404, { error, ...json });
   } else {
     const [json, responseInit] = args as ModernSpecificParameters;
-    return sendHttpErrorResponse({ status: 404, ...responseInit }, { ...json, error });
+    return sendHttpErrorResponse({ status: 404, ...responseInit }, { error, ...json });
   }
 }
 
@@ -266,10 +266,10 @@ export function sendHttpBadMethod(
 
   if (isNextApiResponseLike(arg0)) {
     const [res, json] = args as LegacySpecificParameters;
-    sendHttpErrorResponse(res, 405, { ...json, error });
+    sendHttpErrorResponse(res, 405, { error, ...json });
   } else {
     const [json, responseInit] = args as ModernSpecificParameters;
-    return sendHttpErrorResponse({ status: 405, ...responseInit }, { ...json, error });
+    return sendHttpErrorResponse({ status: 405, ...responseInit }, { error, ...json });
   }
 }
 
@@ -289,10 +289,10 @@ export function sendHttpTooLarge(
 
   if (isNextApiResponseLike(arg0)) {
     const [res, json] = args as LegacySpecificParameters;
-    sendHttpErrorResponse(res, 413, { ...json, error });
+    sendHttpErrorResponse(res, 413, { error, ...json });
   } else {
     const [json, responseInit] = args as ModernSpecificParameters;
-    return sendHttpErrorResponse({ status: 413, ...responseInit }, { ...json, error });
+    return sendHttpErrorResponse({ status: 413, ...responseInit }, { error, ...json });
   }
 }
 
@@ -312,10 +312,10 @@ export function sendHttpBadContentType(
 
   if (isNextApiResponseLike(arg0)) {
     const [res, json] = args as LegacySpecificParameters;
-    sendHttpErrorResponse(res, 415, { ...json, error });
+    sendHttpErrorResponse(res, 415, { error, ...json });
   } else {
     const [json, responseInit] = args as ModernSpecificParameters;
-    return sendHttpErrorResponse({ status: 415, ...responseInit }, { ...json, error });
+    return sendHttpErrorResponse({ status: 415, ...responseInit }, { error, ...json });
   }
 }
 
@@ -335,10 +335,10 @@ export function sendHttpRateLimited(
 
   if (isNextApiResponseLike(arg0)) {
     const [res, json] = args as LegacySpecificParameters;
-    sendHttpErrorResponse(res, 429, { ...json, error });
+    sendHttpErrorResponse(res, 429, { error, ...json });
   } else {
     const [json, responseInit] = args as ModernSpecificParameters;
-    return sendHttpErrorResponse({ status: 429, ...responseInit }, { ...json, error });
+    return sendHttpErrorResponse({ status: 429, ...responseInit }, { error, ...json });
   }
 }
 
@@ -358,10 +358,10 @@ export function sendHttpUnspecifiedError(
 
   if (isNextApiResponseLike(arg0)) {
     const [res, json] = args as LegacySpecificParameters;
-    sendHttpErrorResponse(res, 500, { ...json, error });
+    sendHttpErrorResponse(res, 500, { error, ...json });
   } else {
     const [json, responseInit] = args as ModernSpecificParameters;
-    return sendHttpErrorResponse({ status: 500, ...responseInit }, { ...json, error });
+    return sendHttpErrorResponse({ status: 500, ...responseInit }, { error, ...json });
   }
 }
 
@@ -381,10 +381,10 @@ export function sendNotImplemented(
 
   if (isNextApiResponseLike(arg0)) {
     const [res, json] = args as LegacySpecificParameters;
-    sendHttpErrorResponse(res, 501, { ...json, error });
+    sendHttpErrorResponse(res, 501, { error, ...json });
   } else {
     const [json, responseInit] = args as ModernSpecificParameters;
-    return sendHttpErrorResponse({ status: 501, ...responseInit }, { ...json, error });
+    return sendHttpErrorResponse({ status: 501, ...responseInit }, { error, ...json });
   }
 }
 
@@ -404,9 +404,9 @@ export function sendHttpContrivedError(
 
   if (isNextApiResponseLike(arg0)) {
     const [res, json] = args as LegacySpecificParameters;
-    sendHttpErrorResponse(res, 555, { ...json, error });
+    sendHttpErrorResponse(res, 555, { error, ...json });
   } else {
     const [json, responseInit] = args as ModernSpecificParameters;
-    return sendHttpErrorResponse({ status: 555, ...responseInit }, { ...json, error });
+    return sendHttpErrorResponse({ status: 555, ...responseInit }, { error, ...json });
   }
 }

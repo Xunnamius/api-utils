@@ -20,6 +20,8 @@ import {
 
 import { ErrorMessage } from 'universe+respond:error.ts';
 
+const customError = 'custom error';
+
 describe('::sendGenericHttpResponse', () => {
   it('sends appropriate response given arguments', async () => {
     expect.hasAssertions();
@@ -92,6 +94,26 @@ describe('::sendHttpErrorResponse', () => {
           success: false,
           json: 'data',
           error: ErrorMessage.SendHttpErrorResponse()
+        });
+      }
+    });
+  });
+
+  it('allows overriding error property in json response', async () => {
+    expect.hasAssertions();
+
+    await testApiHandler({
+      appHandler: {
+        GET() {
+          return sendHttpBadMethod({ error: customError });
+        }
+      },
+      test: async ({ fetch }) => {
+        const res = await fetch();
+        expect(res.status).toBe(405);
+        await expect(res.json()).resolves.toStrictEqual({
+          success: false,
+          error: customError
         });
       }
     });
@@ -172,6 +194,26 @@ describe('::sendHttpBadMethod', () => {
       }
     });
   });
+
+  it('allows overriding error property in json response', async () => {
+    expect.hasAssertions();
+
+    await testApiHandler({
+      appHandler: {
+        GET() {
+          return sendHttpBadRequest({ error: customError });
+        }
+      },
+      test: async ({ fetch }) => {
+        const res = await fetch();
+        expect(res.status).toBe(400);
+        await expect(res.json()).resolves.toStrictEqual({
+          success: false,
+          error: customError
+        });
+      }
+    });
+  });
 });
 
 describe('::sendHttpBadRequest', () => {
@@ -207,6 +249,26 @@ describe('::sendHttpBadRequest', () => {
           success: false,
           error: ErrorMessage.SendHttpBadRequest(),
           json: 'data'
+        });
+      }
+    });
+  });
+
+  it('allows overriding error property in json response', async () => {
+    expect.hasAssertions();
+
+    await testApiHandler({
+      appHandler: {
+        GET() {
+          return sendHttpContrivedError({ error: customError });
+        }
+      },
+      test: async ({ fetch }) => {
+        const res = await fetch();
+        expect(res.status).toBe(555);
+        await expect(res.json()).resolves.toStrictEqual({
+          success: false,
+          error: customError
         });
       }
     });
@@ -250,6 +312,26 @@ describe('::sendHttpContrivedError', () => {
       }
     });
   });
+
+  it('allows overriding error property in json response', async () => {
+    expect.hasAssertions();
+
+    await testApiHandler({
+      appHandler: {
+        GET() {
+          return sendHttpUnspecifiedError({ error: customError });
+        }
+      },
+      test: async ({ fetch }) => {
+        const res = await fetch();
+        expect(res.status).toBe(500);
+        await expect(res.json()).resolves.toStrictEqual({
+          success: false,
+          error: customError
+        });
+      }
+    });
+  });
 });
 
 describe('::sendHttpUnspecifiedError', () => {
@@ -285,6 +367,26 @@ describe('::sendHttpUnspecifiedError', () => {
           success: false,
           error: ErrorMessage.SendHttpUnspecifiedError(),
           json: 'data'
+        });
+      }
+    });
+  });
+
+  it('allows overriding error property in json response', async () => {
+    expect.hasAssertions();
+
+    await testApiHandler({
+      appHandler: {
+        GET() {
+          return sendHttpErrorResponse({ status: 400 }, { error: customError });
+        }
+      },
+      test: async ({ fetch }) => {
+        const res = await fetch();
+        expect(res.status).toBe(400);
+        await expect(res.json()).resolves.toStrictEqual({
+          success: false,
+          error: customError
         });
       }
     });
@@ -365,6 +467,26 @@ describe('::sendHttpNotFound', () => {
       }
     });
   });
+
+  it('allows overriding error property in json response', async () => {
+    expect.hasAssertions();
+
+    await testApiHandler({
+      appHandler: {
+        GET() {
+          return sendHttpNotFound({ error: customError });
+        }
+      },
+      test: async ({ fetch }) => {
+        const res = await fetch();
+        expect(res.status).toBe(404);
+        await expect(res.json()).resolves.toStrictEqual({
+          success: false,
+          error: customError
+        });
+      }
+    });
+  });
 });
 
 describe('::sendHttpRateLimited', () => {
@@ -400,6 +522,26 @@ describe('::sendHttpRateLimited', () => {
           success: false,
           error: ErrorMessage.SendHttpRateLimited(),
           json: 'data'
+        });
+      }
+    });
+  });
+
+  it('allows overriding error property in json response', async () => {
+    expect.hasAssertions();
+
+    await testApiHandler({
+      appHandler: {
+        GET() {
+          return sendHttpRateLimited({ error: customError });
+        }
+      },
+      test: async ({ fetch }) => {
+        const res = await fetch();
+        expect(res.status).toBe(429);
+        await expect(res.json()).resolves.toStrictEqual({
+          success: false,
+          error: customError
         });
       }
     });
@@ -443,6 +585,26 @@ describe('::sendHttpTooLarge', () => {
       }
     });
   });
+
+  it('allows overriding error property in json response', async () => {
+    expect.hasAssertions();
+
+    await testApiHandler({
+      appHandler: {
+        GET() {
+          return sendHttpTooLarge({ error: customError });
+        }
+      },
+      test: async ({ fetch }) => {
+        const res = await fetch();
+        expect(res.status).toBe(413);
+        await expect(res.json()).resolves.toStrictEqual({
+          success: false,
+          error: customError
+        });
+      }
+    });
+  });
 });
 
 describe('::sendHttpBadContentType', () => {
@@ -478,6 +640,26 @@ describe('::sendHttpBadContentType', () => {
           success: false,
           error: ErrorMessage.SendHttpBadContentType(),
           json: 'data'
+        });
+      }
+    });
+  });
+
+  it('allows overriding error property in json response', async () => {
+    expect.hasAssertions();
+
+    await testApiHandler({
+      appHandler: {
+        GET() {
+          return sendHttpBadContentType({ error: customError });
+        }
+      },
+      test: async ({ fetch }) => {
+        const res = await fetch();
+        expect(res.status).toBe(415);
+        await expect(res.json()).resolves.toStrictEqual({
+          success: false,
+          error: customError
         });
       }
     });
@@ -521,6 +703,26 @@ describe('::sendHttpUnauthenticated', () => {
       }
     });
   });
+
+  it('allows overriding error property in json response', async () => {
+    expect.hasAssertions();
+
+    await testApiHandler({
+      appHandler: {
+        GET() {
+          return sendHttpUnauthenticated({ error: customError });
+        }
+      },
+      test: async ({ fetch }) => {
+        const res = await fetch();
+        expect(res.status).toBe(401);
+        await expect(res.json()).resolves.toStrictEqual({
+          success: false,
+          error: customError
+        });
+      }
+    });
+  });
 });
 
 describe('::sendHttpUnauthorized', () => {
@@ -560,6 +762,26 @@ describe('::sendHttpUnauthorized', () => {
       }
     });
   });
+
+  it('allows overriding error property in json response', async () => {
+    expect.hasAssertions();
+
+    await testApiHandler({
+      appHandler: {
+        GET() {
+          return sendHttpUnauthorized({ error: customError });
+        }
+      },
+      test: async ({ fetch }) => {
+        const res = await fetch();
+        expect(res.status).toBe(403);
+        await expect(res.json()).resolves.toStrictEqual({
+          success: false,
+          error: customError
+        });
+      }
+    });
+  });
 });
 
 describe('::sendNotImplemented', () => {
@@ -595,6 +817,26 @@ describe('::sendNotImplemented', () => {
           success: false,
           error: ErrorMessage.SendNotImplemented(),
           json: 'data'
+        });
+      }
+    });
+  });
+
+  it('allows overriding error property in json response', async () => {
+    expect.hasAssertions();
+
+    await testApiHandler({
+      appHandler: {
+        GET() {
+          return sendNotImplemented({ error: customError });
+        }
+      },
+      test: async ({ fetch }) => {
+        const res = await fetch();
+        expect(res.status).toBe(501);
+        await expect(res.json()).resolves.toStrictEqual({
+          success: false,
+          error: customError
         });
       }
     });
