@@ -540,6 +540,94 @@ describe('::withMiddleware', () => {
         expect(errorSpy).toHaveBeenCalledTimes(2);
       });
     });
+
+    it('returns a function-object shaped with respect to allowedMethods (if present)', async () => {
+      expect.hasAssertions();
+
+      {
+        const handler = withMiddleware(undefined, {
+          descriptor: '/fake',
+          use: []
+        });
+
+        expect(handler).toContainKeys([
+          'GET',
+          'HEAD',
+          'DELETE',
+          'POST',
+          'PUT',
+          'PATCH',
+          'OPTIONS'
+        ]);
+      }
+
+      {
+        const handler = withMiddleware(undefined, {
+          descriptor: '/fake',
+          use: [],
+          options: { allowedMethods: [] }
+        });
+
+        expect(handler).not.toContainAnyKeys([
+          'GET',
+          'HEAD',
+          'DELETE',
+          'POST',
+          'PUT',
+          'PATCH',
+          'OPTIONS'
+        ]);
+      }
+
+      {
+        const handler = withMiddleware(undefined, {
+          descriptor: '/fake',
+          use: [],
+          options: {
+            allowedMethods: ['GET', 'HEAD', 'DELETE', 'POST', 'PUT', 'PATCH', 'OPTIONS']
+          }
+        });
+
+        expect(handler).toContainKeys([
+          'GET',
+          'HEAD',
+          'DELETE',
+          'POST',
+          'PUT',
+          'PATCH',
+          'OPTIONS'
+        ]);
+      }
+
+      {
+        const handler = withMiddleware(undefined, {
+          descriptor: '/fake',
+          use: [],
+          options: { allowedMethods: ['GET'] }
+        });
+
+        expect(handler).toContainKeys(['GET']);
+        expect(handler).not.toContainAnyKeys([
+          'HEAD',
+          'DELETE',
+          'POST',
+          'PUT',
+          'PATCH',
+          'OPTIONS'
+        ]);
+      }
+
+      {
+        const handler = withMiddleware(undefined, {
+          descriptor: '/fake',
+          use: [],
+          options: { allowedMethods: ['GET', 'HEAD', 'DELETE'] }
+        });
+
+        expect(handler).toContainKeys(['GET', 'HEAD', 'DELETE']);
+        expect(handler).not.toContainAnyKeys(['POST', 'PUT', 'PATCH', 'OPTIONS']);
+      }
+    });
   });
 
   it('supports adding post-sent tasks via runtime.doAfterSent', async () => {
