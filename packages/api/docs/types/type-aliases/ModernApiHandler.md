@@ -8,7 +8,7 @@
 
 > **ModernApiHandler** = (`request`) => `Promisable`\<`Response` \| `undefined` \| `void`\> & `{ [method in ValidHttpMethod]?: Extract<ModernApiHandler, Function> }`
 
-Defined in: [packages/api/src/types.ts:31](https://github.com/Xunnamius/api-utils/blob/20b3c0a8fb0d738da534e0b5a18ecc7bfb431124/packages/api/src/types.ts#L31)
+Defined in: [packages/api/src/types.ts:31](https://github.com/Xunnamius/api-utils/blob/26ff5418e5bdc48556430bd75dc6bad0dc96e47c/packages/api/src/types.ts#L31)
 
 The shape of a modern fetch request handler.
 

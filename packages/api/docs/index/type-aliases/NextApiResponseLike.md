@@ -8,7 +8,7 @@
 
 > **NextApiResponseLike** = `ServerResponse` & `object`
 
-Defined in: [packages/shared/src/next-like.ts:26](https://github.com/Xunnamius/api-utils/blob/20b3c0a8fb0d738da534e0b5a18ecc7bfb431124/packages/shared/src/next-like.ts#L26)
+Defined in: [packages/shared/src/next-like.ts:26](https://github.com/Xunnamius/api-utils/blob/26ff5418e5bdc48556430bd75dc6bad0dc96e47c/packages/shared/src/next-like.ts#L26)
 
 An object that is probably a `NextApiResponse`.
 

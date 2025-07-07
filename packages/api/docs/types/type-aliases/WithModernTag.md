@@ -8,7 +8,7 @@
 
 > **WithModernTag**\<`T`\> = `Tagged`\<`T`, `"modern"`\>
 
-Defined in: [packages/api/src/types.ts:15](https://github.com/Xunnamius/api-utils/blob/20b3c0a8fb0d738da534e0b5a18ecc7bfb431124/packages/api/src/types.ts#L15)
+Defined in: [packages/api/src/types.ts:15](https://github.com/Xunnamius/api-utils/blob/26ff5418e5bdc48556430bd75dc6bad0dc96e47c/packages/api/src/types.ts#L15)
 
 Used to help structurally differentiate [ModernMiddleware](ModernMiddleware.md) from
 [LegacyMiddleware](LegacyMiddleware.md).
