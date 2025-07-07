@@ -107,6 +107,7 @@
     "test:packages:all": "symbiote test --env NODE_NO_WARNINGS=1 --tests all-local --scope unlimited --coverage"
   },
   "dependencies": {
+    "@-xun/api-error": "^1.0.0",
     "@-xun/env": "^1.1.0",
     "@-xun/js": "^2.0.0",
     "@-xun/mongo-item": "^1.1.1",
