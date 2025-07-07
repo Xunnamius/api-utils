@@ -6,7 +6,7 @@
 
 # Class: ForbiddenError
 
-Defined in: [packages/api-strategy/src/error.ts:43](https://github.com/Xunnamius/api-utils/blob/d69fc4b10948b0fd555b5e8b1869b9e8266c0fb8/packages/api-strategy/src/error.ts#L43)
+Defined in: packages/api-error/dist/packages/api-error/src/index.d.ts:6
 
 ## Extends
 
