@@ -8,7 +8,7 @@
 
 > `const` **publicAuthEntryProjection**: `object`
 
-Defined in: [packages/api-strategy/src/auth/db.ts:21](https://github.com/Xunnamius/api-utils/blob/80abd4a35bc71883d21e2018ef2b5a215a9a56b3/packages/api-strategy/src/auth/db.ts#L21)
+Defined in: [packages/api-strategy/src/auth/db.ts:21](https://github.com/Xunnamius/api-utils/blob/9ad17e4ad2e689dd2955c28701b11d077ae09346/packages/api-strategy/src/auth/db.ts#L21)
 
 A MongoDB cursor projection that transforms an internal auth entry (or
 "token") into an unsafe public auth entry.
