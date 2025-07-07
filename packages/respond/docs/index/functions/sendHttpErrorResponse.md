@@ -10,7 +10,7 @@
 
 > **sendHttpErrorResponse**(...`args`): `Response`
 
-Defined in: [index.ts:111](https://github.com/Xunnamius/api-utils/blob/dc547be746591c271280b9971411391f9b2053f2/packages/respond/src/index.ts#L111)
+Defined in: [index.ts:111](https://github.com/Xunnamius/api-utils/blob/2380af8d9957fce028eee89fa329ac3c196b60c1/packages/respond/src/index.ts#L111)
 
 Sends a generic error response and JSON body, optionally with additional
 properties.
@@ -31,7 +31,7 @@ This function generates 4xx and 5xx responses.
 
 > **sendHttpErrorResponse**(...`args`): `void`
 
-Defined in: [index.ts:112](https://github.com/Xunnamius/api-utils/blob/dc547be746591c271280b9971411391f9b2053f2/packages/respond/src/index.ts#L112)
+Defined in: [index.ts:112](https://github.com/Xunnamius/api-utils/blob/2380af8d9957fce028eee89fa329ac3c196b60c1/packages/respond/src/index.ts#L112)
 
 Sends a generic error response and JSON body, optionally with additional
 properties.
@@ -52,7 +52,7 @@ This function generates 4xx and 5xx responses.
 
 > **sendHttpErrorResponse**(...`args`): `void` \| `Response`
 
-Defined in: [index.ts:113](https://github.com/Xunnamius/api-utils/blob/dc547be746591c271280b9971411391f9b2053f2/packages/respond/src/index.ts#L113)
+Defined in: [index.ts:113](https://github.com/Xunnamius/api-utils/blob/2380af8d9957fce028eee89fa329ac3c196b60c1/packages/respond/src/index.ts#L113)
 
 Sends a generic error response and JSON body, optionally with additional
 properties.
