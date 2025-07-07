@@ -1,4 +1,5 @@
-// TODO: Augment with @-xun/error
+// TODO: Augment with @-xun/error and replace all "instanceof" checks everywhere
+// TODO: in codebase, especially in @-xun/api/middleware/handle-error
 
 export class ApiError extends Error {}
 export class SanityError extends ApiError {}
