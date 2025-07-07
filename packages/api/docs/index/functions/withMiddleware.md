@@ -10,7 +10,7 @@
 
 > **withMiddleware**\<`Options`, `Heap`\>(`handler`, `options`): [`ModernApiHandler`](../../types/type-aliases/ModernApiHandler.md)
 
-Defined in: [packages/api/src/index.ts:82](https://github.com/Xunnamius/api-utils/blob/26ff5418e5bdc48556430bd75dc6bad0dc96e47c/packages/api/src/index.ts#L82)
+Defined in: [packages/api/src/index.ts:82](https://github.com/Xunnamius/api-utils/blob/5da7e0f39c76927221d59796ee606e41a5525952/packages/api/src/index.ts#L82)
 
 This function decorates a Request handler, returning a generic
 Response-returning middleware runner function compatible with tools
@@ -59,7 +59,7 @@ middleware for later implementation.
 
 > **withMiddleware**\<`Options`, `Heap`\>(`handler`, `options`): [`LegacyApiHandler`](../../types/type-aliases/LegacyApiHandler.md)
 
-Defined in: [packages/api/src/index.ts:99](https://github.com/Xunnamius/api-utils/blob/26ff5418e5bdc48556430bd75dc6bad0dc96e47c/packages/api/src/index.ts#L99)
+Defined in: [packages/api/src/index.ts:99](https://github.com/Xunnamius/api-utils/blob/5da7e0f39c76927221d59796ee606e41a5525952/packages/api/src/index.ts#L99)
 
 This function decorates a [LegacyApiHandlerWithHeap](../../types/type-aliases/LegacyApiHandlerWithHeap.md), returning a
 middleware runner compatible with legacy middleware like Express or the

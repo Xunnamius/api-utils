@@ -8,7 +8,7 @@
 
 > **Options** = `object`
 
-Defined in: [packages/api/src/middleware/check-version.ts:16](https://github.com/Xunnamius/api-utils/blob/26ff5418e5bdc48556430bd75dc6bad0dc96e47c/packages/api/src/middleware/check-version.ts#L16)
+Defined in: [packages/api/src/middleware/check-version.ts:16](https://github.com/Xunnamius/api-utils/blob/5da7e0f39c76927221d59796ee606e41a5525952/packages/api/src/middleware/check-version.ts#L16)
 
 ## Properties
 
@@ -16,6 +16,6 @@ Defined in: [packages/api/src/middleware/check-version.ts:16](https://github.com
 
 > `optional` **apiVersion**: `string`
 
-Defined in: [packages/api/src/middleware/check-version.ts:20](https://github.com/Xunnamius/api-utils/blob/26ff5418e5bdc48556430bd75dc6bad0dc96e47c/packages/api/src/middleware/check-version.ts#L20)
+Defined in: [packages/api/src/middleware/check-version.ts:20](https://github.com/Xunnamius/api-utils/blob/5da7e0f39c76927221d59796ee606e41a5525952/packages/api/src/middleware/check-version.ts#L20)
 
 The version of the api this endpoint serves.
