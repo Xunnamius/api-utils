@@ -10,7 +10,7 @@
 
 > **addToRequestLog**(`options`): `Promise`\<`void`\>
 
-Defined in: [packages/api-strategy/src/log.ts:37](https://github.com/Xunnamius/api-utils/blob/b785d9e67ba769b2480f64a9690c2911fb596cf7/packages/api-strategy/src/log.ts#L37)
+Defined in: [packages/api-strategy/src/log.ts:37](https://github.com/Xunnamius/api-utils/blob/840d5baca8526043aadc1db57d1845b3fe2f876c/packages/api-strategy/src/log.ts#L37)
 
 This function adds a request metadata entry to the database.
 
@@ -42,7 +42,7 @@ This function adds a request metadata entry to the database.
 
 > **addToRequestLog**(`options`): `Promise`\<`void`\>
 
-Defined in: [packages/api-strategy/src/log.ts:56](https://github.com/Xunnamius/api-utils/blob/b785d9e67ba769b2480f64a9690c2911fb596cf7/packages/api-strategy/src/log.ts#L56)
+Defined in: [packages/api-strategy/src/log.ts:56](https://github.com/Xunnamius/api-utils/blob/840d5baca8526043aadc1db57d1845b3fe2f876c/packages/api-strategy/src/log.ts#L56)
 
 This function adds a request metadata entry to the database.
 

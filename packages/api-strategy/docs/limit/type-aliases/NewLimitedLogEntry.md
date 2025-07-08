@@ -8,6 +8,6 @@
 
 > **NewLimitedLogEntry** = `WithoutId`\<[`InternalLimitedLogEntry`](InternalLimitedLogEntry.md)\>
 
-Defined in: [packages/api-strategy/src/limit.ts:35](https://github.com/Xunnamius/api-utils/blob/b785d9e67ba769b2480f64a9690c2911fb596cf7/packages/api-strategy/src/limit.ts#L35)
+Defined in: [packages/api-strategy/src/limit.ts:35](https://github.com/Xunnamius/api-utils/blob/840d5baca8526043aadc1db57d1845b3fe2f876c/packages/api-strategy/src/limit.ts#L35)
 
 The shape of a new entry in the well-known "limited log" collection.

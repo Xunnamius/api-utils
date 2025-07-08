@@ -8,7 +8,7 @@
 
 > **getCommonSchemaConfig**(`additionalSchemaConfig?`): `DbSchema`
 
-Defined in: [packages/api-strategy/src/mongo/index.ts:12](https://github.com/Xunnamius/api-utils/blob/b785d9e67ba769b2480f64a9690c2911fb596cf7/packages/api-strategy/src/mongo/index.ts#L12)
+Defined in: [packages/api-strategy/src/mongo/index.ts:12](https://github.com/Xunnamius/api-utils/blob/840d5baca8526043aadc1db57d1845b3fe2f876c/packages/api-strategy/src/mongo/index.ts#L12)
 
 A JSON representation of the backend Mongo database structure. This is used
 for common consistent "well-known" db structure across projects.
