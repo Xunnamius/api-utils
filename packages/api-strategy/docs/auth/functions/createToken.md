@@ -10,7 +10,7 @@
 
 > **createToken**(`options`): `Promise`\<[`PublicAuthEntry`](../types/type-aliases/PublicAuthEntry.md)\>
 
-Defined in: [packages/api-strategy/src/auth.ts:161](https://github.com/Xunnamius/api-utils/blob/9ad17e4ad2e689dd2955c28701b11d077ae09346/packages/api-strategy/src/auth.ts#L161)
+Defined in: [packages/api-strategy/src/auth.ts:161](https://github.com/Xunnamius/api-utils/blob/b785d9e67ba769b2480f64a9690c2911fb596cf7/packages/api-strategy/src/auth.ts#L161)
 
 Generates a new bearer token and auth entry in the well-known "auth" MongoDB
 collection.
@@ -31,7 +31,7 @@ Throws on invalid input.
 
 > **createToken**(`options`): `Promise`\<[`SafePublicAuthEntry`](../types/type-aliases/SafePublicAuthEntry.md)\>
 
-Defined in: [packages/api-strategy/src/auth.ts:164](https://github.com/Xunnamius/api-utils/blob/9ad17e4ad2e689dd2955c28701b11d077ae09346/packages/api-strategy/src/auth.ts#L164)
+Defined in: [packages/api-strategy/src/auth.ts:164](https://github.com/Xunnamius/api-utils/blob/b785d9e67ba769b2480f64a9690c2911fb596cf7/packages/api-strategy/src/auth.ts#L164)
 
 Generates a new bearer token and auth entry in the well-known "auth" MongoDB
 collection.
@@ -52,7 +52,7 @@ Throws on invalid input.
 
 > **createToken**(`options`): `Promise`\<[`PublicAuthEntry`](../types/type-aliases/PublicAuthEntry.md) \| [`SafePublicAuthEntry`](../types/type-aliases/SafePublicAuthEntry.md)\>
 
-Defined in: [packages/api-strategy/src/auth.ts:167](https://github.com/Xunnamius/api-utils/blob/9ad17e4ad2e689dd2955c28701b11d077ae09346/packages/api-strategy/src/auth.ts#L167)
+Defined in: [packages/api-strategy/src/auth.ts:167](https://github.com/Xunnamius/api-utils/blob/b785d9e67ba769b2480f64a9690c2911fb596cf7/packages/api-strategy/src/auth.ts#L167)
 
 Generates a new bearer token and auth entry in the well-known "auth" MongoDB
 collection.
