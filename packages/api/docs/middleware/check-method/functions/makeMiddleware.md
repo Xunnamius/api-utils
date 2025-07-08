@@ -8,7 +8,7 @@
 
 > **makeMiddleware**(): (`reqOrRequest`, `resOrModernContext`, `maybeLegacyContext`) => `Promise`\<`void`\>
 
-Defined in: [packages/api/src/middleware/check-method.ts:40](https://github.com/Xunnamius/api-utils/blob/f159b4026fbac8d4de769d2a9e8cfaddf85d9e96/packages/api/src/middleware/check-method.ts#L40)
+Defined in: [packages/api/src/middleware/check-method.ts:40](https://github.com/Xunnamius/api-utils/blob/5d75eafe8fcae226a3b6f99a43817184692fd9bf/packages/api/src/middleware/check-method.ts#L40)
 
 Rejects requests that are either using a disallowed method or not using an
 allowed method.

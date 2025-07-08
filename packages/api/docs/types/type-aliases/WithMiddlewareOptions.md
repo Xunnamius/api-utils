@@ -8,7 +8,7 @@
 
 > **WithMiddlewareOptions**\<`Options`, `Heap`, `Middleware`\> = `object` & `Middleware` *extends* [`WithModernTag`](WithModernTag.md)\<`unknown`\> ? `Partial`\<`Options`\> *extends* `Options` ? `object` : `object` : `Middleware` *extends* [`WithLegacyTag`](WithLegacyTag.md)\<`unknown`\> ? `object` : `object`
 
-Defined in: [packages/api/src/types.ts:355](https://github.com/Xunnamius/api-utils/blob/f159b4026fbac8d4de769d2a9e8cfaddf85d9e96/packages/api/src/types.ts#L355)
+Defined in: [packages/api/src/types.ts:355](https://github.com/Xunnamius/api-utils/blob/5d75eafe8fcae226a3b6f99a43817184692fd9bf/packages/api/src/types.ts#L355)
 
 ## Type declaration
 
