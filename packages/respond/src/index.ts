@@ -196,10 +196,12 @@ export function sendHttpUnauthenticated(
 
   if (isNextApiResponseLike(arg0)) {
     const [res, json] = args as LegacySpecificParameters;
-    sendHttpErrorResponse(res, 401, { error, ...json });
+    // ? For this one, we do override error on purpose (security)
+    sendHttpErrorResponse(res, 401, { ...json, error });
   } else {
     const [json, responseInit] = args as ModernSpecificParameters;
-    return sendHttpErrorResponse({ status: 401, ...responseInit }, { error, ...json });
+    // ? For this one, we do override error on purpose (security)
+    return sendHttpErrorResponse({ status: 401, ...responseInit }, { ...json, error });
   }
 }
 
@@ -220,10 +222,12 @@ export function sendHttpUnauthorized(
 
   if (isNextApiResponseLike(arg0)) {
     const [res, json] = args as LegacySpecificParameters;
-    sendHttpErrorResponse(res, 403, { error, ...json });
+    // ? For this one, we do override error on purpose (security)
+    sendHttpErrorResponse(res, 403, { ...json, error });
   } else {
     const [json, responseInit] = args as ModernSpecificParameters;
-    return sendHttpErrorResponse({ status: 403, ...responseInit }, { error, ...json });
+    // ? For this one, we do override error on purpose (security)
+    return sendHttpErrorResponse({ status: 403, ...responseInit }, { ...json, error });
   }
 }
 
