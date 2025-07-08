@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable no-restricted-syntax */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import {
   ApiError,
   AuthError,
   ClientValidationError,
   ForbiddenError,
+  isANamedErrorClass,
   NotFoundError,
   NotImplementedError,
   SanityError,
@@ -102,8 +102,8 @@ export type Options<
    * functions that handle them.
    */
   errorHandlers?: [
-    type: NoInfer<new (...args: any[]) => Error>,
-    handler: UnwrapTagged<NoInfer<ErrorHandler>>
+    type: new (...args: any[]) => Error,
+    handler: UnwrapTagged<ErrorHandler>
   ][];
 };
 
@@ -160,7 +160,11 @@ export function makeMiddleware() {
     if (errorHandlers) {
       try {
         for (const [errorType, errorHandler] of errorHandlers) {
-          if (error instanceof errorType) {
+          if (
+            (isANamedErrorClass(errorType) && errorType.isError(error)) ||
+            // eslint-disable-next-line no-restricted-syntax
+            error instanceof errorType
+          ) {
             debug(`using custom error handler for type "${error.name}"`);
 
             // eslint-disable-next-line no-await-in-loop
@@ -182,6 +186,7 @@ export function makeMiddleware() {
       }
     }
 
+    // eslint-disable-next-line no-restricted-syntax
     if (handlerResult instanceof Response) {
       // ? Request was already handled
       return handlerResult;
@@ -201,6 +206,7 @@ export function makeMiddleware() {
 
     debug(
       `using default error handler${
+        // eslint-disable-next-line no-restricted-syntax
         handleAs instanceof Error ? ` for type "${handleAs.constructor.name}"` : ''
       }`
     );
@@ -214,32 +220,35 @@ export function makeMiddleware() {
       TraversalError: ArkTraversalError
     } = await import('arktype');
 
-    if (handleAs instanceof SanityError) {
+    if (SanityError.isError(handleAs)) {
       // eslint-disable-next-line no-console
       console.error(`sanity check failed on request: ${url}\n`, error);
       return respondWith(sendHttpUnspecifiedError, {
         error: ErrorMessage.SanityCheckFailed()
       });
-    } else if (handleAs instanceof ServerValidationError) {
+    } else if (ServerValidationError.isError(handleAs)) {
       // eslint-disable-next-line no-console
       console.error(`server-side validation exception on request: ${url}\n`, error);
       return respondWith(sendHttpUnspecifiedError, errorJson);
     } else if (
-      handleAs instanceof ClientValidationError ||
+      ClientValidationError.isError(handleAs) ||
+      // eslint-disable-next-line no-restricted-syntax
       handleAs instanceof ArkError ||
+      // eslint-disable-next-line no-restricted-syntax
       handleAs instanceof ArkParseError ||
+      // eslint-disable-next-line no-restricted-syntax
       handleAs instanceof ArkTraversalError
     ) {
       return respondWith(sendHttpBadRequest, errorJson);
-    } else if (handleAs instanceof AuthError) {
+    } else if (AuthError.isError(handleAs)) {
       return respondWith(sendHttpUnauthenticated, errorJson);
-    } else if (handleAs instanceof ForbiddenError) {
+    } else if (ForbiddenError.isError(handleAs)) {
       return respondWith(sendHttpUnauthorized, errorJson);
-    } else if (handleAs instanceof NotFoundError) {
+    } else if (NotFoundError.isError(handleAs)) {
       return respondWith(sendHttpNotFound, errorJson);
-    } else if (handleAs instanceof NotImplementedError) {
+    } else if (NotImplementedError.isError(handleAs)) {
       return respondWith(sendNotImplemented, {});
-    } else if (handleAs instanceof ApiError) {
+    } else if (ApiError.isError(handleAs)) {
       // eslint-disable-next-line no-console
       console.error(`named exception on request: ${url}\n`, error);
       return respondWith(sendHttpUnspecifiedError, errorJson);
