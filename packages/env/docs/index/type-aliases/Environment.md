@@ -8,4 +8,4 @@
 
 > **Environment** = `Record`\<`string`, `Primitive` \| `Primitive`[]\>
 
-Defined in: [index.ts:22](https://github.com/Xunnamius/api-utils/blob/6c4d0a6c6dd75cf70a61cf5e13f3a0671a3583aa/packages/env/src/index.ts#L22)
+Defined in: [index.ts:26](https://github.com/Xunnamius/api-utils/blob/ec6a1f848bdf89f680f91c44729fb1ec9cab402f/packages/env/src/index.ts#L26)
