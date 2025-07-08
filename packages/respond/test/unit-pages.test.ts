@@ -631,7 +631,7 @@ describe('::sendHttpUnauthenticated', () => {
     });
   });
 
-  it('allows overriding error property in json response', async () => {
+  it('does not allow overriding error property in json response', async () => {
     expect.hasAssertions();
 
     await testApiHandler({
@@ -643,7 +643,7 @@ describe('::sendHttpUnauthenticated', () => {
         expect(res.status).toBe(401);
         await expect(res.json()).resolves.toStrictEqual({
           success: false,
-          error: customError
+          error: ErrorMessage.SendHttpUnauthenticated()
         });
       }
     });
@@ -684,7 +684,7 @@ describe('::sendHttpUnauthorized', () => {
     });
   });
 
-  it('allows overriding error property in json response', async () => {
+  it('does not allow overriding error property in json response', async () => {
     expect.hasAssertions();
 
     await testApiHandler({
@@ -696,7 +696,7 @@ describe('::sendHttpUnauthorized', () => {
         expect(res.status).toBe(403);
         await expect(res.json()).resolves.toStrictEqual({
           success: false,
-          error: customError
+          error: ErrorMessage.SendHttpUnauthorized()
         });
       }
     });
