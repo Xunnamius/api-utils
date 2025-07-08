@@ -111,7 +111,7 @@
     "@-xun/env": "^1.1.1",
     "@-xun/js": "^2.0.0",
     "@-xun/mongo-item": "^1.2.1",
-    "@-xun/mongo-schema": "^1.2.0",
+    "@-xun/mongo-schema": "^1.2.1",
     "@-xun/mongo-test": "^1.1.6",
     "@-xun/types": "^1.1.0",
     "arktype": "^2.1.20",
