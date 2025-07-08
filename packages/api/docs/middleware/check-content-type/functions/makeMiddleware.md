@@ -8,7 +8,7 @@
 
 > **makeMiddleware**(): (`reqOrRequest`, `resOrModernContext`, `maybeLegacyContext`) => `Promise`\<`undefined` \| `Response`\>
 
-Defined in: [packages/api/src/middleware/check-content-type.ts:71](https://github.com/Xunnamius/api-utils/blob/5da7e0f39c76927221d59796ee606e41a5525952/packages/api/src/middleware/check-content-type.ts#L71)
+Defined in: [packages/api/src/middleware/check-content-type.ts:71](https://github.com/Xunnamius/api-utils/blob/f159b4026fbac8d4de769d2a9e8cfaddf85d9e96/packages/api/src/middleware/check-content-type.ts#L71)
 
 Rejects requests that are not using an allowed content type. This middleware
 should usually come _after_ check-method.
