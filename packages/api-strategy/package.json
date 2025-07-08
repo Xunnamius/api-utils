@@ -115,7 +115,7 @@
     "@-xun/mongo-test": "^1.1.6",
     "@-xun/types": "^1.1.0",
     "arktype": "^2.1.20",
-    "core-js": "^3.43.0",
+    "core-js": "^3.44.0",
     "mongodb": ">=6",
     "rejoinder": "^2.0.1",
     "request-ip": "^3.3.0"
