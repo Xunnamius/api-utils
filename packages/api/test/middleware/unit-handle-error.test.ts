@@ -10,6 +10,8 @@ import {
   ServerValidationError
 } from '@-xun/api-strategy/error';
 
+import { makeNamedError } from '@-xun/error';
+
 import { ErrorMessage } from '@-xun/respond/error';
 import { testApiHandler } from 'next-test-api-route-handler';
 import { toss } from 'toss-expression';
@@ -108,7 +110,9 @@ describe('<legacy mode>', () => {
     expect.hasAssertions();
 
     const MyError = class extends Error {};
-    const MyUnusedError = class extends Error {};
+    const { MyOtherError } = makeNamedError(class extends Error {}, 'MyOtherError');
+
+    let threw = false as boolean;
 
     await testApiHandler({
       rejectOnHandlerError: true,
@@ -118,7 +122,12 @@ describe('<legacy mode>', () => {
           descriptor: '/fake',
           use: [
             () => {
-              throw new MyError('bad bad not good');
+              if (!threw) {
+                threw = true;
+                throw new MyError('bad bad not good');
+              }
+
+              throw new MyOtherError('good good not bad');
             }
           ],
           useOnError: [makeMiddleware()],
@@ -126,9 +135,9 @@ describe('<legacy mode>', () => {
             legacyMode: true,
             errorHandlers: [
               [
-                MyUnusedError,
-                (_req, res) => {
-                  res.status(555).end();
+                MyOtherError,
+                (_req, res, errorJson) => {
+                  res.status(555).send(errorJson);
                 }
               ],
               [
@@ -142,10 +151,23 @@ describe('<legacy mode>', () => {
         }
       ),
       test: async ({ fetch }) => {
-        expect((await fetch()).status).toBe(444);
-        await expect((await fetch()).json()).resolves.toStrictEqual({
-          error: 'bad bad not good'
-        });
+        {
+          const res = await fetch();
+          expect(res.status).toBe(444);
+
+          await expect(res.json()).resolves.toStrictEqual({
+            error: 'bad bad not good'
+          });
+        }
+
+        {
+          const res = await fetch();
+          expect(res.status).toBe(555);
+
+          await expect(res.json()).resolves.toStrictEqual({
+            error: 'good good not bad'
+          });
+        }
       }
     });
 
@@ -185,6 +207,39 @@ describe('<legacy mode>', () => {
       });
 
       expect(errorSpy).toHaveBeenCalled();
+    });
+  });
+
+  it('gracefully handles non-writable responses after pluggable error handler runs', async () => {
+    expect.hasAssertions();
+
+    const MyError = class extends Error {};
+
+    await testApiHandler({
+      rejectOnHandlerError: true,
+      pagesHandler: withMiddleware<Options<LegacyErrorHandler<any, any>>, Context>(
+        undefined,
+        {
+          descriptor: '/fake',
+          use: [
+            () => {
+              throw new MyError('bad bad not good');
+            }
+          ],
+          useOnError: [makeMiddleware()],
+          options: {
+            legacyMode: true,
+            errorHandlers: [[MyError, (_req, res) => void res.status(567).end()]]
+          }
+        }
+      ),
+      test: async ({ fetch }) => {
+        {
+          const res = await fetch();
+          expect(res.status).toBe(567);
+          await expect(res.text()).resolves.toBe('');
+        }
+      }
     });
   });
 
@@ -263,14 +318,16 @@ describe('<modern mode>', () => {
   it('supports pluggable error handlers', async () => {
     expect.hasAssertions();
 
+    const UnusedError = class extends Error {};
     const MyError = class extends Error {};
-    const MyUnusedError = class extends Error {};
+    const { MyOtherError } = makeNamedError(class extends Error {}, 'MyOtherError');
 
     await withMockedOutput(async ({ errorSpy }) => {
       await testApiHandler({
         rejectOnHandlerError: true,
-        appHandler: spreadHandlerAcrossMethods(
-          withMiddleware<Options<ModernErrorHandler<any, any>>, Context>(undefined, {
+        appHandler: withMiddleware<Options<ModernErrorHandler<any, any>>, Context>(
+          undefined,
+          {
             descriptor: '/fake',
             use: [
               () => {
@@ -281,7 +338,13 @@ describe('<modern mode>', () => {
             options: {
               errorHandlers: [
                 [
-                  MyUnusedError,
+                  UnusedError,
+                  () => {
+                    return new Response(null, { status: 567 });
+                  }
+                ],
+                [
+                  MyOtherError,
                   () => {
                     return new Response(null, { status: 555 });
                   }
@@ -297,8 +360,7 @@ describe('<modern mode>', () => {
                 ]
               ]
             }
-          }),
-          ['GET']
+          }
         ),
         test: async ({ fetch }) => {
           const res = await fetch({ headers: { 'z-z-z': 'x-x-x' } });
@@ -314,8 +376,9 @@ describe('<modern mode>', () => {
 
     await testApiHandler({
       rejectOnHandlerError: true,
-      appHandler: spreadHandlerAcrossMethods(
-        withMiddleware<Options<ModernErrorHandler<any, any>>, Context>(undefined, {
+      appHandler: withMiddleware<Options<ModernErrorHandler<any, any>>, Context>(
+        undefined,
+        {
           descriptor: '/fake',
           use: [
             () => {
@@ -334,14 +397,45 @@ describe('<modern mode>', () => {
               ]
             ]
           }
-        }),
-        ['GET']
+        }
       ),
       test: async ({ fetch }) => {
         expect((await fetch()).status).toBe(444);
         await expect((await fetch()).json()).resolves.toStrictEqual({
           error: 'bad good not good'
         });
+      }
+    });
+  });
+
+  it('gracefully handles responses returned after pluggable error handler runs', async () => {
+    expect.hasAssertions();
+
+    const MyError = class extends Error {};
+
+    await testApiHandler({
+      rejectOnHandlerError: true,
+      appHandler: withMiddleware<Options<ModernErrorHandler<any, any>>, Context>(
+        undefined,
+        {
+          descriptor: '/fake',
+          use: [
+            () => {
+              throw new MyError('bad bad not good');
+            }
+          ],
+          useOnError: [makeMiddleware()],
+          options: {
+            errorHandlers: [[MyError, () => new Response(null, { status: 567 })]]
+          }
+        }
+      ),
+      test: async ({ fetch }) => {
+        {
+          const res = await fetch();
+          expect(res.status).toBe(567);
+          await expect(res.text()).resolves.toBe('');
+        }
       }
     });
   });

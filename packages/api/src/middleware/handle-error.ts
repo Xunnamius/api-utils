@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import {
@@ -162,7 +163,6 @@ export function makeMiddleware() {
         for (const [errorType, errorHandler] of errorHandlers) {
           if (
             (isANamedErrorClass(errorType) && errorType.isError(error)) ||
-            // eslint-disable-next-line no-restricted-syntax
             error instanceof errorType
           ) {
             debug(`using custom error handler for type "${error.name}"`);
@@ -186,7 +186,6 @@ export function makeMiddleware() {
       }
     }
 
-    // eslint-disable-next-line no-restricted-syntax
     if (handlerResult instanceof Response) {
       // ? Request was already handled
       return handlerResult;
@@ -206,7 +205,6 @@ export function makeMiddleware() {
 
     debug(
       `using default error handler${
-        // eslint-disable-next-line no-restricted-syntax
         handleAs instanceof Error ? ` for type "${handleAs.constructor.name}"` : ''
       }`
     );
@@ -232,11 +230,8 @@ export function makeMiddleware() {
       return respondWith(sendHttpUnspecifiedError, errorJson);
     } else if (
       ClientValidationError.isError(handleAs) ||
-      // eslint-disable-next-line no-restricted-syntax
       handleAs instanceof ArkError ||
-      // eslint-disable-next-line no-restricted-syntax
       handleAs instanceof ArkParseError ||
-      // eslint-disable-next-line no-restricted-syntax
       handleAs instanceof ArkTraversalError
     ) {
       return respondWith(sendHttpBadRequest, errorJson);
