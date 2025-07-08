@@ -10,7 +10,7 @@
 
 > **sendHttpContrivedError**(...`args`): `Response`
 
-Defined in: [index.ts:394](https://github.com/Xunnamius/api-utils/blob/2380af8d9957fce028eee89fa329ac3c196b60c1/packages/respond/src/index.ts#L394)
+Defined in: [index.ts:398](https://github.com/Xunnamius/api-utils/blob/b03924fda63811edf48417901d0265e3de012ea4/packages/respond/src/index.ts#L398)
 
 Sends an HTTP 555 "contrived" response with optional JSON data.
 
@@ -28,7 +28,7 @@ Sends an HTTP 555 "contrived" response with optional JSON data.
 
 > **sendHttpContrivedError**(...`args`): `void`
 
-Defined in: [index.ts:395](https://github.com/Xunnamius/api-utils/blob/2380af8d9957fce028eee89fa329ac3c196b60c1/packages/respond/src/index.ts#L395)
+Defined in: [index.ts:399](https://github.com/Xunnamius/api-utils/blob/b03924fda63811edf48417901d0265e3de012ea4/packages/respond/src/index.ts#L399)
 
 Sends an HTTP 555 "contrived" response with optional JSON data.
 
@@ -46,7 +46,7 @@ Sends an HTTP 555 "contrived" response with optional JSON data.
 
 > **sendHttpContrivedError**(...`args`): `void` \| `Response`
 
-Defined in: [index.ts:396](https://github.com/Xunnamius/api-utils/blob/2380af8d9957fce028eee89fa329ac3c196b60c1/packages/respond/src/index.ts#L396)
+Defined in: [index.ts:400](https://github.com/Xunnamius/api-utils/blob/b03924fda63811edf48417901d0265e3de012ea4/packages/respond/src/index.ts#L400)
 
 Sends an HTTP 555 "contrived" response with optional JSON data.
 

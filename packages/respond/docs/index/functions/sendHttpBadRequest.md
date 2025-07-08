@@ -10,7 +10,7 @@
 
 > **sendHttpBadRequest**(...`args`): `Response`
 
-Defined in: [index.ts:163](https://github.com/Xunnamius/api-utils/blob/2380af8d9957fce028eee89fa329ac3c196b60c1/packages/respond/src/index.ts#L163)
+Defined in: [index.ts:163](https://github.com/Xunnamius/api-utils/blob/b03924fda63811edf48417901d0265e3de012ea4/packages/respond/src/index.ts#L163)
 
 Sends an HTTP 400 "client error" response with optional JSON data.
 
@@ -28,7 +28,7 @@ Sends an HTTP 400 "client error" response with optional JSON data.
 
 > **sendHttpBadRequest**(...`args`): `void`
 
-Defined in: [index.ts:164](https://github.com/Xunnamius/api-utils/blob/2380af8d9957fce028eee89fa329ac3c196b60c1/packages/respond/src/index.ts#L164)
+Defined in: [index.ts:164](https://github.com/Xunnamius/api-utils/blob/b03924fda63811edf48417901d0265e3de012ea4/packages/respond/src/index.ts#L164)
 
 Sends an HTTP 400 "client error" response with optional JSON data.
 
@@ -46,7 +46,7 @@ Sends an HTTP 400 "client error" response with optional JSON data.
 
 > **sendHttpBadRequest**(...`args`): `void` \| `Response`
 
-Defined in: [index.ts:165](https://github.com/Xunnamius/api-utils/blob/2380af8d9957fce028eee89fa329ac3c196b60c1/packages/respond/src/index.ts#L165)
+Defined in: [index.ts:165](https://github.com/Xunnamius/api-utils/blob/b03924fda63811edf48417901d0265e3de012ea4/packages/respond/src/index.ts#L165)
 
 Sends an HTTP 400 "client error" response with optional JSON data.
 

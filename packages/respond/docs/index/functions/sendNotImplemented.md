@@ -10,7 +10,7 @@
 
 > **sendNotImplemented**(...`args`): `Response`
 
-Defined in: [index.ts:371](https://github.com/Xunnamius/api-utils/blob/2380af8d9957fce028eee89fa329ac3c196b60c1/packages/respond/src/index.ts#L371)
+Defined in: [index.ts:375](https://github.com/Xunnamius/api-utils/blob/b03924fda63811edf48417901d0265e3de012ea4/packages/respond/src/index.ts#L375)
 
 Sends an HTTP 501 "not implemented" response with optional JSON data.
 
@@ -28,7 +28,7 @@ Sends an HTTP 501 "not implemented" response with optional JSON data.
 
 > **sendNotImplemented**(...`args`): `void`
 
-Defined in: [index.ts:372](https://github.com/Xunnamius/api-utils/blob/2380af8d9957fce028eee89fa329ac3c196b60c1/packages/respond/src/index.ts#L372)
+Defined in: [index.ts:376](https://github.com/Xunnamius/api-utils/blob/b03924fda63811edf48417901d0265e3de012ea4/packages/respond/src/index.ts#L376)
 
 Sends an HTTP 501 "not implemented" response with optional JSON data.
 
@@ -46,7 +46,7 @@ Sends an HTTP 501 "not implemented" response with optional JSON data.
 
 > **sendNotImplemented**(...`args`): `void` \| `Response`
 
-Defined in: [index.ts:373](https://github.com/Xunnamius/api-utils/blob/2380af8d9957fce028eee89fa329ac3c196b60c1/packages/respond/src/index.ts#L373)
+Defined in: [index.ts:377](https://github.com/Xunnamius/api-utils/blob/b03924fda63811edf48417901d0265e3de012ea4/packages/respond/src/index.ts#L377)
 
 Sends an HTTP 501 "not implemented" response with optional JSON data.
 

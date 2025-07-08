@@ -10,7 +10,7 @@
 
 > **sendHttpBadContentType**(...`args`): `Response`
 
-Defined in: [index.ts:302](https://github.com/Xunnamius/api-utils/blob/2380af8d9957fce028eee89fa329ac3c196b60c1/packages/respond/src/index.ts#L302)
+Defined in: [index.ts:306](https://github.com/Xunnamius/api-utils/blob/b03924fda63811edf48417901d0265e3de012ea4/packages/respond/src/index.ts#L306)
 
 Sends an HTTP 415 "unsupported media type" response with optional JSON data.
 
@@ -28,7 +28,7 @@ Sends an HTTP 415 "unsupported media type" response with optional JSON data.
 
 > **sendHttpBadContentType**(...`args`): `void`
 
-Defined in: [index.ts:303](https://github.com/Xunnamius/api-utils/blob/2380af8d9957fce028eee89fa329ac3c196b60c1/packages/respond/src/index.ts#L303)
+Defined in: [index.ts:307](https://github.com/Xunnamius/api-utils/blob/b03924fda63811edf48417901d0265e3de012ea4/packages/respond/src/index.ts#L307)
 
 Sends an HTTP 415 "unsupported media type" response with optional JSON data.
 
@@ -46,7 +46,7 @@ Sends an HTTP 415 "unsupported media type" response with optional JSON data.
 
 > **sendHttpBadContentType**(...`args`): `void` \| `Response`
 
-Defined in: [index.ts:304](https://github.com/Xunnamius/api-utils/blob/2380af8d9957fce028eee89fa329ac3c196b60c1/packages/respond/src/index.ts#L304)
+Defined in: [index.ts:308](https://github.com/Xunnamius/api-utils/blob/b03924fda63811edf48417901d0265e3de012ea4/packages/respond/src/index.ts#L308)
 
 Sends an HTTP 415 "unsupported media type" response with optional JSON data.
 

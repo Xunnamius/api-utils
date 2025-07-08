@@ -10,7 +10,7 @@
 
 > **sendHttpUnspecifiedError**(...`args`): `Response`
 
-Defined in: [index.ts:348](https://github.com/Xunnamius/api-utils/blob/2380af8d9957fce028eee89fa329ac3c196b60c1/packages/respond/src/index.ts#L348)
+Defined in: [index.ts:352](https://github.com/Xunnamius/api-utils/blob/b03924fda63811edf48417901d0265e3de012ea4/packages/respond/src/index.ts#L352)
 
 Sends an unspecified HTTP 500 "error" response with optional JSON data.
 
@@ -28,7 +28,7 @@ Sends an unspecified HTTP 500 "error" response with optional JSON data.
 
 > **sendHttpUnspecifiedError**(...`args`): `void`
 
-Defined in: [index.ts:349](https://github.com/Xunnamius/api-utils/blob/2380af8d9957fce028eee89fa329ac3c196b60c1/packages/respond/src/index.ts#L349)
+Defined in: [index.ts:353](https://github.com/Xunnamius/api-utils/blob/b03924fda63811edf48417901d0265e3de012ea4/packages/respond/src/index.ts#L353)
 
 Sends an unspecified HTTP 500 "error" response with optional JSON data.
 
@@ -46,7 +46,7 @@ Sends an unspecified HTTP 500 "error" response with optional JSON data.
 
 > **sendHttpUnspecifiedError**(...`args`): `void` \| `Response`
 
-Defined in: [index.ts:350](https://github.com/Xunnamius/api-utils/blob/2380af8d9957fce028eee89fa329ac3c196b60c1/packages/respond/src/index.ts#L350)
+Defined in: [index.ts:354](https://github.com/Xunnamius/api-utils/blob/b03924fda63811edf48417901d0265e3de012ea4/packages/respond/src/index.ts#L354)
 
 Sends an unspecified HTTP 500 "error" response with optional JSON data.
 
