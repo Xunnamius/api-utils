@@ -1,45 +1,56 @@
 import { makeNamedError } from '@-xun/error';
 
-const { ApiError, isApiError } = makeNamedError(class extends Error {}, 'ApiError');
+export { isANamedErrorClass, isANamedErrorInstance } from '@-xun/error';
 
-const { SanityError, isSanityError } = makeNamedError(
-  class extends ApiError {},
+const { ApiError } = makeNamedError(class ApiError extends Error {}, 'ApiError');
+
+const { SanityError } = makeNamedError(
+  class SanityError extends ApiError {},
   'SanityError'
 );
 
-const { ClientValidationError, isClientValidationError } = makeNamedError(
-  class extends ApiError {},
+const { ClientValidationError } = makeNamedError(
+  class ClientValidationError extends ApiError {},
   'ClientValidationError'
 );
 
-const { ServerValidationError, isServerValidationError } = makeNamedError(
-  class extends ApiError {},
+const { ServerValidationError } = makeNamedError(
+  class ServerValidationError extends ApiError {},
   'ServerValidationError'
 );
 
-const { AuthError, isAuthError } = makeNamedError(
-  class extends ApiError {},
-  'AuthError'
-);
+const { AuthError } = makeNamedError(class AuthError extends ApiError {}, 'AuthError');
 
-const { ForbiddenError, isForbiddenError } = makeNamedError(
-  class extends ApiError {},
+const { ForbiddenError } = makeNamedError(
+  class ForbiddenError extends ApiError {},
   'ForbiddenError'
 );
 
-const { NotFoundError, isNotFoundError } = makeNamedError(
-  class extends ApiError {},
+const { NotFoundError } = makeNamedError(
+  class NotFoundError extends ApiError {},
   'NotFoundError'
 );
 
-const { NotImplementedError, isNotImplementedError } = makeNamedError(
+const { NotImplementedError } = makeNamedError(
   class extends ApiError {},
   'NotImplementedError'
 );
 
+export type ApiError = InstanceType<typeof ApiError>;
+export type AuthError = InstanceType<typeof AuthError>;
+export type ClientValidationError = InstanceType<typeof ClientValidationError>;
+export type ForbiddenError = InstanceType<typeof ForbiddenError>;
+export type NotFoundError = InstanceType<typeof NotFoundError>;
+export type NotImplementedError = InstanceType<typeof NotImplementedError>;
+export type SanityError = InstanceType<typeof SanityError>;
+export type ServerValidationError = InstanceType<typeof ServerValidationError>;
+
 export {
   /**
    * Generic base API-related error (HTTP 500).
+   *
+   * This class is the ancestor of all error types exported by
+   * `@-xun/api-error`.
    */
   ApiError,
   /**
@@ -54,38 +65,6 @@ export {
    * A resource authorization issue (HTTP 403).
    */
   ForbiddenError,
-  /**
-   * @see @{link ApiError}
-   */
-  isApiError,
-  /**
-   * @see @{link AuthError}
-   */
-  isAuthError,
-  /**
-   * @see @{link ClientValidationError}
-   */
-  isClientValidationError,
-  /**
-   * @see @{link ForbiddenError}
-   */
-  isForbiddenError,
-  /**
-   * @see @{link NotFoundError}
-   */
-  isNotFoundError,
-  /**
-   * @see @{link NotImplementedError}
-   */
-  isNotImplementedError,
-  /**
-   * @see @{link SanityError}
-   */
-  isSanityError,
-  /**
-   * @see @{link ServerValidationError}
-   */
-  isServerValidationError,
   /**
    * A resource existence issue (HTTP 404).
    */
