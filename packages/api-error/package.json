@@ -62,7 +62,7 @@
     "test:packages:all": "symbiote test --env NODE_NO_WARNINGS=1 --tests all-local --scope unlimited --coverage"
   },
   "dependencies": {
-    "@-xun/error": "^1.1.3"
+    "@-xun/error": "^1.1.4"
   },
   "devDependencies": {
     "@-xun/fs": "^2.0.0",
