@@ -75,7 +75,7 @@
   "devDependencies": {
     "@-xun/fs": "^2.0.0",
     "next-test-api-route-handler": "^4.0.16",
-    "rejoinder": "^2.0.1"
+    "rejoinder": "^2.0.2"
   },
   "engines": {
     "node": "^20.18.0 || >=22.12.0"
