@@ -1,6 +1,6 @@
 {
   "name": "@-xun/api-error",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Simple shared error classes for @-xun/api and friends",
   "keywords": [],
   "homepage": "https://github.com/Xunnamius/api-utils/tree/main/packages/api-error#readme",

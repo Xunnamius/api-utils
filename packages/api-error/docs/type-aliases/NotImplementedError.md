@@ -8,4 +8,6 @@
 
 > **NotImplementedError** = `InstanceType`\<*typeof* [`NotImplementedError`](../variables/NotImplementedError.md)\>
 
-Defined in: [packages/api-error/src/index.ts:44](https://github.com/Xunnamius/api-utils/blob/d46566fdf0580474a9805c4abcfcefdec4f36359/packages/api-error/src/index.ts#L44)
+Defined in: [packages/api-error/src/index.ts:37](https://github.com/Xunnamius/api-utils/blob/76aaa5b4cce48ea0bcd85fb368375b4a88bfa80f/packages/api-error/src/index.ts#L37)
+
+An issue with unimplemented functionality (HTTP 501).
