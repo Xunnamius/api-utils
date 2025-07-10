@@ -8,7 +8,7 @@
 
 > **Options** = `object`
 
-Defined in: [packages/api/src/middleware/auth-request.ts:16](https://github.com/Xunnamius/api-utils/blob/5d75eafe8fcae226a3b6f99a43817184692fd9bf/packages/api/src/middleware/auth-request.ts#L16)
+Defined in: [packages/api/src/middleware/auth-request.ts:16](https://github.com/Xunnamius/api-utils/blob/57bcbde0493ed3285651262eed2a32e963f10249/packages/api/src/middleware/auth-request.ts#L16)
 
 ## Properties
 
@@ -16,7 +16,7 @@ Defined in: [packages/api/src/middleware/auth-request.ts:16](https://github.com/
 
 > **requiresAuth**: `boolean` \| \{ `filter?`: `TokenAttributesFilter`; \}
 
-Defined in: [packages/api/src/middleware/auth-request.ts:26](https://github.com/Xunnamius/api-utils/blob/5d75eafe8fcae226a3b6f99a43817184692fd9bf/packages/api/src/middleware/auth-request.ts#L26)
+Defined in: [packages/api/src/middleware/auth-request.ts:26](https://github.com/Xunnamius/api-utils/blob/57bcbde0493ed3285651262eed2a32e963f10249/packages/api/src/middleware/auth-request.ts#L26)
 
 If not `false` or falsy, accessing this endpoint requires a valid (yet
 unfortunately named) Authorization header.

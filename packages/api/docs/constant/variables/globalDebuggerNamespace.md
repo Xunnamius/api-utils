@@ -8,6 +8,6 @@
 
 > `const` **globalDebuggerNamespace**: `"xapi"` = `'xapi'`
 
-Defined in: [packages/api/src/constant.ts:6](https://github.com/Xunnamius/api-utils/blob/5d75eafe8fcae226a3b6f99a43817184692fd9bf/packages/api/src/constant.ts#L6)
+Defined in: [packages/api/src/constant.ts:6](https://github.com/Xunnamius/api-utils/blob/57bcbde0493ed3285651262eed2a32e963f10249/packages/api/src/constant.ts#L6)
 
 The project-wide namespace that appears in debugger output.

@@ -8,7 +8,7 @@
 
 > `const` **defaultLegacyPageConfig**: `PageConfigLike`
 
-Defined in: [packages/api/src/index.ts:711](https://github.com/Xunnamius/api-utils/blob/5d75eafe8fcae226a3b6f99a43817184692fd9bf/packages/api/src/index.ts#L711)
+Defined in: [packages/api/src/index.ts:711](https://github.com/Xunnamius/api-utils/blob/57bcbde0493ed3285651262eed2a32e963f10249/packages/api/src/index.ts#L711)
 
 The default app-wide configuration object for legacy Next.js APIs.
 
