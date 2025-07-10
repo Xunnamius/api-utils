@@ -13,6 +13,7 @@
   },
   "license": "MIT",
   "author": "Xunnamius",
+  "sideEffects": false,
   "type": "commonjs",
   "exports": {
     ".": {
