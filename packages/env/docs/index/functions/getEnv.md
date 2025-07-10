@@ -8,7 +8,7 @@
 
 > **getEnv**\<`T`\>(`customizedEnv?`): `object` & `T`
 
-Defined in: [index.ts:35](https://github.com/Xunnamius/api-utils/blob/ec6a1f848bdf89f680f91c44729fb1ec9cab402f/packages/env/src/index.ts#L35)
+Defined in: [index.ts:35](https://github.com/Xunnamius/api-utils/blob/1146a0250eaddce3e84badee30d0a7461611f0bd/packages/env/src/index.ts#L35)
 
 Returns an object representing the current runtime environment. Performs
 light validation.

@@ -8,7 +8,7 @@
 
 > **arrayFromEnvironmentValue**(`envVal`): `string`[]
 
-Defined in: [index.ts:19](https://github.com/Xunnamius/api-utils/blob/ec6a1f848bdf89f680f91c44729fb1ec9cab402f/packages/env/src/index.ts#L19)
+Defined in: [index.ts:19](https://github.com/Xunnamius/api-utils/blob/1146a0250eaddce3e84badee30d0a7461611f0bd/packages/env/src/index.ts#L19)
 
 This method takes an environment variable value (string), removes illegal
 characters, and then splits the string by its commas, returning the resulting
