@@ -117,7 +117,7 @@
     "arktype": "^2.1.20",
     "core-js": "^3.44.0",
     "mongodb": ">=6",
-    "rejoinder": "^2.0.1",
+    "rejoinder": "^2.0.2",
     "request-ip": "^3.3.0"
   },
   "devDependencies": {
