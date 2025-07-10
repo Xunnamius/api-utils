@@ -8,7 +8,7 @@
 
 > **TokenAttributes** = `object`
 
-Defined in: [packages/api-strategy/src/auth/types.ts:112](https://github.com/Xunnamius/api-utils/blob/840d5baca8526043aadc1db57d1845b3fe2f876c/packages/api-strategy/src/auth/types.ts#L112)
+Defined in: [packages/api-strategy/src/auth/types.ts:112](https://github.com/Xunnamius/api-utils/blob/ee7740d17f3fcf19933c048d9a79c5c0520267a8/packages/api-strategy/src/auth/types.ts#L112)
 
 The shape of the attributes corresponding to a full token entry in the
 well-known "auth" collection. Each property must correspond to an array
@@ -20,7 +20,7 @@ element in the validTokenAttributes array and vice-versa.
 
 > `optional` **isGlobalAdmin**: `boolean`
 
-Defined in: [packages/api-strategy/src/auth/types.ts:122](https://github.com/Xunnamius/api-utils/blob/840d5baca8526043aadc1db57d1845b3fe2f876c/packages/api-strategy/src/auth/types.ts#L122)
+Defined in: [packages/api-strategy/src/auth/types.ts:122](https://github.com/Xunnamius/api-utils/blob/ee7740d17f3fcf19933c048d9a79c5c0520267a8/packages/api-strategy/src/auth/types.ts#L122)
 
 If `true`, the token grants access to potentially dangerous abilities.
 
@@ -36,6 +36,6 @@ undefined
 
 > **owner**: `string`
 
-Defined in: [packages/api-strategy/src/auth/types.ts:116](https://github.com/Xunnamius/api-utils/blob/840d5baca8526043aadc1db57d1845b3fe2f876c/packages/api-strategy/src/auth/types.ts#L116)
+Defined in: [packages/api-strategy/src/auth/types.ts:116](https://github.com/Xunnamius/api-utils/blob/ee7740d17f3fcf19933c048d9a79c5c0520267a8/packages/api-strategy/src/auth/types.ts#L116)
 
 A string (or stringified `ObjectId`) representing the owner of the token.

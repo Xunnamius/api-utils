@@ -8,7 +8,7 @@
 
 > **IsClientRateLimitedReturnType** = `object`
 
-Defined in: [packages/api-strategy/src/limit.ts:40](https://github.com/Xunnamius/api-utils/blob/840d5baca8526043aadc1db57d1845b3fe2f876c/packages/api-strategy/src/limit.ts#L40)
+Defined in: [packages/api-strategy/src/limit.ts:40](https://github.com/Xunnamius/api-utils/blob/ee7740d17f3fcf19933c048d9a79c5c0520267a8/packages/api-strategy/src/limit.ts#L40)
 
 ## See
 
@@ -20,7 +20,7 @@ Defined in: [packages/api-strategy/src/limit.ts:40](https://github.com/Xunnamius
 
 > **isLimited**: `boolean`
 
-Defined in: [packages/api-strategy/src/limit.ts:41](https://github.com/Xunnamius/api-utils/blob/840d5baca8526043aadc1db57d1845b3fe2f876c/packages/api-strategy/src/limit.ts#L41)
+Defined in: [packages/api-strategy/src/limit.ts:41](https://github.com/Xunnamius/api-utils/blob/ee7740d17f3fcf19933c048d9a79c5c0520267a8/packages/api-strategy/src/limit.ts#L41)
 
 ***
 
@@ -28,4 +28,4 @@ Defined in: [packages/api-strategy/src/limit.ts:41](https://github.com/Xunnamius
 
 > **retryAfter**: `number`
 
-Defined in: [packages/api-strategy/src/limit.ts:42](https://github.com/Xunnamius/api-utils/blob/840d5baca8526043aadc1db57d1845b3fe2f876c/packages/api-strategy/src/limit.ts#L42)
+Defined in: [packages/api-strategy/src/limit.ts:42](https://github.com/Xunnamius/api-utils/blob/ee7740d17f3fcf19933c048d9a79c5c0520267a8/packages/api-strategy/src/limit.ts#L42)

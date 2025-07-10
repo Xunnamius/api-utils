@@ -8,4 +8,6 @@
 
 > **NotImplementedError** = `InstanceType`\<*typeof* [`NotImplementedError`](../variables/NotImplementedError.md)\>
 
-Defined in: packages/api-error/dist/packages/api-error/src/index.d.ts:95
+Defined in: packages/api-error/dist/packages/api-error/src/index.d.ts:79
+
+An issue with unimplemented functionality (HTTP 501).

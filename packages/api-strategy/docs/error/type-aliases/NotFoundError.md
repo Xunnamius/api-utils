@@ -8,4 +8,6 @@
 
 > **NotFoundError** = `InstanceType`\<*typeof* [`NotFoundError`](../variables/NotFoundError.md)\>
 
-Defined in: packages/api-error/dist/packages/api-error/src/index.d.ts:94
+Defined in: packages/api-error/dist/packages/api-error/src/index.d.ts:68
+
+A resource existence issue (HTTP 404).

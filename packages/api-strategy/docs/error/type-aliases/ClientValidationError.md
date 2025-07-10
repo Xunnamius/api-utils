@@ -8,4 +8,6 @@
 
 > **ClientValidationError** = `InstanceType`\<*typeof* [`ClientValidationError`](../variables/ClientValidationError.md)\>
 
-Defined in: packages/api-error/dist/packages/api-error/src/index.d.ts:92
+Defined in: packages/api-error/dist/packages/api-error/src/index.d.ts:24
+
+A client-side validation issue (HTTP 400).

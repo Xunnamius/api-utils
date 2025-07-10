@@ -8,4 +8,6 @@
 
 > **ServerValidationError** = `InstanceType`\<*typeof* [`ServerValidationError`](../variables/ServerValidationError.md)\>
 
-Defined in: packages/api-error/dist/packages/api-error/src/index.d.ts:97
+Defined in: packages/api-error/dist/packages/api-error/src/index.d.ts:35
+
+A server-side validation issue (HTTP 500).

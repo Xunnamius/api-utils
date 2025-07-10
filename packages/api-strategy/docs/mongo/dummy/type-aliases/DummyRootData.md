@@ -8,7 +8,7 @@
 
 > **DummyRootData** = `object`
 
-Defined in: [packages/api-strategy/src/mongo/dummy.ts:29](https://github.com/Xunnamius/api-utils/blob/840d5baca8526043aadc1db57d1845b3fe2f876c/packages/api-strategy/src/mongo/dummy.ts#L29)
+Defined in: [packages/api-strategy/src/mongo/dummy.ts:29](https://github.com/Xunnamius/api-utils/blob/ee7740d17f3fcf19933c048d9a79c5c0520267a8/packages/api-strategy/src/mongo/dummy.ts#L29)
 
 The shape of the well-known `root` database's collections and their test
 data.
@@ -23,7 +23,7 @@ data.
 
 > **\_generatedAt**: `number`
 
-Defined in: [packages/api-strategy/src/mongo/dummy.ts:30](https://github.com/Xunnamius/api-utils/blob/840d5baca8526043aadc1db57d1845b3fe2f876c/packages/api-strategy/src/mongo/dummy.ts#L30)
+Defined in: [packages/api-strategy/src/mongo/dummy.ts:30](https://github.com/Xunnamius/api-utils/blob/ee7740d17f3fcf19933c048d9a79c5c0520267a8/packages/api-strategy/src/mongo/dummy.ts#L30)
 
 ***
 
@@ -31,7 +31,7 @@ Defined in: [packages/api-strategy/src/mongo/dummy.ts:30](https://github.com/Xun
 
 > **auth**: [`InternalAuthEntry`](../../../auth/types/type-aliases/InternalAuthEntry.md)[]
 
-Defined in: [packages/api-strategy/src/mongo/dummy.ts:31](https://github.com/Xunnamius/api-utils/blob/840d5baca8526043aadc1db57d1845b3fe2f876c/packages/api-strategy/src/mongo/dummy.ts#L31)
+Defined in: [packages/api-strategy/src/mongo/dummy.ts:31](https://github.com/Xunnamius/api-utils/blob/ee7740d17f3fcf19933c048d9a79c5c0520267a8/packages/api-strategy/src/mongo/dummy.ts#L31)
 
 ***
 
@@ -39,7 +39,7 @@ Defined in: [packages/api-strategy/src/mongo/dummy.ts:31](https://github.com/Xun
 
 > **limited-log**: [`InternalLimitedLogEntry`](../../../limit/type-aliases/InternalLimitedLogEntry.md)[]
 
-Defined in: [packages/api-strategy/src/mongo/dummy.ts:33](https://github.com/Xunnamius/api-utils/blob/840d5baca8526043aadc1db57d1845b3fe2f876c/packages/api-strategy/src/mongo/dummy.ts#L33)
+Defined in: [packages/api-strategy/src/mongo/dummy.ts:33](https://github.com/Xunnamius/api-utils/blob/ee7740d17f3fcf19933c048d9a79c5c0520267a8/packages/api-strategy/src/mongo/dummy.ts#L33)
 
 ***
 
@@ -47,4 +47,4 @@ Defined in: [packages/api-strategy/src/mongo/dummy.ts:33](https://github.com/Xun
 
 > **request-log**: [`InternalRequestLogEntry`](../../../log/type-aliases/InternalRequestLogEntry.md)[]
 
-Defined in: [packages/api-strategy/src/mongo/dummy.ts:32](https://github.com/Xunnamius/api-utils/blob/840d5baca8526043aadc1db57d1845b3fe2f876c/packages/api-strategy/src/mongo/dummy.ts#L32)
+Defined in: [packages/api-strategy/src/mongo/dummy.ts:32](https://github.com/Xunnamius/api-utils/blob/ee7740d17f3fcf19933c048d9a79c5c0520267a8/packages/api-strategy/src/mongo/dummy.ts#L32)

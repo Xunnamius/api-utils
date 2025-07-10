@@ -8,4 +8,6 @@
 
 > **ForbiddenError** = `InstanceType`\<*typeof* [`ForbiddenError`](../variables/ForbiddenError.md)\>
 
-Defined in: packages/api-error/dist/packages/api-error/src/index.d.ts:93
+Defined in: packages/api-error/dist/packages/api-error/src/index.d.ts:57
+
+A resource authorization issue (HTTP 403).

@@ -8,7 +8,7 @@
 
 > **tokenAttributesUpdateToMongoUpdate**(`update`): `object`
 
-Defined in: [packages/api-strategy/src/auth/db.ts:97](https://github.com/Xunnamius/api-utils/blob/840d5baca8526043aadc1db57d1845b3fe2f876c/packages/api-strategy/src/auth/db.ts#L97)
+Defined in: [packages/api-strategy/src/auth/db.ts:97](https://github.com/Xunnamius/api-utils/blob/ee7740d17f3fcf19933c048d9a79c5c0520267a8/packages/api-strategy/src/auth/db.ts#L97)
 
 Transforms `update`, a patch to update  [TokenAttributes](../../types/type-aliases/TokenAttributes.md) in the
 MongoDb "auth" collection, into a valid MongoDb update expression.

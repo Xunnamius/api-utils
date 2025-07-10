@@ -8,7 +8,7 @@
 
 > **NewAuthEntry** = `object`
 
-Defined in: [packages/api-strategy/src/auth/types.ts:67](https://github.com/Xunnamius/api-utils/blob/840d5baca8526043aadc1db57d1845b3fe2f876c/packages/api-strategy/src/auth/types.ts#L67)
+Defined in: [packages/api-strategy/src/auth/types.ts:67](https://github.com/Xunnamius/api-utils/blob/ee7740d17f3fcf19933c048d9a79c5c0520267a8/packages/api-strategy/src/auth/types.ts#L67)
 
 The shape of a new entry in the well-known "auth" collection.
 
@@ -18,7 +18,7 @@ The shape of a new entry in the well-known "auth" collection.
 
 > **attributes**: [`TokenAttributes`](TokenAttributes.md)
 
-Defined in: [packages/api-strategy/src/auth/types.ts:74](https://github.com/Xunnamius/api-utils/blob/840d5baca8526043aadc1db57d1845b3fe2f876c/packages/api-strategy/src/auth/types.ts#L74)
+Defined in: [packages/api-strategy/src/auth/types.ts:74](https://github.com/Xunnamius/api-utils/blob/ee7740d17f3fcf19933c048d9a79c5c0520267a8/packages/api-strategy/src/auth/types.ts#L74)
 
 Metadata attributes associated with this new "auth" entry.
 

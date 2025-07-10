@@ -8,7 +8,7 @@
 
 > `const` **NULL\_BEARER\_TOKEN**: `"00000000-0000-0000-0000-000000000000"` = `'00000000-0000-0000-0000-000000000000'`
 
-Defined in: [packages/api-strategy/src/auth/well-known-tokens.ts:9](https://github.com/Xunnamius/api-utils/blob/840d5baca8526043aadc1db57d1845b3fe2f876c/packages/api-strategy/src/auth/well-known-tokens.ts#L9)
+Defined in: [packages/api-strategy/src/auth/well-known-tokens.ts:9](https://github.com/Xunnamius/api-utils/blob/ee7740d17f3fcf19933c048d9a79c5c0520267a8/packages/api-strategy/src/auth/well-known-tokens.ts#L9)
 
 This string is guaranteed never to appear in data generated during tests or
 in production. Hence, this string can be used to represent a `null` or

@@ -10,7 +10,7 @@
 
 > **updateTokensAttributes**(`options`): `Promise`\<`number`\>
 
-Defined in: [packages/api-strategy/src/auth.ts:279](https://github.com/Xunnamius/api-utils/blob/840d5baca8526043aadc1db57d1845b3fe2f876c/packages/api-strategy/src/auth.ts#L279)
+Defined in: [packages/api-strategy/src/auth.ts:279](https://github.com/Xunnamius/api-utils/blob/ee7740d17f3fcf19933c048d9a79c5c0520267a8/packages/api-strategy/src/auth.ts#L279)
 
 Updates entries corresponding to the given `_id`s (`auth_ids`) in the
 well-known "auth" MongoDB collection.
@@ -45,7 +45,7 @@ Data used to patch the auth entry's attributes.
 
 > **updateTokensAttributes**(`options`): `Promise`\<`number`\>
 
-Defined in: [packages/api-strategy/src/auth.ts:299](https://github.com/Xunnamius/api-utils/blob/840d5baca8526043aadc1db57d1845b3fe2f876c/packages/api-strategy/src/auth.ts#L299)
+Defined in: [packages/api-strategy/src/auth.ts:299](https://github.com/Xunnamius/api-utils/blob/ee7740d17f3fcf19933c048d9a79c5c0520267a8/packages/api-strategy/src/auth.ts#L299)
 
 Updates entries matching the given `filter` in the well-known "auth" MongoDB
 collection.
