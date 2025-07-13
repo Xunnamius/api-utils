@@ -493,7 +493,7 @@ describe('::withMiddleware', () => {
 
       let counter = 0;
 
-      await withMockedOutput(async ({ errorSpy }) => {
+      await withMockedOutput(async ({ nodeErrorSpy }) => {
         await testApiHandler({
           rejectOnHandlerError: true,
           appHandler: withMiddleware(
@@ -537,7 +537,7 @@ describe('::withMiddleware', () => {
         });
 
         expect(counter).toBe(4);
-        expect(errorSpy).toHaveBeenCalledTimes(2);
+        expect(nodeErrorSpy).toHaveBeenCalledTimes(2);
       });
     });
 
@@ -718,7 +718,7 @@ describe('::withMiddleware', () => {
       Promise.withResolvers();
     let counter = 0;
 
-    await withMockedOutput(async ({ errorSpy }) => {
+    await withMockedOutput(async ({ nodeErrorSpy }) => {
       await testApiHandler({
         rejectOnHandlerError: true,
         appHandler: withMiddleware(
@@ -756,7 +756,7 @@ describe('::withMiddleware', () => {
 
       await promisedFinish;
       expect(counter).toBe(4);
-      expect(errorSpy).toHaveBeenCalledTimes(2);
+      expect(nodeErrorSpy).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -1192,7 +1192,7 @@ describe('::withMiddleware', () => {
 
     const error = new Error('bad stuff happened');
 
-    await withMockedOutput(async ({ errorSpy }) => {
+    await withMockedOutput(async ({ nodeErrorSpy }) => {
       await testApiHandler({
         // ? Failing expectation exceptions will bubble up
         rejectOnHandlerError: true,
@@ -1216,10 +1216,10 @@ describe('::withMiddleware', () => {
       });
 
       // ? This is coming from within Next.js itself
-      expect(errorSpy).toHaveBeenCalledTimes(1);
+      expect(nodeErrorSpy).toHaveBeenCalledTimes(1);
     });
 
-    await withMockedOutput(async ({ errorSpy }) => {
+    await withMockedOutput(async ({ nodeErrorSpy }) => {
       await testApiHandler({
         // ? Failing expectation exceptions will bubble up
         rejectOnHandlerError: true,
@@ -1254,7 +1254,7 @@ describe('::withMiddleware', () => {
       });
 
       // ? This is coming from within Next.js itself
-      expect(errorSpy).toHaveBeenCalledTimes(1);
+      expect(nodeErrorSpy).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -1263,7 +1263,7 @@ describe('::withMiddleware', () => {
 
     const middleware = jest.fn();
 
-    await withMockedOutput(async ({ errorSpy }) => {
+    await withMockedOutput(async ({ nodeErrorSpy }) => {
       await testApiHandler({
         rejectOnHandlerError: true,
         pagesHandler: withMiddleware(legacyNoopHandler, {
@@ -1279,10 +1279,10 @@ describe('::withMiddleware', () => {
       });
 
       // ? This is coming from within Next.js itself
-      expect(errorSpy).toHaveBeenCalledTimes(1);
+      expect(nodeErrorSpy).toHaveBeenCalledTimes(1);
     });
 
-    await withMockedOutput(async ({ errorSpy }) => {
+    await withMockedOutput(async ({ nodeErrorSpy }) => {
       await testApiHandler({
         rejectOnHandlerError: true,
         appHandler: withMiddleware(modernNoopHandler, {
@@ -1297,7 +1297,7 @@ describe('::withMiddleware', () => {
       });
 
       // ? This is coming from within Next.js itself
-      expect(errorSpy).toHaveBeenCalledTimes(1);
+      expect(nodeErrorSpy).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -1312,7 +1312,7 @@ describe('::withMiddleware', () => {
       } as ExportedMiddleware<GenericRecord, GenericRecord>
     ];
 
-    await withMockedOutput(async ({ errorSpy }) => {
+    await withMockedOutput(async ({ nodeErrorSpy }) => {
       await testApiHandler({
         rejectOnHandlerError: true,
         pagesHandler: withMiddleware(legacyNoopHandler, {
@@ -1328,10 +1328,10 @@ describe('::withMiddleware', () => {
       });
 
       // ? This is coming from within Next.js itself
-      expect(errorSpy).toHaveBeenCalledTimes(1);
+      expect(nodeErrorSpy).toHaveBeenCalledTimes(1);
     });
 
-    await withMockedOutput(async ({ errorSpy }) => {
+    await withMockedOutput(async ({ nodeErrorSpy }) => {
       await testApiHandler({
         rejectOnHandlerError: true,
         appHandler: withMiddleware(modernNoopHandler, {
@@ -1346,7 +1346,7 @@ describe('::withMiddleware', () => {
       });
 
       // ? This is coming from within Next.js itself
-      expect(errorSpy).toHaveBeenCalledTimes(1);
+      expect(nodeErrorSpy).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -1355,7 +1355,7 @@ describe('::withMiddleware', () => {
 
     const middleware = jest.fn();
 
-    await withMockedOutput(async ({ errorSpy }) => {
+    await withMockedOutput(async ({ nodeErrorSpy }) => {
       await testApiHandler({
         rejectOnHandlerError: true,
         pagesHandler: withMiddleware(() => toss(new Error('error')), {
@@ -1371,10 +1371,10 @@ describe('::withMiddleware', () => {
       });
 
       // ? This is coming from within Next.js itself
-      expect(errorSpy).toHaveBeenCalledTimes(1);
+      expect(nodeErrorSpy).toHaveBeenCalledTimes(1);
     });
 
-    await withMockedOutput(async ({ errorSpy }) => {
+    await withMockedOutput(async ({ nodeErrorSpy }) => {
       await testApiHandler({
         rejectOnHandlerError: true,
         appHandler: withMiddleware(() => toss(new Error('error')), {
@@ -1389,7 +1389,7 @@ describe('::withMiddleware', () => {
       });
 
       // ? This is coming from within Next.js itself
-      expect(errorSpy).toHaveBeenCalledTimes(1);
+      expect(nodeErrorSpy).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -1404,7 +1404,7 @@ describe('::withMiddleware', () => {
       } as ExportedMiddleware<GenericRecord, GenericRecord>
     ];
 
-    await withMockedOutput(async ({ errorSpy }) => {
+    await withMockedOutput(async ({ nodeErrorSpy }) => {
       await testApiHandler({
         rejectOnHandlerError: true,
         pagesHandler: withMiddleware(() => toss(new Error('error')), {
@@ -1420,10 +1420,10 @@ describe('::withMiddleware', () => {
       });
 
       // ? This is coming from within Next.js itself
-      expect(errorSpy).toHaveBeenCalledTimes(1);
+      expect(nodeErrorSpy).toHaveBeenCalledTimes(1);
     });
 
-    await withMockedOutput(async ({ errorSpy }) => {
+    await withMockedOutput(async ({ nodeErrorSpy }) => {
       await testApiHandler({
         rejectOnHandlerError: true,
         appHandler: withMiddleware(() => toss(new Error('error')), {
@@ -1438,7 +1438,7 @@ describe('::withMiddleware', () => {
       });
 
       // ? This is coming from within Next.js itself
-      expect(errorSpy).toHaveBeenCalledTimes(1);
+      expect(nodeErrorSpy).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -1570,7 +1570,7 @@ describe('::withMiddleware', () => {
   it('responds with HTTP 500 if no error handling middleware available', async () => {
     expect.hasAssertions();
 
-    await withMockedOutput(async ({ errorSpy }) => {
+    await withMockedOutput(async ({ nodeErrorSpy }) => {
       await testApiHandler({
         rejectOnHandlerError: true,
         pagesHandler: withMiddleware(undefined, {
@@ -1586,10 +1586,10 @@ describe('::withMiddleware', () => {
       });
 
       // ? This is coming from within Next.js itself
-      expect(errorSpy).toHaveBeenCalledTimes(1);
+      expect(nodeErrorSpy).toHaveBeenCalledTimes(1);
     });
 
-    await withMockedOutput(async ({ errorSpy }) => {
+    await withMockedOutput(async ({ nodeErrorSpy }) => {
       await testApiHandler({
         rejectOnHandlerError: true,
         appHandler: withMiddleware(undefined, {
@@ -1604,14 +1604,14 @@ describe('::withMiddleware', () => {
       });
 
       // ? This is coming from within Next.js itself
-      expect(errorSpy).toHaveBeenCalledTimes(1);
+      expect(nodeErrorSpy).toHaveBeenCalledTimes(1);
     });
   });
 
   it('responds with HTTP 500 if res.end not called by the time error handling chain completes', async () => {
     expect.hasAssertions();
 
-    await withMockedOutput(async ({ errorSpy }) => {
+    await withMockedOutput(async ({ nodeErrorSpy }) => {
       await testApiHandler({
         rejectOnHandlerError: true,
         pagesHandler: withMiddleware(undefined, {
@@ -1628,10 +1628,10 @@ describe('::withMiddleware', () => {
       });
 
       // ? This is coming from within Next.js itself
-      expect(errorSpy).toHaveBeenCalledTimes(1);
+      expect(nodeErrorSpy).toHaveBeenCalledTimes(1);
     });
 
-    await withMockedOutput(async ({ errorSpy }) => {
+    await withMockedOutput(async ({ nodeErrorSpy }) => {
       await testApiHandler({
         rejectOnHandlerError: true,
         appHandler: withMiddleware(undefined, {
@@ -1647,7 +1647,7 @@ describe('::withMiddleware', () => {
       });
 
       // ? This is coming from within Next.js itself
-      expect(errorSpy).toHaveBeenCalledTimes(1);
+      expect(nodeErrorSpy).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -1663,7 +1663,7 @@ describe('::withMiddleware', () => {
     );
 
     await withDebugEnabled(async () => {
-      await withMockedOutput(async ({ nodeErrorSpy, errorSpy }) => {
+      await withMockedOutput(async ({ nodeErrorSpy }) => {
         let done: () => void;
 
         await testApiHandler({
@@ -1702,12 +1702,12 @@ describe('::withMiddleware', () => {
 
             done();
             expect(nodeErrorSpy).toHaveBeenCalledWith(doneWarning);
-            expect(errorSpy).toHaveBeenCalled();
+            expect(nodeErrorSpy).toHaveBeenCalled();
           }
         });
       });
 
-      await withMockedOutput(async ({ nodeErrorSpy, errorSpy }) => {
+      await withMockedOutput(async ({ nodeErrorSpy }) => {
         let done: () => void;
 
         await testApiHandler({
@@ -1748,7 +1748,7 @@ describe('::withMiddleware', () => {
 
             done();
             expect(nodeErrorSpy).toHaveBeenCalledWith(abortedWarning);
-            expect(errorSpy).toHaveBeenCalled();
+            expect(nodeErrorSpy).toHaveBeenCalled();
           }
         });
       });
@@ -1763,7 +1763,7 @@ describe('::withMiddleware', () => {
     );
 
     await withDebugEnabled(async () => {
-      await withMockedOutput(async ({ nodeErrorSpy, errorSpy }) => {
+      await withMockedOutput(async ({ errorSpy, nodeErrorSpy }) => {
         let done: () => void = () => toss(new Error('test failed'));
 
         await expect(
@@ -1804,7 +1804,7 @@ describe('::withMiddleware', () => {
         expect(errorSpy).toHaveBeenCalledTimes(1);
       });
 
-      await withMockedOutput(async ({ nodeErrorSpy, errorSpy }) => {
+      await withMockedOutput(async ({ errorSpy, nodeErrorSpy }) => {
         let done: () => void = () => toss(new Error('test failed'));
 
         await expect(

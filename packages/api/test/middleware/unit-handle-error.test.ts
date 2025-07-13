@@ -39,7 +39,7 @@ describe('<legacy mode>', () => {
   it('sends correct HTTP error codes when certain errors occur', async () => {
     expect.hasAssertions();
 
-    await withMockedOutput(async ({ errorSpy }) => {
+    await withMockedOutput(async ({ nodeErrorSpy }) => {
       await expectExceptionsWithMatchingErrors<[Error | string]>(
         [
           [[new ClientValidationError()], '400'],
@@ -70,7 +70,7 @@ describe('<legacy mode>', () => {
         }
       );
 
-      expect(errorSpy).toHaveBeenCalled();
+      expect(nodeErrorSpy).toHaveBeenCalled();
     });
   });
 
@@ -170,7 +170,7 @@ describe('<legacy mode>', () => {
       }
     });
 
-    await withMockedOutput(async ({ errorSpy }) => {
+    await withMockedOutput(async ({ nodeErrorSpy }) => {
       await testApiHandler({
         rejectOnHandlerError: true,
         pagesHandler: withMiddleware<Options<LegacyErrorHandler<any, any>>, Context>(
@@ -205,7 +205,7 @@ describe('<legacy mode>', () => {
         }
       });
 
-      expect(errorSpy).toHaveBeenCalled();
+      expect(nodeErrorSpy).toHaveBeenCalled();
     });
   });
 
@@ -279,7 +279,7 @@ describe('<modern mode>', () => {
   it('sends correct HTTP error codes when certain errors occur', async () => {
     expect.hasAssertions();
 
-    await withMockedOutput(async ({ errorSpy }) => {
+    await withMockedOutput(async ({ nodeErrorSpy }) => {
       await expectExceptionsWithMatchingErrors<[Error | string]>(
         [
           [[new ClientValidationError()], '400'],
@@ -310,7 +310,7 @@ describe('<modern mode>', () => {
         }
       );
 
-      expect(errorSpy).toHaveBeenCalled();
+      expect(nodeErrorSpy).toHaveBeenCalled();
     });
   });
 
@@ -321,7 +321,7 @@ describe('<modern mode>', () => {
     const MyError = class extends Error {};
     const { MyOtherError } = makeNamedError(class extends Error {}, 'MyOtherError');
 
-    await withMockedOutput(async ({ errorSpy }) => {
+    await withMockedOutput(async ({ nodeErrorSpy }) => {
       await testApiHandler({
         rejectOnHandlerError: true,
         appHandler: withMiddleware<Options<ModernErrorHandler<any, any>>, Context>(
@@ -370,7 +370,7 @@ describe('<modern mode>', () => {
         }
       });
 
-      expect(errorSpy).toHaveBeenCalled();
+      expect(nodeErrorSpy).toHaveBeenCalled();
     });
 
     await testApiHandler({

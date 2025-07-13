@@ -185,7 +185,7 @@ describe('::addToRequestLog', () => {
       'request-log'
     );
 
-    await withMockedOutput(async ({ warnSpy }) => {
+    await withMockedOutput(async ({ nodeErrorSpy }) => {
       await addToRequestLog({
         req: req1,
         res: res1,
@@ -193,7 +193,7 @@ describe('::addToRequestLog', () => {
         durationMs: 1234
       });
 
-      expect(warnSpy).toHaveBeenCalledWith(
+      expect(nodeErrorSpy).toHaveBeenCalledWith(
         expect.stringContaining(`at url: ${String(req1.url)}`)
       );
 
@@ -212,7 +212,7 @@ describe('::addToRequestLog', () => {
         durationMs: 1234
       });
 
-      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('at url: null'));
+      expect(nodeErrorSpy).toHaveBeenCalledWith(expect.stringContaining('at url: null'));
 
       await expect(
         reqlog.findOne({ resStatusCode: 222 as HttpStatusCode })
@@ -225,7 +225,7 @@ describe('::addToRequestLog', () => {
       // @ts-expect-error: purposely missing endpoint parameter
       await addToRequestLog({ req: req2, res: res3 });
 
-      expect(warnSpy).toHaveBeenCalledTimes(3);
+      expect(nodeErrorSpy).toHaveBeenCalledTimes(3);
 
       await expect(
         reqlog.findOne({ resStatusCode: 333 as HttpStatusCode })
@@ -242,7 +242,7 @@ describe('::addToRequestLog', () => {
         durationMs: 1234
       });
 
-      expect(warnSpy).toHaveBeenCalledTimes(3);
+      expect(nodeErrorSpy).toHaveBeenCalledTimes(3);
     });
   });
 

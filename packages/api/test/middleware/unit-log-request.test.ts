@@ -90,7 +90,7 @@ describe('<legacy mode>', () => {
 
     mockAddToRequestLog.mockImplementation(() => toss(new Error('fake error')));
 
-    await withMockedOutput(async ({ errorSpy }) => {
+    await withMockedOutput(async ({ nodeErrorSpy }) => {
       await testApiHandler({
         pagesHandler: withLegacyConfig(
           withMiddleware(legacyNoopHandler, {
@@ -105,7 +105,7 @@ describe('<legacy mode>', () => {
         }
       });
 
-      expect(errorSpy).toHaveBeenCalled();
+      expect(nodeErrorSpy).toHaveBeenCalled();
     });
   });
 });
@@ -152,7 +152,7 @@ describe('<modern mode>', () => {
 
     mockAddToRequestLog.mockImplementation(() => toss(new Error('fake error')));
 
-    await withMockedOutput(async ({ errorSpy }) => {
+    await withMockedOutput(async ({ nodeErrorSpy }) => {
       await testApiHandler({
         appHandler: {
           GET: withMiddleware(modernNoopHandler, {
@@ -166,7 +166,7 @@ describe('<modern mode>', () => {
         }
       });
 
-      expect(errorSpy).toHaveBeenCalled();
+      expect(nodeErrorSpy).toHaveBeenCalled();
     });
   });
 });
