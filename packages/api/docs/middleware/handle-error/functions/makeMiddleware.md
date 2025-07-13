@@ -8,7 +8,7 @@
 
 > **makeMiddleware**(): (`reqOrRequest`, `resOrModernContext`, `maybeLegacyContext`) => `Promise`\<`undefined` \| `Response`\>
 
-Defined in: [packages/api/src/middleware/handle-error.ts:120](https://github.com/Xunnamius/api-utils/blob/38288e756f37a9fa3bac377fdbaa51608d8bbed9/packages/api/src/middleware/handle-error.ts#L120)
+Defined in: [packages/api/src/middleware/handle-error.ts:120](https://github.com/Xunnamius/api-utils/blob/559770a60e6903bf2f195d0d5f6450a09f08cf05/packages/api/src/middleware/handle-error.ts#L120)
 
 Returns a generic error handling middleware.
 

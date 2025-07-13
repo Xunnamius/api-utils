@@ -641,6 +641,9 @@ export function withMiddleware<
  * `middlewareFactory`. Note that passed option keys will override (via shallow
  * merge) their default counterparts.
  *
+ * Note that all required options should be passed in via `defaults`, as all
+ * options become partial/"optional" in their factoried form.
+ *
  * This function is useful when you don't want to repeatedly import, configure,
  * and list a bunch of middleware every time you want to call
  * {@link withMiddleware}.

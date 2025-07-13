@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import type { ValidHttpMethod } from '@-xun/types';
-import type { Merge, Promisable, SetReturnType, Tagged, UnwrapTagged } from 'type-fest';
+import type { Promisable, SetReturnType, Tagged, UnwrapTagged } from 'type-fest';
 
 import type {
   NextApiRequestLike,
@@ -408,10 +408,7 @@ export type FactoriedMiddlewareOptions<
     'use' | 'useOnError' | 'options'
   >
 > & {
-  options?: Merge<
-    WithMiddlewareOptions<Options, Heap, Middleware>['options'],
-    { legacyMode?: boolean }
-  >;
+  options?: Partial<WithMiddlewareOptions<Options, Heap, Middleware>['options']>;
 } & {
   /**
    * @see {@link WithMiddlewareOptions.use}

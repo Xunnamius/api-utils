@@ -38,6 +38,10 @@ export type Options = {
     schema: () => DbSchema;
     /**
      * Passed to {@link setDummyData} at the appropriate point.
+     *
+     * This function's contents become a no-op that is never run when outside of
+     * a development environment (as determined by the NODE_ENV environment
+     * variable).
      */
     data: () => DummyData;
   };
