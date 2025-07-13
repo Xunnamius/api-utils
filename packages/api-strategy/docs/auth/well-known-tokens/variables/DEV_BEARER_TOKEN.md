@@ -8,7 +8,7 @@
 
 > `const` **DEV\_BEARER\_TOKEN**: `"dev-xunn-dev-294a-536h-9751-rydmj"` = `'dev-xunn-dev-294a-536h-9751-rydmj'`
 
-Defined in: [packages/api-strategy/src/auth/well-known-tokens.ts:30](https://github.com/Xunnamius/api-utils/blob/ee7740d17f3fcf19933c048d9a79c5c0520267a8/packages/api-strategy/src/auth/well-known-tokens.ts#L30)
+Defined in: [packages/api-strategy/src/auth/well-known-tokens.ts:30](https://github.com/Xunnamius/api-utils/blob/3905fc4975c9f15e022202427b124cf715fcf3dc/packages/api-strategy/src/auth/well-known-tokens.ts#L30)
 
 This string can be used to authenticate with local and _non-web-facing_ test
 and preview deployments as a global administrator. This string cannot be used

@@ -8,7 +8,7 @@
 
 > **getAllRateLimits**(): `Promise`\<`WithoutId`\<[`InternalLimitedLogEntry`](../type-aliases/InternalLimitedLogEntry.md)\>[]\>
 
-Defined in: [packages/api-strategy/src/limit.ts:154](https://github.com/Xunnamius/api-utils/blob/ee7740d17f3fcf19933c048d9a79c5c0520267a8/packages/api-strategy/src/limit.ts#L154)
+Defined in: [packages/api-strategy/src/limit.ts:154](https://github.com/Xunnamius/api-utils/blob/3905fc4975c9f15e022202427b124cf715fcf3dc/packages/api-strategy/src/limit.ts#L154)
 
 Retrieve all active rate limits.
 

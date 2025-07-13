@@ -8,7 +8,7 @@
 
 > **getValidators**(): `Promise`\<[`Validators`](../type-aliases/Validators.md)\>
 
-Defined in: [packages/api-strategy/src/auth/types.ts:26](https://github.com/Xunnamius/api-utils/blob/ee7740d17f3fcf19933c048d9a79c5c0520267a8/packages/api-strategy/src/auth/types.ts#L26)
+Defined in: [packages/api-strategy/src/auth/types.ts:26](https://github.com/Xunnamius/api-utils/blob/3905fc4975c9f15e022202427b124cf715fcf3dc/packages/api-strategy/src/auth/types.ts#L26)
 
 Instantiate and return runtime versions of various types. Useful for
 validation and transforms.
