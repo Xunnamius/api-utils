@@ -75,10 +75,18 @@ export function makeMiddleware() {
       debug('set global database schema');
 
       if (isDevelopment && getEnv().API_HYDRATE_DB) {
-        const { hydrateDbWithDummyData, setDummyData } = require(
-          // ? This expression stops webpack/turbopack from bundling the thing
-          '@-xun/mongo-test'.toString()
-        ) as typeof import('@-xun/mongo-test');
+        const { hydrateDbWithDummyData, setDummyData } = (() => {
+          try {
+            return require(
+              //{@symbiote/notInvalid @-xun/mongo-test}
+              //{@symbiote/notExtraneous @-xun/mongo-test}
+              // ? This expression stops webpack/turbopack from bundling things
+              '@-xun/mongo-test'.toString()
+            ) as typeof import('@-xun/mongo-test');
+          } catch (error) {
+            throw new Error(ErrorMessage.MissingMongoTestPackage(), { cause: error });
+          }
+        })();
 
         debug('executing api db initialize-and-hydrate directive');
 

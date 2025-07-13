@@ -9,6 +9,9 @@ export const ErrorMessage = {
   ApiHydrateDbSucceeded() {
     return 'database was hydrated successfully. You may invoke the app normally now (without API_HYDRATE_DB)';
   },
+  MissingMongoTestPackage() {
+    return 'failed to import @-xun/mongo-test. Note that said package is not installed by default and must be installed manually (try `npm i --save-dev @-xun/mongo-test`)';
+  },
   ReachedEndOfRuntime() {
     return 'end of runtime reached but legacy response was not sent';
   },
