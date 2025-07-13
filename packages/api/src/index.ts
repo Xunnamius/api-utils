@@ -8,7 +8,11 @@ import { sendHttpUnspecifiedError, sendNotImplemented } from '@-xun/respond';
 import { validHttpMethods } from '@-xun/types';
 import { toss } from 'toss-expression';
 
-import { globalDebugLogger as debug } from 'universe+api:constant.ts';
+import {
+  globalDebugLogger as debug,
+  globalGenericLogger as log
+} from 'universe+api:constant.ts';
+
 import { ErrorMessage } from 'universe+api:error.ts';
 
 import type { ExtendedDebugger } from 'rejoinder';
@@ -285,10 +289,15 @@ export function withMiddleware<
 
         writableContextRuntime.error = error;
 
+        let didErrorChainReturnAResponse = false as boolean;
+
         if (useOnError) {
           try {
             debug.error('selecting first middleware in error handling middleware chain');
-            await startPullingChain(useOnError[Symbol.iterator](), debug.error);
+            didErrorChainReturnAResponse = await startPullingChain(
+              useOnError[Symbol.iterator](),
+              debug.error
+            );
           } catch (subError) {
             // ? Error in error handler was unhandled
             debug.error('error in error handling middleware chain: %O', subError);
@@ -303,11 +312,12 @@ export function withMiddleware<
 
         if (isInLegacyMode) {
           const res = resOrUndefined as NextApiResponseLike;
-
           const resSent = res.writableEnded || res.headersSent;
+
           if (res.statusCode < 400 || !resSent) {
-            // eslint-disable-next-line no-console
-            console.error('unhandled error (error response not sent or status < 400)');
+            log.warn(
+              'potentially unhandled error (error response not sent or status < 400)'
+            );
 
             if (!resSent) {
               sendHttpUnspecifiedError(res);
@@ -315,9 +325,11 @@ export function withMiddleware<
           }
         } else {
           if (middlewareContext.runtime.response.status < 400) {
-            // eslint-disable-next-line no-console
-            console.error('unhandled error (error response status < 400)');
-            middlewareContext.runtime.response = sendHttpUnspecifiedError();
+            log.warn('potentially unhandled error (error response status < 400)');
+
+            if (!didErrorChainReturnAResponse) {
+              middlewareContext.runtime.response = sendHttpUnspecifiedError();
+            }
           }
         }
       } finally {
@@ -403,8 +415,7 @@ export function withMiddleware<
                 break;
               }
             } catch (error) {
-              // eslint-disable-next-line no-console
-              console.error(
+              log.error(
                 'a task added via doAfterHandled failed (which was ignored): %O',
                 error
               );
@@ -452,8 +463,7 @@ export function withMiddleware<
                 )) || writableContextRuntime.response;
             }
           } catch (error) {
-            // eslint-disable-next-line no-console
-            console.error(
+            log.error(
               'a middleware task added via doAfterSent failed (which was ignored): %O',
               error
             );
@@ -466,7 +476,7 @@ export function withMiddleware<
 
     /**
      * Async middleware chain iteration. Returns `true` if execution was aborted
-     * or `false` otherwise.
+     * (e.g. by a call to `done()`) or `false` otherwise.
      */
     async function startPullingChain(
       chain: IterableIterator<

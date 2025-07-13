@@ -4,6 +4,8 @@ import { getClientIp } from 'request-ip';
 
 import { getAuthorizationHeaderFromRequestLike } from 'multiverse+shared:next-like.ts';
 
+import { globalGenericLogger } from 'universe+api-strategy:constant.ts';
+
 import type { HttpStatusCode, UnixEpochMs } from '@-xun/types';
 import type { WithId, WithoutId } from 'mongodb';
 
@@ -11,6 +13,8 @@ import type {
   NextApiRequestLike,
   NextApiResponseLike
 } from 'multiverse+shared:next-like.ts';
+
+const log = globalGenericLogger.extend('log');
 
 /**
  * The shape of an entry in the well-known "request log" collection.
@@ -81,8 +85,7 @@ export async function addToRequestLog(
       : reqOrRequest.url || null;
 
   if (!endpoint) {
-    // eslint-disable-next-line no-console
-    console.warn(
+    log.warn(
       `an API endpoint is missing its descriptor metadata at url: ${String(url)}`
     );
   }

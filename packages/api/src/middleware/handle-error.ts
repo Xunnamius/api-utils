@@ -22,7 +22,7 @@ import {
   sendNotImplemented
 } from '@-xun/respond';
 
-import { globalDebugLogger } from 'universe+api:constant.ts';
+import { globalDebugLogger, globalGenericLogger } from 'universe+api:constant.ts';
 import { ErrorMessage } from 'universe+api:error.ts';
 
 import type { JsonError } from '@-xun/respond';
@@ -44,6 +44,7 @@ import type {
 } from 'universe+api:types.ts';
 
 const debug = globalDebugLogger.extend('handle-error');
+const log = globalGenericLogger.extend('handle-error');
 
 type ErrorLikeOrUndefined = { message: string } | undefined;
 
@@ -178,11 +179,7 @@ export function makeMiddleware() {
         }
       } catch (error) {
         /* istanbul ignore next */
-        // eslint-disable-next-line no-console
-        console.error(
-          'custom error handler failed with error (will be ignored): %O',
-          error
-        );
+        log.error('custom error handler failed with error (will be ignored): %O', error);
       }
     }
 
@@ -219,14 +216,12 @@ export function makeMiddleware() {
     } = await import('arktype');
 
     if (SanityError.isError(handleAs)) {
-      // eslint-disable-next-line no-console
-      console.error(`sanity check failed on request: ${url}\n`, error);
+      log.error(`sanity check failed on request: ${url}\n`, error);
       return respondWith(sendHttpUnspecifiedError, {
         error: ErrorMessage.SanityCheckFailed()
       });
     } else if (ServerValidationError.isError(handleAs)) {
-      // eslint-disable-next-line no-console
-      console.error(`server-side validation exception on request: ${url}\n`, error);
+      log.error(`server-side validation exception on request: ${url}\n`, error);
       return respondWith(sendHttpUnspecifiedError, errorJson);
     } else if (
       ClientValidationError.isError(handleAs) ||
@@ -244,12 +239,10 @@ export function makeMiddleware() {
     } else if (NotImplementedError.isError(handleAs)) {
       return respondWith(sendNotImplemented, {});
     } else if (ApiError.isError(handleAs)) {
-      // eslint-disable-next-line no-console
-      console.error(`named exception on request: ${url}\n`, error);
+      log.error(`named exception on request: ${url}\n`, error);
       return respondWith(sendHttpUnspecifiedError, errorJson);
     } else {
-      // eslint-disable-next-line no-console
-      console.error(`unnamed exception on request: ${url}\n`, error);
+      log.error(`unnamed exception on request: ${url}\n`, error);
       return respondWith(sendHttpUnspecifiedError, {});
     }
 

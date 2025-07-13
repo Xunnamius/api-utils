@@ -6,6 +6,9 @@ export const ErrorMessage = {
   SanityCheckFailed() {
     return 'sanity check failed: please report exactly what you did just now!';
   },
+  ApiHydrateDbSucceeded() {
+    return 'database was hydrated successfully. You may invoke the app normally now (without API_HYDRATE_DB)';
+  },
   ReachedEndOfRuntime() {
     return 'end of runtime reached but legacy response was not sent';
   },
