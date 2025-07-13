@@ -8,7 +8,7 @@
 
 > **Options** = `object`
 
-Defined in: [packages/api/src/middleware/check-content-type.ts:36](https://github.com/Xunnamius/api-utils/blob/559770a60e6903bf2f195d0d5f6450a09f08cf05/packages/api/src/middleware/check-content-type.ts#L36)
+Defined in: [packages/api/src/middleware/check-content-type.ts:36](https://github.com/Xunnamius/api-utils/blob/60863c4db4ba817b2926c481da6a42f07a7c9992/packages/api/src/middleware/check-content-type.ts#L36)
 
 ## Properties
 
@@ -16,7 +16,7 @@ Defined in: [packages/api/src/middleware/check-content-type.ts:36](https://githu
 
 > `optional` **allowedContentTypes**: [`AllowedContentTypesConfig`](AllowedContentTypesConfig.md) \| [`AllowedContentTypesPerMethodConfig`](AllowedContentTypesPerMethodConfig.md)
 
-Defined in: [packages/api/src/middleware/check-content-type.ts:62](https://github.com/Xunnamius/api-utils/blob/559770a60e6903bf2f195d0d5f6450a09f08cf05/packages/api/src/middleware/check-content-type.ts#L62)
+Defined in: [packages/api/src/middleware/check-content-type.ts:62](https://github.com/Xunnamius/api-utils/blob/60863c4db4ba817b2926c481da6a42f07a7c9992/packages/api/src/middleware/check-content-type.ts#L62)
 
 A string, a mapping, or an array of media types this endpoint is
 allowed to receive.

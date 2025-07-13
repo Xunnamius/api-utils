@@ -8,7 +8,7 @@
 
 > **makeMiddleware**(): (`_reqOrRequest`, `resOrModernContext`, `maybeLegacyContext`) => `Promise`\<`void`\>
 
-Defined in: [packages/api/src/middleware/connect-databases.ts:61](https://github.com/Xunnamius/api-utils/blob/559770a60e6903bf2f195d0d5f6450a09f08cf05/packages/api/src/middleware/connect-databases.ts#L61)
+Defined in: [packages/api/src/middleware/connect-databases.ts:61](https://github.com/Xunnamius/api-utils/blob/60863c4db4ba817b2926c481da6a42f07a7c9992/packages/api/src/middleware/connect-databases.ts#L61)
 
 Sets the database schema(s) if the NODE_ENV environment variable starts with
 "production" or "development". Additionally hydrates the database(s) with

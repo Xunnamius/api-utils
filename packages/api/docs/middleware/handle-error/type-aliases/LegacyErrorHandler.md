@@ -8,7 +8,7 @@
 
 > **LegacyErrorHandler**\<`Options`, `Heap`\> = [`WithLegacyTag`](../../../types/type-aliases/WithLegacyTag.md)\<(`req`, `res`, `errorJson`, `middlewareContext`) => `Promisable`\<`Error` \| `void`\>\>
 
-Defined in: [packages/api/src/middleware/handle-error.ts:87](https://github.com/Xunnamius/api-utils/blob/559770a60e6903bf2f195d0d5f6450a09f08cf05/packages/api/src/middleware/handle-error.ts#L87)
+Defined in: [packages/api/src/middleware/handle-error.ts:87](https://github.com/Xunnamius/api-utils/blob/60863c4db4ba817b2926c481da6a42f07a7c9992/packages/api/src/middleware/handle-error.ts#L87)
 
 Special middleware used to handle custom errors.
 
