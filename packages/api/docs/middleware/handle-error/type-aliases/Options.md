@@ -8,7 +8,7 @@
 
 > **Options**\<`ErrorHandler`\> = `object`
 
-Defined in: [packages/api/src/middleware/handle-error.ts:98](https://github.com/Xunnamius/api-utils/blob/57bcbde0493ed3285651262eed2a32e963f10249/packages/api/src/middleware/handle-error.ts#L98)
+Defined in: [packages/api/src/middleware/handle-error.ts:99](https://github.com/Xunnamius/api-utils/blob/38288e756f37a9fa3bac377fdbaa51608d8bbed9/packages/api/src/middleware/handle-error.ts#L99)
 
 ## Type Parameters
 
@@ -22,7 +22,7 @@ Defined in: [packages/api/src/middleware/handle-error.ts:98](https://github.com/
 
 > `optional` **errorHandlers**: \[(...`args`) => `Error`, `UnwrapTagged`\<`ErrorHandler`\>\][]
 
-Defined in: [packages/api/src/middleware/handle-error.ts:105](https://github.com/Xunnamius/api-utils/blob/57bcbde0493ed3285651262eed2a32e963f10249/packages/api/src/middleware/handle-error.ts#L105)
+Defined in: [packages/api/src/middleware/handle-error.ts:106](https://github.com/Xunnamius/api-utils/blob/38288e756f37a9fa3bac377fdbaa51608d8bbed9/packages/api/src/middleware/handle-error.ts#L106)
 
 A map (in the form of a multidimensional array) of Error classes and the
 functions that handle them.

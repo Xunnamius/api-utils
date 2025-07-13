@@ -8,5 +8,6 @@
 
 ## Variables
 
-- [globalDebuggerNamespace](variables/globalDebuggerNamespace.md)
 - [globalDebugLogger](variables/globalDebugLogger.md)
+- [globalGenericLogger](variables/globalGenericLogger.md)
+- [globalNamespace](variables/globalNamespace.md)

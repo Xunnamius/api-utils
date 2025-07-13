@@ -8,4 +8,4 @@
 
 > **Context** = `EmptyObject`
 
-Defined in: [packages/api/src/middleware/handle-error.ts:111](https://github.com/Xunnamius/api-utils/blob/57bcbde0493ed3285651262eed2a32e963f10249/packages/api/src/middleware/handle-error.ts#L111)
+Defined in: [packages/api/src/middleware/handle-error.ts:112](https://github.com/Xunnamius/api-utils/blob/38288e756f37a9fa3bac377fdbaa51608d8bbed9/packages/api/src/middleware/handle-error.ts#L112)

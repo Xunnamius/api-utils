@@ -8,7 +8,7 @@
 
 > **ModernErrorHandler**\<`Options`, `Heap`\> = [`WithModernTag`](../../../types/type-aliases/WithModernTag.md)\<(`request`, `response`, `errorJson`, `middlewareContext`) => `Promisable`\<`Error` \| `Response` \| `undefined` \| `void`\>\>
 
-Defined in: [packages/api/src/middleware/handle-error.ts:63](https://github.com/Xunnamius/api-utils/blob/57bcbde0493ed3285651262eed2a32e963f10249/packages/api/src/middleware/handle-error.ts#L63)
+Defined in: [packages/api/src/middleware/handle-error.ts:64](https://github.com/Xunnamius/api-utils/blob/38288e756f37a9fa3bac377fdbaa51608d8bbed9/packages/api/src/middleware/handle-error.ts#L64)
 
 Special middleware used to handle custom errors.
 

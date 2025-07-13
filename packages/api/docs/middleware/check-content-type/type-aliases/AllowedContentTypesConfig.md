@@ -8,6 +8,6 @@
 
 > **AllowedContentTypesConfig** = `string`[] \| `"any"` \| `"none"`
 
-Defined in: [packages/api/src/middleware/check-content-type.ts:27](https://github.com/Xunnamius/api-utils/blob/57bcbde0493ed3285651262eed2a32e963f10249/packages/api/src/middleware/check-content-type.ts#L27)
+Defined in: [packages/api/src/middleware/check-content-type.ts:27](https://github.com/Xunnamius/api-utils/blob/38288e756f37a9fa3bac377fdbaa51608d8bbed9/packages/api/src/middleware/check-content-type.ts#L27)
 
 The shape of a simple configuration object.
