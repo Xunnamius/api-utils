@@ -8,6 +8,6 @@
 
 > **AllowedContentTypesPerMethodConfig** = `{ [method in ValidHttpMethod]?: AllowedContentTypesConfig }`
 
-Defined in: [packages/api/src/middleware/check-content-type.ts:32](https://github.com/Xunnamius/api-utils/blob/60863c4db4ba817b2926c481da6a42f07a7c9992/packages/api/src/middleware/check-content-type.ts#L32)
+Defined in: [packages/api/src/middleware/check-content-type.ts:32](https://github.com/Xunnamius/api-utils/blob/e344f26c2c71ff2ab26a4bf6ee6f0fc1cb9a441b/packages/api/src/middleware/check-content-type.ts#L32)
 
 The shape of a complex configuration object.

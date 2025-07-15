@@ -8,7 +8,7 @@
 
 > **getAuthorizationHeaderFromRequestLike**(`client`): `undefined` \| `string`
 
-Defined in: [packages/shared/src/next-like.ts:78](https://github.com/Xunnamius/api-utils/blob/60863c4db4ba817b2926c481da6a42f07a7c9992/packages/shared/src/next-like.ts#L78)
+Defined in: [packages/shared/src/next-like.ts:78](https://github.com/Xunnamius/api-utils/blob/e344f26c2c71ff2ab26a4bf6ee6f0fc1cb9a441b/packages/shared/src/next-like.ts#L78)
 
 Accepts an authorization header string or something resembling a
 Request and returns either an authorization header string or

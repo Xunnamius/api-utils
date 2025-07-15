@@ -8,7 +8,7 @@
 
 > **makeMiddleware**(): (`reqOrRequest`, `resOrModernContext`, `maybeLegacyContext`) => `Promise`\<`undefined` \| `Response`\>
 
-Defined in: [packages/api/src/middleware/enforce-limits.ts:21](https://github.com/Xunnamius/api-utils/blob/60863c4db4ba817b2926c481da6a42f07a7c9992/packages/api/src/middleware/enforce-limits.ts#L21)
+Defined in: [packages/api/src/middleware/enforce-limits.ts:21](https://github.com/Xunnamius/api-utils/blob/e344f26c2c71ff2ab26a4bf6ee6f0fc1cb9a441b/packages/api/src/middleware/enforce-limits.ts#L21)
 
 Rejects requests from clients that have sent too many previous requests.
 
