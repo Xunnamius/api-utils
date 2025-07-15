@@ -8,7 +8,7 @@
 
 > **isNextApiRequestLike**(`o`): `o is NextApiRequestLike`
 
-Defined in: [packages/shared/src/next-like.ts:54](https://github.com/Xunnamius/api-utils/blob/e344f26c2c71ff2ab26a4bf6ee6f0fc1cb9a441b/packages/shared/src/next-like.ts#L54)
+Defined in: [packages/shared/src/next-like.ts:54](https://github.com/Xunnamius/api-utils/blob/3e7489507eea9aa3d33b0bcc648e0389bef6f3f5/packages/shared/src/next-like.ts#L54)
 
 Returns `true` if `o` is similar enough to a [NextApiRequestLike](../interfaces/NextApiRequestLike.md)
 without having to import the entire `next` package.

@@ -6,7 +6,7 @@
 
 # Interface: NextApiRequestLike
 
-Defined in: [packages/shared/src/next-like.ts:7](https://github.com/Xunnamius/api-utils/blob/e344f26c2c71ff2ab26a4bf6ee6f0fc1cb9a441b/packages/shared/src/next-like.ts#L7)
+Defined in: [packages/shared/src/next-like.ts:7](https://github.com/Xunnamius/api-utils/blob/3e7489507eea9aa3d33b0bcc648e0389bef6f3f5/packages/shared/src/next-like.ts#L7)
 
 An object that is probably a `NextApiRequest`.
 
@@ -43,7 +43,7 @@ Since v17.0.0,v16.12.0 - Check `message.destroyed` from <a href="stream.html#cla
 
 > **body**: `any`
 
-Defined in: [packages/shared/src/next-like.ts:14](https://github.com/Xunnamius/api-utils/blob/e344f26c2c71ff2ab26a4bf6ee6f0fc1cb9a441b/packages/shared/src/next-like.ts#L14)
+Defined in: [packages/shared/src/next-like.ts:14](https://github.com/Xunnamius/api-utils/blob/3e7489507eea9aa3d33b0bcc648e0389bef6f3f5/packages/shared/src/next-like.ts#L14)
 
 ***
 
@@ -128,7 +128,7 @@ Since v16.0.0 - Use `socket`.
 
 > **cookies**: `Partial`\<\{[`key`: `string`]: `string`; \}\>
 
-Defined in: [packages/shared/src/next-like.ts:11](https://github.com/Xunnamius/api-utils/blob/e344f26c2c71ff2ab26a4bf6ee6f0fc1cb9a441b/packages/shared/src/next-like.ts#L11)
+Defined in: [packages/shared/src/next-like.ts:11](https://github.com/Xunnamius/api-utils/blob/3e7489507eea9aa3d33b0bcc648e0389bef6f3f5/packages/shared/src/next-like.ts#L11)
 
 ***
 
@@ -154,7 +154,7 @@ v8.0.0
 
 > `optional` **draftMode**: `boolean`
 
-Defined in: [packages/shared/src/next-like.ts:18](https://github.com/Xunnamius/api-utils/blob/e344f26c2c71ff2ab26a4bf6ee6f0fc1cb9a441b/packages/shared/src/next-like.ts#L18)
+Defined in: [packages/shared/src/next-like.ts:18](https://github.com/Xunnamius/api-utils/blob/3e7489507eea9aa3d33b0bcc648e0389bef6f3f5/packages/shared/src/next-like.ts#L18)
 
 ***
 
@@ -162,7 +162,7 @@ Defined in: [packages/shared/src/next-like.ts:18](https://github.com/Xunnamius/a
 
 > **env**: `object`
 
-Defined in: [packages/shared/src/next-like.ts:15](https://github.com/Xunnamius/api-utils/blob/e344f26c2c71ff2ab26a4bf6ee6f0fc1cb9a441b/packages/shared/src/next-like.ts#L15)
+Defined in: [packages/shared/src/next-like.ts:15](https://github.com/Xunnamius/api-utils/blob/3e7489507eea9aa3d33b0bcc648e0389bef6f3f5/packages/shared/src/next-like.ts#L15)
 
 #### Index Signature
 
@@ -327,7 +327,7 @@ v0.1.1
 
 > `optional` **preview**: `boolean`
 
-Defined in: [packages/shared/src/next-like.ts:19](https://github.com/Xunnamius/api-utils/blob/e344f26c2c71ff2ab26a4bf6ee6f0fc1cb9a441b/packages/shared/src/next-like.ts#L19)
+Defined in: [packages/shared/src/next-like.ts:19](https://github.com/Xunnamius/api-utils/blob/3e7489507eea9aa3d33b0bcc648e0389bef6f3f5/packages/shared/src/next-like.ts#L19)
 
 ***
 
@@ -335,7 +335,7 @@ Defined in: [packages/shared/src/next-like.ts:19](https://github.com/Xunnamius/a
 
 > `optional` **previewData**: `string` \| `false` \| `object`
 
-Defined in: [packages/shared/src/next-like.ts:20](https://github.com/Xunnamius/api-utils/blob/e344f26c2c71ff2ab26a4bf6ee6f0fc1cb9a441b/packages/shared/src/next-like.ts#L20)
+Defined in: [packages/shared/src/next-like.ts:20](https://github.com/Xunnamius/api-utils/blob/3e7489507eea9aa3d33b0bcc648e0389bef6f3f5/packages/shared/src/next-like.ts#L20)
 
 ***
 
@@ -343,7 +343,7 @@ Defined in: [packages/shared/src/next-like.ts:20](https://github.com/Xunnamius/a
 
 > **query**: `Partial`\<\{[`key`: `string`]: `string` \| `string`[]; \}\>
 
-Defined in: [packages/shared/src/next-like.ts:8](https://github.com/Xunnamius/api-utils/blob/e344f26c2c71ff2ab26a4bf6ee6f0fc1cb9a441b/packages/shared/src/next-like.ts#L8)
+Defined in: [packages/shared/src/next-like.ts:8](https://github.com/Xunnamius/api-utils/blob/3e7489507eea9aa3d33b0bcc648e0389bef6f3f5/packages/shared/src/next-like.ts#L8)
 
 ***
 

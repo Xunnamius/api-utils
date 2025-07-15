@@ -8,7 +8,7 @@
 
 > **Options** = `object`
 
-Defined in: [packages/api/src/middleware/check-method.ts:23](https://github.com/Xunnamius/api-utils/blob/e344f26c2c71ff2ab26a4bf6ee6f0fc1cb9a441b/packages/api/src/middleware/check-method.ts#L23)
+Defined in: [packages/api/src/middleware/check-method.ts:23](https://github.com/Xunnamius/api-utils/blob/3e7489507eea9aa3d33b0bcc648e0389bef6f3f5/packages/api/src/middleware/check-method.ts#L23)
 
 ## Properties
 
@@ -16,6 +16,6 @@ Defined in: [packages/api/src/middleware/check-method.ts:23](https://github.com/
 
 > `optional` **allowedMethods**: `ValidHttpMethod`[]
 
-Defined in: [packages/api/src/middleware/check-method.ts:27](https://github.com/Xunnamius/api-utils/blob/e344f26c2c71ff2ab26a4bf6ee6f0fc1cb9a441b/packages/api/src/middleware/check-method.ts#L27)
+Defined in: [packages/api/src/middleware/check-method.ts:27](https://github.com/Xunnamius/api-utils/blob/3e7489507eea9aa3d33b0bcc648e0389bef6f3f5/packages/api/src/middleware/check-method.ts#L27)
 
 An array of HTTP methods this endpoint is allowed to serve.
