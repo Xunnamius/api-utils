@@ -27,7 +27,7 @@ const { initializeMemoryServerOverride, killMemoryServerOverride } =
   setupMemoryServerOverride({
     schema: { aliases: {}, databases: {} },
     data: {},
-    defer: 'without-initialization'
+    defer: 'without-hooks'
   });
 
 const fakeSchema: DbSchema = {
