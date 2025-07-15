@@ -8,7 +8,7 @@
 
 > **isDueForContrivedError**(): `Promise`\<`boolean`\>
 
-Defined in: [packages/api-strategy/src/contrived.ts:14](https://github.com/Xunnamius/api-utils/blob/f7980bf9d2336364841bd054b4ab2fc66322ed4a/packages/api-strategy/src/contrived.ts#L14)
+Defined in: [packages/api-strategy/src/contrived.ts:14](https://github.com/Xunnamius/api-utils/blob/60a2178cffe0885ecc2a390e9b6bc795373b5e0b/packages/api-strategy/src/contrived.ts#L14)
 
 Returns `true` if a request should be rejected with a pseudo-error.
 

@@ -10,7 +10,7 @@
 
 > **removeRateLimit**(`options`): `Promise`\<`number`\>
 
-Defined in: [packages/api-strategy/src/limit.ts:97](https://github.com/Xunnamius/api-utils/blob/f7980bf9d2336364841bd054b4ab2fc66322ed4a/packages/api-strategy/src/limit.ts#L97)
+Defined in: [packages/api-strategy/src/limit.ts:97](https://github.com/Xunnamius/api-utils/blob/60a2178cffe0885ecc2a390e9b6bc795373b5e0b/packages/api-strategy/src/limit.ts#L97)
 
 Removes a rate limit on a client matched against either `ip`, `header`, or
 both. Matching against both removes rate limits that match either criterion.
@@ -33,7 +33,7 @@ The number of rate limits removed.
 
 > **removeRateLimit**(`options`): `Promise`\<`number`\>
 
-Defined in: [packages/api-strategy/src/limit.ts:100](https://github.com/Xunnamius/api-utils/blob/f7980bf9d2336364841bd054b4ab2fc66322ed4a/packages/api-strategy/src/limit.ts#L100)
+Defined in: [packages/api-strategy/src/limit.ts:100](https://github.com/Xunnamius/api-utils/blob/60a2178cffe0885ecc2a390e9b6bc795373b5e0b/packages/api-strategy/src/limit.ts#L100)
 
 Removes a rate limit on a client matched against either `ip`, `header`, or
 both. Matching against both removes rate limits that match either criterion.
@@ -56,7 +56,7 @@ The number of rate limits removed.
 
 > **removeRateLimit**(`__namedParameters`): `Promise`\<`number`\>
 
-Defined in: [packages/api-strategy/src/limit.ts:103](https://github.com/Xunnamius/api-utils/blob/f7980bf9d2336364841bd054b4ab2fc66322ed4a/packages/api-strategy/src/limit.ts#L103)
+Defined in: [packages/api-strategy/src/limit.ts:103](https://github.com/Xunnamius/api-utils/blob/60a2178cffe0885ecc2a390e9b6bc795373b5e0b/packages/api-strategy/src/limit.ts#L103)
 
 Removes a rate limit on a client matched against either `ip`, `header`, or
 both. Matching against both removes rate limits that match either criterion.

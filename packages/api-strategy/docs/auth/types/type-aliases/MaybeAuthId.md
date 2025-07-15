@@ -8,7 +8,7 @@
 
 > **MaybeAuthId** = `string` \| `ObjectId` \| `undefined`
 
-Defined in: [packages/api-strategy/src/auth/types.ts:165](https://github.com/Xunnamius/api-utils/blob/f7980bf9d2336364841bd054b4ab2fc66322ed4a/packages/api-strategy/src/auth/types.ts#L165)
+Defined in: [packages/api-strategy/src/auth/types.ts:165](https://github.com/Xunnamius/api-utils/blob/60a2178cffe0885ecc2a390e9b6bc795373b5e0b/packages/api-strategy/src/auth/types.ts#L165)
 
 An array of items that can be coerced into ObjectId instances, or are
 `undefined`.
