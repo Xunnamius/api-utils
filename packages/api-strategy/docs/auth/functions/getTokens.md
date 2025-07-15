@@ -10,7 +10,7 @@
 
 > **getTokens**(`options`): `Promise`\<[`PublicAuthEntry`](../types/type-aliases/PublicAuthEntry.md)[]\>
 
-Defined in: [packages/api-strategy/src/auth.ts:204](https://github.com/Xunnamius/api-utils/blob/3905fc4975c9f15e022202427b124cf715fcf3dc/packages/api-strategy/src/auth.ts#L204)
+Defined in: [packages/api-strategy/src/auth.ts:204](https://github.com/Xunnamius/api-utils/blob/f7980bf9d2336364841bd054b4ab2fc66322ed4a/packages/api-strategy/src/auth.ts#L204)
 
 Returns entries corresponding to the given `_id`s (`auth_ids`) in the
 well-known "auth" MongoDB collection.
@@ -36,7 +36,7 @@ collection.
 
 > **getTokens**(`options`): `Promise`\<[`PublicAuthEntry`](../types/type-aliases/PublicAuthEntry.md)[]\>
 
-Defined in: [packages/api-strategy/src/auth.ts:217](https://github.com/Xunnamius/api-utils/blob/3905fc4975c9f15e022202427b124cf715fcf3dc/packages/api-strategy/src/auth.ts#L217)
+Defined in: [packages/api-strategy/src/auth.ts:217](https://github.com/Xunnamius/api-utils/blob/f7980bf9d2336364841bd054b4ab2fc66322ed4a/packages/api-strategy/src/auth.ts#L217)
 
 Returns entries matching the given `filter` in the well-known "auth" MongoDB
 collection.
