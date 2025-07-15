@@ -76,7 +76,7 @@
     "test:packages:all": "symbiote test --env NODE_NO_WARNINGS=1 --tests all-local --scope unlimited --coverage"
   },
   "dependencies": {
-    "@-xun/api-strategy": "^1.3.7",
+    "@-xun/api-strategy": "^1.3.8",
     "@-xun/env": "^1.1.3",
     "@-xun/mongo-schema": "^1.3.2",
     "@-xun/respond": "^1.1.4",
