@@ -10,7 +10,7 @@
 
 > **sendHttpRateLimited**(...`args`): `Response`
 
-Defined in: [index.ts:329](https://github.com/Xunnamius/api-utils/blob/b03924fda63811edf48417901d0265e3de012ea4/packages/respond/src/index.ts#L329)
+Defined in: [index.ts:329](https://github.com/Xunnamius/api-utils/blob/e8ce4963b8daa4c21bc4c8b9f74bbf11b683a0d4/packages/respond/src/index.ts#L329)
 
 Sends an HTTP 429 "too many requests" response with optional JSON data.
 
@@ -28,7 +28,7 @@ Sends an HTTP 429 "too many requests" response with optional JSON data.
 
 > **sendHttpRateLimited**(...`args`): `void`
 
-Defined in: [index.ts:330](https://github.com/Xunnamius/api-utils/blob/b03924fda63811edf48417901d0265e3de012ea4/packages/respond/src/index.ts#L330)
+Defined in: [index.ts:330](https://github.com/Xunnamius/api-utils/blob/e8ce4963b8daa4c21bc4c8b9f74bbf11b683a0d4/packages/respond/src/index.ts#L330)
 
 Sends an HTTP 429 "too many requests" response with optional JSON data.
 
@@ -46,7 +46,7 @@ Sends an HTTP 429 "too many requests" response with optional JSON data.
 
 > **sendHttpRateLimited**(...`args`): `void` \| `Response`
 
-Defined in: [index.ts:331](https://github.com/Xunnamius/api-utils/blob/b03924fda63811edf48417901d0265e3de012ea4/packages/respond/src/index.ts#L331)
+Defined in: [index.ts:331](https://github.com/Xunnamius/api-utils/blob/e8ce4963b8daa4c21bc4c8b9f74bbf11b683a0d4/packages/respond/src/index.ts#L331)
 
 Sends an HTTP 429 "too many requests" response with optional JSON data.
 
