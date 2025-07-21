@@ -96,7 +96,7 @@
     "@-xun/error": "^1.1.6",
     "@-xun/fs": "^2.0.0",
     "@-xun/mongo-test": "^3.0.4",
-    "next-test-api-route-handler": "^4.0.16",
+    "next-test-api-route-handler": "^5.0.0",
     "random-case": "^1.0.0"
   },
   "engines": {
