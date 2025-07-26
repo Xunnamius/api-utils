@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@-xun/symbiote": "^4.11.4",
-    "mongodb": "^6.17.0"
+    "mongodb": "^6.18.0"
   },
   "engines": {
     "node": "^20.18.0 || >=22.12.0"
