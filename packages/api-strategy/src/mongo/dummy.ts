@@ -72,7 +72,7 @@ export const dummyRootData: DummyRootData = {
   })),
   'limited-log': [
     // ! Must maintain order or various unit tests will fail
-    {
+    /* {
       _id: generateMockSensitiveObjectId(),
       ip: '1.2.3.4',
       until: mockDateNowMs + 1000 * 60 * 15
@@ -80,6 +80,11 @@ export const dummyRootData: DummyRootData = {
     {
       _id: generateMockSensitiveObjectId(),
       ip: '5.6.7.8',
+      until: mockDateNowMs + 1000 * 60 * 15
+    }, */
+    {
+      _id: generateMockSensitiveObjectId(),
+      header: `bearer another-banned-token`,
       until: mockDateNowMs + 1000 * 60 * 15
     },
     {

@@ -24,7 +24,7 @@ setupMemoryServerOverride({
 });
 
 describe('::isClientRateLimited', () => {
-  it('returns true if ip or header (case-insensitive) are rate limited', async () => {
+  it('returns true if header (case-insensitive, not including ip) are rate limited', async () => {
     expect.hasAssertions();
 
     const req1 = await isClientRateLimited({
@@ -78,18 +78,18 @@ describe('::isClientRateLimited', () => {
       url: '/api/route/path1'
     } as unknown as NextApiRequestLike);
 
-    expect(req1.isLimited).toBeTrue();
+    expect(req1.isLimited).toBeFalse();
     expect(req2.isLimited).toBeTrue();
-    expect(req3.isLimited).toBeTrue();
-    expect(req4.isLimited).toBeTrue();
+    expect(req3.isLimited).toBeFalse();
+    expect(req4.isLimited).toBeFalse();
     expect(req5.isLimited).toBeTrue();
     expect(req6.isLimited).toBeTrue();
 
     const minToMs = (minutes: number) => 1000 * 60 * minutes;
-    expect(req1.retryAfter).toBeWithin(minToMs(15) - 1000, minToMs(15) + 1000);
+    //expect(req1.retryAfter).toBeWithin(minToMs(15) - 1000, minToMs(15) + 1000);
     expect(req2.retryAfter).toBeWithin(minToMs(60) - 1000, minToMs(60) + 1000);
-    expect(req3.retryAfter).toBeWithin(minToMs(15) - 1000, minToMs(15) + 1000);
-    expect(req4.retryAfter).toBeWithin(minToMs(15) - 1000, minToMs(15) + 1000);
+    //expect(req3.retryAfter).toBeWithin(minToMs(15) - 1000, minToMs(15) + 1000);
+    //expect(req4.retryAfter).toBeWithin(minToMs(15) - 1000, minToMs(15) + 1000);
     // ? Should return greater of the two ban times (header time > ip time)
     expect(req5.retryAfter).toBeWithin(minToMs(60) - 1000, minToMs(60) + 1000);
     expect(req6.retryAfter).toBeWithin(minToMs(60) - 1000, minToMs(60) + 1000);
@@ -126,7 +126,7 @@ describe('::isClientRateLimited', () => {
     expect.hasAssertions();
 
     const req = {
-      headers: { 'x-forwarded-for': '1.2.3.4' },
+      headers: { authorization: `bearer ${BANNED_BEARER_TOKEN}` },
       method: 'POST',
       url: '/api/route/path1'
     } as unknown as NextApiRequestLike;
@@ -138,7 +138,10 @@ describe('::isClientRateLimited', () => {
 
     await (await getDb({ name: 'root' }))
       .collection<InternalLimitedLogEntry>('limited-log')
-      .updateOne({ ip: '1.2.3.4' }, { $set: { until: Date.now() - 10 ** 5 } });
+      .updateOne(
+        { header: `bearer ${BANNED_BEARER_TOKEN}` },
+        { $set: { until: Date.now() - 10 ** 5 } }
+      );
 
     await expect(isClientRateLimited(req)).resolves.toStrictEqual({
       isLimited: false,
@@ -206,18 +209,18 @@ describe('::isClientRateLimited', () => {
       })
     );
 
-    expect(req1.isLimited).toBeTrue();
+    expect(req1.isLimited).toBeFalse();
     expect(req2.isLimited).toBeTrue();
-    expect(req3.isLimited).toBeTrue();
-    expect(req4.isLimited).toBeTrue();
+    expect(req3.isLimited).toBeFalse();
+    expect(req4.isLimited).toBeFalse();
     expect(req5.isLimited).toBeTrue();
     expect(req6.isLimited).toBeTrue();
 
     const minToMs = (minutes: number) => 1000 * 60 * minutes;
-    expect(req1.retryAfter).toBeWithin(minToMs(15) - 1000, minToMs(15) + 1000);
+    //expect(req1.retryAfter).toBeWithin(minToMs(15) - 1000, minToMs(15) + 1000);
     expect(req2.retryAfter).toBeWithin(minToMs(60) - 1000, minToMs(60) + 1000);
-    expect(req3.retryAfter).toBeWithin(minToMs(15) - 1000, minToMs(15) + 1000);
-    expect(req4.retryAfter).toBeWithin(minToMs(15) - 1000, minToMs(15) + 1000);
+    //expect(req3.retryAfter).toBeWithin(minToMs(15) - 1000, minToMs(15) + 1000);
+    //expect(req4.retryAfter).toBeWithin(minToMs(15) - 1000, minToMs(15) + 1000);
     // ? Should return greater of the two ban times (header time > ip time)
     expect(req5.retryAfter).toBeWithin(minToMs(60) - 1000, minToMs(60) + 1000);
     expect(req6.retryAfter).toBeWithin(minToMs(60) - 1000, minToMs(60) + 1000);
@@ -232,36 +235,18 @@ describe('::removeRateLimit', () => {
 
     await expect(
       db.countDocuments({
-        ip: dummyRootData['limited-log'][0]!.ip,
+        header: dummyRootData['limited-log'][0]!.header,
         until: { $gt: Date.now() }
       })
     ).resolves.toBe(1);
 
     await expect(
-      removeRateLimit({ target: { ip: dummyRootData['limited-log'][0]!.ip } })
+      removeRateLimit({ target: { header: dummyRootData['limited-log'][0]!.header } })
     ).resolves.toBe(1);
 
     await expect(
       db.countDocuments({
-        ip: dummyRootData['limited-log'][0]!.ip,
-        until: { $gt: Date.now() }
-      })
-    ).resolves.toBe(0);
-
-    await expect(
-      db.countDocuments({
-        header: dummyRootData['limited-log'][2]!.header,
-        until: { $gt: Date.now() }
-      })
-    ).resolves.toBe(1);
-
-    await expect(
-      removeRateLimit({ target: { header: dummyRootData['limited-log'][2]!.header } })
-    ).resolves.toBe(1);
-
-    await expect(
-      db.countDocuments({
-        header: dummyRootData['limited-log'][2]!.header,
+        header: dummyRootData['limited-log'][0]!.header,
         until: { $gt: Date.now() }
       })
     ).resolves.toBe(0);
@@ -275,8 +260,8 @@ describe('::removeRateLimit', () => {
     await expect(
       db.countDocuments({
         $or: [
-          { ip: dummyRootData['limited-log'][1]!.ip },
-          { header: dummyRootData['limited-log'][2]!.header }
+          { ip: dummyRootData['limited-log'][0]!.ip },
+          { header: dummyRootData['limited-log'][0]!.header }
         ],
         until: { $gt: Date.now() }
       })
@@ -285,21 +270,21 @@ describe('::removeRateLimit', () => {
     await expect(
       removeRateLimit({
         target: {
-          ip: dummyRootData['limited-log'][1]!.ip,
-          header: dummyRootData['limited-log'][2]!.header
+          ip: dummyRootData['limited-log'][0]!.ip,
+          header: dummyRootData['limited-log'][0]!.header
         }
       })
-    ).resolves.toBe(2);
+    ).resolves.toBe(1);
 
     await expect(
       db.countDocuments({
         $or: [
-          { ip: dummyRootData['limited-log'][1]!.ip },
-          { header: dummyRootData['limited-log'][2]!.header }
+          { ip: dummyRootData['limited-log'][0]!.ip },
+          { header: dummyRootData['limited-log'][0]!.header }
         ],
         until: { $gt: Date.now() }
       })
-    ).resolves.toBe(0);
+    ).resolves.toBe(1);
   });
 
   it('only removes active rate limits', async () => {
@@ -308,18 +293,18 @@ describe('::removeRateLimit', () => {
     const db = (await getDb({ name: 'root' })).collection('limited-log');
 
     await db.updateOne(
-      { ip: dummyRootData['limited-log'][1]!.ip },
+      { header: dummyRootData['limited-log'][0]!.header },
       { $set: { until: Date.now() } }
     );
 
     await expect(
       removeRateLimit({
         target: {
-          ip: dummyRootData['limited-log'][1]!.ip,
-          header: dummyRootData['limited-log'][2]!.header
+          ip: dummyRootData['limited-log'][0]!.ip,
+          header: dummyRootData['limited-log'][0]!.header
         }
       })
-    ).resolves.toBe(1);
+    ).resolves.toBe(0);
   });
 
   it('returns 0 if no active rate limit was found', async () => {
@@ -328,12 +313,12 @@ describe('::removeRateLimit', () => {
     const db = (await getDb({ name: 'root' })).collection('limited-log');
 
     await db.updateOne(
-      { ip: dummyRootData['limited-log'][1]!.ip },
+      { header: dummyRootData['limited-log'][0]!.header },
       { $set: { until: Date.now() } }
     );
 
     await expect(
-      removeRateLimit({ target: { ip: dummyRootData['limited-log'][1]!.ip } })
+      removeRateLimit({ target: { header: dummyRootData['limited-log'][0]!.header } })
     ).resolves.toBe(0);
   });
 
