@@ -8,7 +8,7 @@
 
 > **Validators** = `object`
 
-Defined in: [packages/api-strategy/src/auth/types.ts:13](https://github.com/Xunnamius/api-utils/blob/60a2178cffe0885ecc2a390e9b6bc795373b5e0b/packages/api-strategy/src/auth/types.ts#L13)
+Defined in: [packages/api-strategy/src/auth/types.ts:13](https://github.com/Xunnamius/api-utils/blob/52a8c73e7bc88df6639a2fe1c2313f726aa468a9/packages/api-strategy/src/auth/types.ts#L13)
 
 ## See
 
@@ -20,7 +20,7 @@ Defined in: [packages/api-strategy/src/auth/types.ts:13](https://github.com/Xunn
 
 > **AuthorizationHeader**: `Type`\<`string`\>
 
-Defined in: [packages/api-strategy/src/auth/types.ts:15](https://github.com/Xunnamius/api-utils/blob/60a2178cffe0885ecc2a390e9b6bc795373b5e0b/packages/api-strategy/src/auth/types.ts#L15)
+Defined in: [packages/api-strategy/src/auth/types.ts:15](https://github.com/Xunnamius/api-utils/blob/52a8c73e7bc88df6639a2fe1c2313f726aa468a9/packages/api-strategy/src/auth/types.ts#L15)
 
 ***
 
@@ -28,7 +28,7 @@ Defined in: [packages/api-strategy/src/auth/types.ts:15](https://github.com/Xunn
 
 > **NewAuthEntry**: `Type`\<[`NewAuthEntry`](NewAuthEntry.md)\>
 
-Defined in: [packages/api-strategy/src/auth/types.ts:16](https://github.com/Xunnamius/api-utils/blob/60a2178cffe0885ecc2a390e9b6bc795373b5e0b/packages/api-strategy/src/auth/types.ts#L16)
+Defined in: [packages/api-strategy/src/auth/types.ts:16](https://github.com/Xunnamius/api-utils/blob/52a8c73e7bc88df6639a2fe1c2313f726aa468a9/packages/api-strategy/src/auth/types.ts#L16)
 
 ***
 
@@ -36,7 +36,7 @@ Defined in: [packages/api-strategy/src/auth/types.ts:16](https://github.com/Xunn
 
 > **Token**: `Type`\<[`Token`](Token.md)\>
 
-Defined in: [packages/api-strategy/src/auth/types.ts:17](https://github.com/Xunnamius/api-utils/blob/60a2178cffe0885ecc2a390e9b6bc795373b5e0b/packages/api-strategy/src/auth/types.ts#L17)
+Defined in: [packages/api-strategy/src/auth/types.ts:17](https://github.com/Xunnamius/api-utils/blob/52a8c73e7bc88df6639a2fe1c2313f726aa468a9/packages/api-strategy/src/auth/types.ts#L17)
 
 ***
 
@@ -44,7 +44,7 @@ Defined in: [packages/api-strategy/src/auth/types.ts:17](https://github.com/Xunn
 
 > **TokenAttributes**: `Type`\<[`TokenAttributes`](TokenAttributes.md)\>
 
-Defined in: [packages/api-strategy/src/auth/types.ts:18](https://github.com/Xunnamius/api-utils/blob/60a2178cffe0885ecc2a390e9b6bc795373b5e0b/packages/api-strategy/src/auth/types.ts#L18)
+Defined in: [packages/api-strategy/src/auth/types.ts:18](https://github.com/Xunnamius/api-utils/blob/52a8c73e7bc88df6639a2fe1c2313f726aa468a9/packages/api-strategy/src/auth/types.ts#L18)
 
 ***
 
@@ -52,7 +52,7 @@ Defined in: [packages/api-strategy/src/auth/types.ts:18](https://github.com/Xunn
 
 > **TokenAttributesFilter**: `Type`\<[`TokenAttributesFilter`](TokenAttributesFilter.md)\>
 
-Defined in: [packages/api-strategy/src/auth/types.ts:19](https://github.com/Xunnamius/api-utils/blob/60a2178cffe0885ecc2a390e9b6bc795373b5e0b/packages/api-strategy/src/auth/types.ts#L19)
+Defined in: [packages/api-strategy/src/auth/types.ts:19](https://github.com/Xunnamius/api-utils/blob/52a8c73e7bc88df6639a2fe1c2313f726aa468a9/packages/api-strategy/src/auth/types.ts#L19)
 
 ***
 
@@ -60,4 +60,4 @@ Defined in: [packages/api-strategy/src/auth/types.ts:19](https://github.com/Xunn
 
 > **toToken**: `Type`\<(`In`) => `Out`\<`string`\>\>
 
-Defined in: [packages/api-strategy/src/auth/types.ts:14](https://github.com/Xunnamius/api-utils/blob/60a2178cffe0885ecc2a390e9b6bc795373b5e0b/packages/api-strategy/src/auth/types.ts#L14)
+Defined in: [packages/api-strategy/src/auth/types.ts:14](https://github.com/Xunnamius/api-utils/blob/52a8c73e7bc88df6639a2fe1c2313f726aa468a9/packages/api-strategy/src/auth/types.ts#L14)
